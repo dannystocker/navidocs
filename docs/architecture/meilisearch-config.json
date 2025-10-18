@@ -1,0 +1,276 @@
+{
+  "indexName": "navidocs-pages",
+  "description": "NaviDocs search index for boat manual pages (multi-vertical support)",
+  "version": "1.0.0",
+  
+  "settings": {
+    "searchableAttributes": [
+      "title",
+      "text",
+      "systems",
+      "categories",
+      "tags",
+      "entityName",
+      "componentName",
+      "manufacturer",
+      "modelNumber",
+      "boatName"
+    ],
+    
+    "filterableAttributes": [
+      "vertical",
+      "organizationId",
+      "entityId",
+      "entityType",
+      "userId",
+      "docId",
+      "documentType",
+      "systems",
+      "categories",
+      "boatMake",
+      "boatModel",
+      "boatYear",
+      "vesselType",
+      "status",
+      "priority",
+      "language",
+      "complianceType",
+      "propertyType",
+      "facilityType"
+    ],
+    
+    "sortableAttributes": [
+      "createdAt",
+      "updatedAt",
+      "pageNumber",
+      "year",
+      "ocrConfidence",
+      "inspectionDate",
+      "nextDue"
+    ],
+    
+    "displayedAttributes": [
+      "*"
+    ],
+    
+    "synonyms": {
+      "bilge": ["sump", "drain", "bilge pump"],
+      "head": ["toilet", "marine toilet", "WC", "lavatory"],
+      "galley": ["kitchen"],
+      "helm": ["steering", "wheel", "cockpit controls"],
+      "bow": ["front", "forward"],
+      "stern": ["aft", "back", "rear"],
+      "port": ["left"],
+      "starboard": ["right"],
+      "VHF": ["radio", "marine radio"],
+      "GPS": ["chartplotter", "navigation system", "plotter"],
+      "autopilot": ["auto helm", "auto pilot"],
+      "windlass": ["anchor winch", "anchor windlass"],
+      "thruster": ["bow thruster", "stern thruster"],
+      "generator": ["gen", "genset"],
+      "inverter": ["power inverter"],
+      "shore power": ["dock power", "land power"],
+      "seacock": ["through-hull", "thru-hull"],
+      "battery": ["batteries", "house bank"],
+      "water tank": ["fresh water tank", "water storage"],
+      "holding tank": ["waste tank", "black water tank"],
+      "grey water": ["gray water", "shower drain"],
+      "HVAC": ["air conditioning", "heating", "climate control"],
+      "engine": ["motor", "powerplant"],
+      "transmission": ["gearbox", "drive"],
+      "impeller": ["water pump impeller"],
+      "alternator": ["charging system"],
+      "starter": ["starting motor"],
+      "fuel filter": ["fuel separator", "racor"],
+      "water heater": ["hot water heater", "calorifier"],
+      "refrigerator": ["fridge", "ice box"],
+      "freezer": ["deep freeze"],
+      "microwave": ["microwave oven"],
+      "stove": ["cooktop", "range"],
+      "oven": ["baking oven"],
+      "anchor": ["ground tackle"],
+      "chain": ["anchor chain", "rode"],
+      "rope": ["line", "dockline"],
+      "fender": ["bumper"],
+      "davit": ["crane", "lifting davit"]
+    },
+    
+    "stopWords": [
+      "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
+      "of", "with", "by", "from", "as", "is", "was", "are", "be", "been",
+      "being", "have", "has", "had", "do", "does", "did", "will", "would",
+      "could", "should", "may", "might", "must", "can", "this", "that",
+      "these", "those", "it", "its", "it's"
+    ],
+    
+    "rankingRules": [
+      "words",
+      "typo",
+      "proximity",
+      "attribute",
+      "sort",
+      "exactness"
+    ],
+    
+    "typoTolerance": {
+      "enabled": true,
+      "minWordSizeForTypos": {
+        "oneTypo": 4,
+        "twoTypos": 8
+      },
+      "disableOnWords": [],
+      "disableOnAttributes": []
+    },
+    
+    "faceting": {
+      "maxValuesPerFacet": 100
+    },
+    
+    "pagination": {
+      "maxTotalHits": 10000
+    },
+    
+    "separatorTokens": [
+      ".", ",", ";", ":", "!", "?", "-", "_", "/", "\\", "|"
+    ],
+    
+    "nonSeparatorTokens": []
+  },
+  
+  "documentStructure": {
+    "description": "Expected structure for indexed documents",
+    "schema": {
+      "id": "string (required) - Format: page_{docId}_p{pageNum}",
+      "vertical": "string (required) - boating | marina | property",
+      
+      "organizationId": "string (required) - Organization UUID",
+      "organizationName": "string (required) - Organization display name",
+      
+      "entityId": "string (required) - Entity UUID (boat, marina, condo)",
+      "entityName": "string (required) - Entity display name",
+      "entityType": "string (required) - boat | marina | condo",
+      
+      "subEntityId": "string (optional) - System, dock, or unit UUID",
+      "subEntityName": "string (optional) - Sub-entity name",
+      
+      "componentId": "string (optional) - Component UUID",
+      "componentName": "string (optional) - Component name",
+      
+      "docId": "string (required) - Document UUID",
+      "userId": "string (required) - Owner/uploader UUID",
+      
+      "documentType": "string (required) - manual | service-record | inspection | certificate",
+      "title": "string (required) - Page or section title",
+      "pageNumber": "number (required) - 1-based page index",
+      "text": "string (required) - Full OCR extracted text",
+      
+      "systems": "array<string> (optional) - electrical, plumbing, navigation, etc",
+      "categories": "array<string> (optional) - maintenance, troubleshooting, safety, etc",
+      "tags": "array<string> (optional) - bilge, pump, generator, etc",
+      
+      "boatName": "string (optional) - Boat name for display",
+      "boatMake": "string (optional) - Prestige, Beneteau, etc",
+      "boatModel": "string (optional) - F4.9, Oceanis 45, etc",
+      "boatYear": "number (optional) - 2024",
+      "vesselType": "string (optional) - powerboat | sailboat | catamaran | trawler",
+      
+      "manufacturer": "string (optional) - Component manufacturer",
+      "modelNumber": "string (optional) - Component model",
+      "serialNumber": "string (optional) - Component serial",
+      
+      "language": "string (required) - en | fr | es | de",
+      "ocrConfidence": "number (optional) - 0.0 to 1.0",
+      
+      "priority": "string (optional) - critical | normal | reference",
+      "offlineCache": "boolean (optional) - Should be cached offline",
+      
+      "complianceType": "string (optional) - electrical-inspection | fire-safety | ada-compliance",
+      "inspectionDate": "number (optional) - Unix timestamp",
+      "nextDue": "number (optional) - Unix timestamp",
+      "status": "string (optional) - compliant | pending | failed",
+      
+      "location": "object (optional) - Physical location metadata",
+      "location.building": "string (optional) - Dock 1, Building A",
+      "location.gps": "object (optional) - GPS coordinates",
+      "location.gps.lat": "number (optional) - Latitude",
+      "location.gps.lon": "number (optional) - Longitude",
+      
+      "createdAt": "number (required) - Unix timestamp",
+      "updatedAt": "number (required) - Unix timestamp",
+      
+      "embedding": "array<number> (optional) - Future: 1536 float vector for semantic search"
+    }
+  },
+  
+  "exampleDocument": {
+    "id": "page_doc_abc123_p7",
+    "vertical": "boating",
+    
+    "organizationId": "org_xyz789",
+    "organizationName": "Smith Family Boats",
+    
+    "entityId": "boat_prestige_f49_001",
+    "entityName": "Sea Breeze",
+    "entityType": "boat",
+    
+    "subEntityId": "system_plumbing_001",
+    "subEntityName": "Plumbing System",
+    
+    "componentId": "comp_webasto_heater_001",
+    "componentName": "Webasto Water Heater",
+    
+    "docId": "doc_abc123",
+    "userId": "user_456",
+    
+    "documentType": "component-manual",
+    "title": "8.7 Blackwater System - Maintenance",
+    "pageNumber": 7,
+    "text": "The blackwater pump is located in the aft compartment beneath the master berth. To access the pump, remove the inspection panel located...",
+    
+    "systems": ["plumbing", "waste-management"],
+    "categories": ["maintenance", "troubleshooting"],
+    "tags": ["bilge", "pump", "blackwater", "waste"],
+    
+    "boatName": "Sea Breeze",
+    "boatMake": "Prestige",
+    "boatModel": "F4.9",
+    "boatYear": 2024,
+    "vesselType": "powerboat",
+    
+    "manufacturer": "Webasto",
+    "modelNumber": "FCF Platinum Series",
+    "serialNumber": "WB-2024-12345",
+    
+    "language": "en",
+    "ocrConfidence": 0.94,
+    
+    "priority": "normal",
+    "offlineCache": true,
+    
+    "createdAt": 1740234567,
+    "updatedAt": 1740234567,
+    
+    "embedding": null
+  },
+  
+  "tenantTokenConfig": {
+    "description": "Tenant tokens for secure client-side search",
+    "expiresIn": 3600,
+    "searchRules": {
+      "navidocs-pages": {
+        "filter": "userId = {{userId}} OR organizationId IN {{organizationIds}}"
+      }
+    }
+  },
+  
+  "notes": {
+    "masterKey": "NEVER expose master key to client! Use tenant tokens only.",
+    "indexUpdates": "Synonyms can be updated without re-indexing",
+    "futureFeatures": [
+      "Vector search with pgvector or Qdrant integration",
+      "Multi-language indexes (separate per language)",
+      "Geo-search for property/marina vertical",
+      "Faceted search UI"
+    ]
+  }
+}
