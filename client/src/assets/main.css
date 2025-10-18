@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer base {
+  * {
+    @apply border-dark-200;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 font-medium rounded transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-primary-500 text-white hover:bg-primary-600 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500;
+  }
+
+  .btn-outline {
+    @apply border-2 border-dark-300 text-dark-700 hover:bg-dark-50 focus:ring-dark-500;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full px-4 py-3 border border-dark-300 rounded bg-white;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-lg shadow-soft p-6;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-soft-lg transition-shadow duration-200;
+  }
+
+  /* Search bar */
+  .search-bar {
+    @apply relative w-full max-w-2xl mx-auto;
+  }
+
+  .search-input {
+    @apply w-full h-14 px-6 pr-12 rounded-lg border-2 border-dark-200;
+    @apply focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100;
+    @apply transition-all duration-200 text-lg;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply inline-block w-6 h-6 border-4 border-dark-200 border-t-primary-500 rounded-full;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Modal */
+  .modal-overlay {
+    @apply fixed inset-0 bg-dark-900 bg-opacity-50 flex items-center justify-center z-50;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-lg shadow-soft-lg p-8 max-w-2xl w-full mx-4;
+    @apply max-h-screen overflow-y-auto;
+  }
+
+  /* Toast notification */
+  .toast {
+    @apply fixed bottom-6 right-6 bg-white rounded-lg shadow-soft-lg p-4 z-50;
+    @apply border-l-4 border-success-500;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
