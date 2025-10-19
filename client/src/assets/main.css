@@ -21,6 +21,21 @@
   }
 }
 
+/* Additional base styles */
+@layer base {
+  /* Accessible focus ring */
+  :focus-visible {
+    outline: 2px solid theme('colors.primary.500');
+    outline-offset: 2px;
+  }
+
+  /* Keyboard key styling */
+  kbd {
+    @apply inline-block px-2 py-1 text-xs font-mono rounded border border-dark-200 bg-dark-50 text-dark-700;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12);
+  }
+}
+
 @layer components {
   /* Button styles */
   .btn {
@@ -135,5 +150,70 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+}
+
+/* Additional component styles (Meilisearch-like polish) */
+@layer components {
+  /* Badges & chips */
+  .badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-dark-100 text-dark-700;
+  }
+  .badge-primary {
+    @apply bg-primary-100 text-primary-700;
+  }
+  .badge-success {
+    @apply bg-success-100 text-success-700;
+  }
+
+  /* Glass panel */
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-dark-100 shadow-soft;
+  }
+
+  /* Section helpers */
+  .section {
+    @apply py-16 md:py-24;
+  }
+  .section-title {
+    @apply text-4xl md:text-5xl font-black tracking-tight text-dark-900;
+  }
+
+  /* Gradient accent border */
+  .accent-border {
+    position: relative;
+  }
+  .accent-border:before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(90deg, theme('colors.primary.500'), theme('colors.secondary.500'));
+    filter: blur(8px);
+    opacity: .3;
+  }
+
+  /* Subtle grid background */
+  .bg-grid {
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 16px 16px;
+    background-position: -1px -1px;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton {
+    @apply relative overflow-hidden bg-dark-100 rounded;
+  }
+  .skeleton:after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    animation: shimmer 1.25s infinite;
+  }
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
   }
 }

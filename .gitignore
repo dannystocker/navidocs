@@ -47,3 +47,6 @@ test-results/
 # Meilisearch
 data.ms/
 meilisearch-data/
+
+# Sensitive handover docs (do not commit)
+docs/handover/PATHS_AND_CREDENTIALS.md
