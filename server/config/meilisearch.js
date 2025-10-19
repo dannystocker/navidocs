@@ -3,11 +3,14 @@
  */
 
 import { MeiliSearch } from 'meilisearch';
+import dotenv from 'dotenv';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+// Ensure environment is loaded for both API and worker contexts
+dotenv.config({ path: join(__dirname, '../.env') });
 
 const MEILISEARCH_HOST = process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700';
 const MEILISEARCH_MASTER_KEY = process.env.MEILISEARCH_MASTER_KEY || 'changeme123';
