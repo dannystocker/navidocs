@@ -227,7 +227,7 @@
             <div class="space-y-3">
               <div v-for="doc in documentsByStatus.processing" :key="doc.id"
                    class="bg-white/10 backdrop-blur-lg rounded-lg p-4 hover:bg-white/15 transition-all cursor-pointer border border-white/10"
-                   @click="$router.push(`/documents/${doc.id}`)">
+                   @click="$router.push(`/document/${doc.id}`)">
                 <div class="flex items-center justify-between">
                   <div class="flex-1">
                     <h5 class="font-semibold text-white">{{ doc.title }}</h5>
@@ -253,7 +253,7 @@
             <div class="space-y-3">
               <div v-for="doc in documentsByStatus.indexed" :key="doc.id"
                    class="bg-white/10 backdrop-blur-lg rounded-lg p-4 hover:bg-white/15 transition-all cursor-pointer border border-white/10"
-                   @click="$router.push(`/documents/${doc.id}`)">
+                   @click="$router.push(`/document/${doc.id}`)">
                 <div class="flex items-center justify-between">
                   <div class="flex-1">
                     <h5 class="font-semibold text-white">{{ doc.title }}</h5>
