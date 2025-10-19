@@ -4,8 +4,10 @@
  */
 
 import { ref, onUnmounted } from 'vue'
+import { useToast } from './useToast'
 
 export function useJobPolling() {
+  const toast = useToast()
   const jobId = ref(null)
   const jobStatus = ref('pending')
   const jobProgress = ref(0)
@@ -45,9 +47,20 @@ export function useJobPolling() {
       const data = await response.json()
 
       if (response.ok) {
+        const previousStatus = jobStatus.value
         jobStatus.value = data.status
         jobProgress.value = data.progress || 0
         jobError.value = data.error || null
+
+        // Show success toast when job completes
+        if (previousStatus !== 'completed' && data.status === 'completed') {
+          toast.success('Document processed successfully! OCR complete.')
+        }
+
+        // Show error toast when job fails
+        if (previousStatus !== 'failed' && data.status === 'failed') {
+          toast.error(`Processing failed: ${data.error || 'Unknown error'}`)
+        }
       } else {
         console.error('Poll error:', data.error)
         // Don't stop polling on transient errors

@@ -57,10 +57,10 @@
                   <div class="flex-1">
                     <p class="font-medium text-white">{{ selectedFile.name }}</p>
                     <p class="text-sm text-white/70">{{ formatFileSize(selectedFile.size) }}</p>
-                    <p v-if="extractingMetadata" class="text-xs text-pink-400 mt-1 flex items-center gap-1">
+                    <div v-if="extractingMetadata" class="text-xs text-pink-400 mt-1 flex items-center gap-1">
                       <div class="spinner border-pink-400" style="width: 12px; height: 12px; border-width: 2px;"></div>
                       Extracting metadata from first page...
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <button
@@ -227,6 +227,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJobPolling } from '../composables/useJobPolling'
+import { useToast } from '../composables/useToast'
 
 const props = defineProps({
   isOpen: {
@@ -238,6 +239,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'upload-success'])
 
 const router = useRouter()
+const toast = useToast()
 const fileInput = ref(null)
 const selectedFile = ref(null)
 const isDragging = ref(false)
@@ -416,7 +418,7 @@ async function uploadFile() {
   } catch (error) {
     console.error('Upload error:', error)
     errorMessage.value = error.message
-    alert(`Upload failed: ${error.message}`)
+    toast.error(`Upload failed: ${error.message}`)
   } finally {
     uploading.value = false
   }
