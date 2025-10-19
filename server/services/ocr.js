@@ -172,15 +172,19 @@ async function convertPDFPageToImage(pdfPath, pageNumber) {
  */
 async function runTesseractOCR(imagePath, language = 'eng') {
   try {
-    const worker = await Tesseract.createWorker(language);
+    // Use local system tesseract command (faster and more reliable)
+    const result = execSync(
+      `tesseract "${imagePath}" stdout -l ${language} --psm 1`,
+      { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
+    );
 
-    const { data } = await worker.recognize(imagePath);
-
-    await worker.terminate();
+    // Tesseract doesn't provide confidence via stdout, so we'll estimate based on output
+    const text = result.trim();
+    const confidence = text.length > 0 ? 0.85 : 0.0; // Rough estimate
 
     return {
-      text: data.text,
-      confidence: data.confidence / 100 // Convert to 0-1 range
+      text,
+      confidence
     };
   } catch (error) {
     console.error('Tesseract OCR error:', error);

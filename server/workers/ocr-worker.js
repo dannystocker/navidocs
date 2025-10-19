@@ -231,7 +231,7 @@ async function processOCRJob(job) {
  * Create and start the OCR worker
  */
 export function createOCRWorker() {
-  const worker = new Worker('ocr-jobs', processOCRJob, {
+  const worker = new Worker('ocr-processing', processOCRJob, {
     connection,
     concurrency: parseInt(process.env.OCR_CONCURRENCY || '2'), // Process 2 documents at a time
     limiter: {
