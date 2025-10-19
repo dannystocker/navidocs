@@ -15,6 +15,7 @@ const INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-pages';
 
 let client = null;
 let index = null;
+let tenantKeyUid = null;
 
 export function getMeilisearchClient() {
   if (!client) {
@@ -69,7 +70,32 @@ async function configureIndex(index) {
   console.log('Meilisearch index configured');
 }
 
-export function generateTenantToken(userId, organizationIds, expiresIn = 3600) {
+async function ensureTenantKeyUid() {
+  if (tenantKeyUid) return tenantKeyUid;
+  const client = getMeilisearchClient();
+  try {
+    const keys = await client.getKeys();
+    const existing = keys.results?.find(k => k.name === 'navidocs-tenant-key' && k.actions?.includes('search'));
+    if (existing) {
+      tenantKeyUid = existing.uid;
+      return tenantKeyUid;
+    }
+  } catch (e) {
+    // proceed to create
+  }
+
+  // Create a search-only key to act as parent for tenant tokens
+  const created = await client.createKey({
+    name: 'navidocs-tenant-key',
+    description: 'Parent key for NaviDocs tenant tokens',
+    actions: ['search'],
+    indexes: [INDEX_NAME]
+  });
+  tenantKeyUid = created.uid;
+  return tenantKeyUid;
+}
+
+export async function generateTenantToken(userId, organizationIds, expiresIn = 3600) {
   const client = getMeilisearchClient();
 
   // Quote string values for Meilisearch filter syntax
@@ -83,8 +109,9 @@ export function generateTenantToken(userId, organizationIds, expiresIn = 3600) {
   const expiresAt = new Date(Date.now() + expiresIn * 1000);
 
   // Ensure a string is returned across client versions
-  const token = client.generateTenantToken(searchRules, {
-    apiKey: MEILISEARCH_MASTER_KEY,
+  const parentUid = await ensureTenantKeyUid();
+  const token = await client.generateTenantToken(searchRules, {
+    apiKey: parentUid,
     expiresAt
   });
 

@@ -46,7 +46,7 @@ router.post('/token', async (req, res) => {
     }
 
     // Generate tenant token with user and organization filters
-    const token = generateTenantToken(userId, organizationIds, tokenExpiry);
+    const token = await generateTenantToken(userId, organizationIds, tokenExpiry);
     const expiresAt = new Date(Date.now() + tokenExpiry * 1000);
 
     res.json({
