@@ -72,16 +72,21 @@ async function configureIndex(index) {
 export function generateTenantToken(userId, organizationIds, expiresIn = 3600) {
   const client = getMeilisearchClient();
 
+  // Quote string values for Meilisearch filter syntax
+  const orgList = (organizationIds || []).map((id) => `"${id}"`).join(', ');
+  const filter = `userId = "${userId}" OR organizationId IN [${orgList}]`;
+
   const searchRules = {
-    [INDEX_NAME]: {
-      filter: `userId = ${userId} OR organizationId IN [${organizationIds.join(', ')}]`
-    }
+    [INDEX_NAME]: { filter }
   };
 
   const expiresAt = new Date(Date.now() + expiresIn * 1000);
 
-  return client.generateTenantToken(searchRules, {
+  // Ensure a string is returned across client versions
+  const token = client.generateTenantToken(searchRules, {
     apiKey: MEILISEARCH_MASTER_KEY,
     expiresAt
   });
+
+  return typeof token === 'string' ? token : String(token);
 }
