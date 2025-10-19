@@ -15,8 +15,8 @@ NaviDocs is a **marine documentation management system** built for organizing bo
 - Local dev environment: 100% operational
 - OCR pipeline: 85% confidence with Tesseract, Google options available
 - Database: Initialized with 13 tables
-- Frontend: Running on port 5174
-- Backend: Running on port 3001
+- Frontend: Running on port 8080
+- Backend: Running on port 8001
 - Search: Meilisearch configured (auth issue ongoing)
 - Git: 18 commits, all code committed
 
@@ -192,7 +192,7 @@ Database: Saved to document_pages table
 
 #### 3. Backend API (95%)
 
-**Running**: `http://localhost:3001`
+**Running**: `http://localhost:8001`
 
 **Implemented Endpoints**:
 - `POST /api/documents/upload` - File upload ✅
@@ -216,7 +216,7 @@ Database: Saved to document_pages table
 
 #### 4. Frontend (80%)
 
-**Running**: `http://localhost:5174`
+**Running**: `http://localhost:8080`
 
 **Implemented**:
 - Vue 3 app structure

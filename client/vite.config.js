@@ -10,10 +10,11 @@ export default defineConfig({
     }
   },
   server: {
-    port: 5173,
+    host: '0.0.0.0', // Expose to network (required for WSL2 → Windows access)
+    port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:8001',
         changeOrigin: true
       }
     }

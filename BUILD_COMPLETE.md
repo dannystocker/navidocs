@@ -317,7 +317,7 @@ cd ~/navidocs/client
 npm run dev
 ```
 
-Visit: http://localhost:5173
+Visit: http://localhost:8080
 
 ---
 

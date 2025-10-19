@@ -61,7 +61,7 @@ cd ../client
 # Configure environment
 cat > /tmp/navidocs/server/.env << 'EOF'
 NODE_ENV=production
-PORT=3001
+PORT=8001
 
 # Database
 DATABASE_PATH=/home/sites/7a/c/cb8112d0d1/navidocs/db/navidocs.db
@@ -119,11 +119,11 @@ navidocs-status
    - Path: /tmp/navidocs/server
    - Startup: index.js
    - Node: 20.x
-   - Port: 3001
+   - Port: 8001
 4. Click "Start"
 5. Configure reverse proxy:
    - Domain: yoursite.com
-   - Target: http://127.0.0.1:3001
+   - Target: http://127.0.0.1:8001
    - SSL: Enable (Let's Encrypt)
 ```
 
@@ -131,7 +131,7 @@ navidocs-status
 
 ```bash
 # Create test user
-curl -X POST http://127.0.0.1:3001/api/auth/register \
+curl -X POST http://127.0.0.1:8001/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@navidocs.com",
@@ -140,7 +140,7 @@ curl -X POST http://127.0.0.1:3001/api/auth/register \
   }'
 
 # Login
-TOKEN=$(curl -X POST http://127.0.0.1:3001/api/auth/login \
+TOKEN=$(curl -X POST http://127.0.0.1:8001/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@navidocs.com",
@@ -148,7 +148,7 @@ TOKEN=$(curl -X POST http://127.0.0.1:3001/api/auth/login \
   }' | jq -r '.token')
 
 # Upload PDF
-curl -X POST http://127.0.0.1:3001/api/documents/upload \
+curl -X POST http://127.0.0.1:8001/api/documents/upload \
   -H "Authorization: Bearer $TOKEN" \
   -F "file=@test.pdf" \
   -F "title=Test Manual" \

@@ -234,9 +234,9 @@ navidocs-status
    - Path: /tmp/navidocs/server (IMPORTANT: /tmp, not ~/!)
    - Startup file: index.js
    - Node version: 20.x
-   - Port: 3001
+   - Port: 8001
 4. Start application
-5. Configure reverse proxy: yoursite.com → http://127.0.0.1:3001
+5. Configure reverse proxy: yoursite.com → http://127.0.0.1:8001
 ```
 
 #### Option C: Manual (Using nohup)
@@ -409,7 +409,7 @@ Control:             Full
 | Node.js execution from `/tmp` | ✅ PASS | v20.19.5 runs perfectly |
 | npm package installation | ✅ PASS | Installed 38 packages in `/tmp` |
 | better-sqlite3 native module | ✅ PASS | Compiled and works in `/tmp` |
-| Express server | ✅ PASS | Listening on port 3333 |
+| Express server | ✅ PASS | Listening on port 8333 |
 | SQLite database operations | ✅ PASS | CREATE, INSERT, SELECT all work |
 | Meilisearch connectivity | ✅ PASS | Health endpoint returns "available" |
 
@@ -431,10 +431,10 @@ db.prepare('INSERT INTO test (name) VALUES (?)').run('StackCP Test');
 # ✅ Works perfectly!
 
 # Express + Meilisearch test server
-GET http://127.0.0.1:3333/
+GET http://127.0.0.1:8333/
 # ✅ {"status":"ok","sqlite":[{"id":1,"name":"StackCP Test"}],"node":"v20.19.5","platform":"linux"}
 
-GET http://127.0.0.1:3333/health
+GET http://127.0.0.1:8333/health
 # ✅ {"meilisearch":{"status":"available"}}
 ```
 

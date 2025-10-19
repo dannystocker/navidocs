@@ -73,12 +73,12 @@
 ```
 ✅ Redis - localhost:6379 (job queue)
 ✅ Meilisearch - localhost:7700 (search, auth issue)
-⚠️ Backend API - localhost:3001 (not currently running)
+⚠️ Backend API - localhost:8001 (not currently running)
 ⚠️ OCR Worker - Background processing (not currently running)
-⚠️ Frontend - localhost:5174 (not currently running)
+⚠️ Frontend - localhost:8080 (not currently running)
 ```
 
-**Note**: FastFile is currently running instead (ports 3001, 5174)
+**Note**: FastFile is currently running instead (ports 8001, 8080)
 
 ### Database
 ```

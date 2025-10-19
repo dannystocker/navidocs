@@ -17,8 +17,8 @@
 - **Test Data**: Created test user and organization for testing
 
 ### 3. Backend API
-- **Server**: Express app running on port 3001
-- **Health Check**: `http://localhost:3001/health` ✅
+- **Server**: Express app running on port 8001
+- **Health Check**: `http://localhost:8001/health` ✅
 - **Upload Endpoint**: `/api/upload` accepting PDF files ✅
 - **Jobs Endpoint**: `/api/jobs/:jobId` tracking OCR progress ✅
 
@@ -125,9 +125,9 @@ The Vite dev server is running on port 5174 but frontend functionality has not b
 |---------|------|--------|-----|
 | Meilisearch | 7700 | ✅ Running | Unknown |
 | Redis | 6379 | ✅ Running | System |
-| Backend API | 3001 | ✅ Running | 48254 |
+| Backend API | 8001 | ✅ Running | 48254 |
 | OCR Worker | - | ✅ Running | Active |
-| Frontend | 5174 | ⚠️ Running (not tested) | Active |
+| Frontend | 8080 | ⚠️ Running (not tested) | Active |
 
 ## 🔧 Configuration Changes
 
@@ -162,7 +162,7 @@ The Vite dev server is running on port 5174 but frontend functionality has not b
    - Test tenant token generation
 
 3. **Test Frontend UI**
-   - Open http://localhost:5174
+   - Open http://localhost:8080
    - Test document upload flow
    - Test search interface
    - Test document viewer
@@ -202,7 +202,7 @@ SELECT COUNT(*) FROM document_pages WHERE ocr_confidence = 0;
 
 ### Upload a Document:
 ```bash
-curl -X POST http://localhost:3001/api/upload \
+curl -X POST http://localhost:8001/api/upload \
   -F "file=@test-manual.pdf" \
   -F "title=My Boat Manual" \
   -F "documentType=owner-manual" \
@@ -211,7 +211,7 @@ curl -X POST http://localhost:3001/api/upload \
 
 ### Check Job Status:
 ```bash
-curl http://localhost:3001/api/jobs/{jobId} | jq
+curl http://localhost:8001/api/jobs/{jobId} | jq
 ```
 
 ### Check Database:

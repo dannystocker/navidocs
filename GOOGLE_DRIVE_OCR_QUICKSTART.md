@@ -72,7 +72,7 @@ cd /home/setup/navidocs
 node server/workers/ocr-worker.js > logs/worker.log 2>&1 &
 
 # Upload a test PDF
-curl -X POST http://localhost:3001/api/upload \
+curl -X POST http://localhost:8001/api/upload \
   -F "file=@your-handwritten-logbook.pdf" \
   -F "title=Captain's Log" \
   -F "documentType=logbook" \

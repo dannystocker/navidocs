@@ -409,7 +409,7 @@ Routes use the database schema defined in `/server/db/schema.sql`:
 
 ### Upload Example
 ```bash
-curl -X POST http://localhost:3001/api/upload \
+curl -X POST http://localhost:8001/api/upload \
   -H "Authorization: Bearer <token>" \
   -F "file=@manual.pdf" \
   -F "title=Owner Manual" \
@@ -419,13 +419,13 @@ curl -X POST http://localhost:3001/api/upload \
 
 ### Get Job Status
 ```bash
-curl http://localhost:3001/api/jobs/<job-id> \
+curl http://localhost:8001/api/jobs/<job-id> \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Generate Search Token
 ```bash
-curl -X POST http://localhost:3001/api/search/token \
+curl -X POST http://localhost:8001/api/search/token \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"expiresIn": 3600}'
@@ -433,7 +433,7 @@ curl -X POST http://localhost:3001/api/search/token \
 
 ### Get Document
 ```bash
-curl http://localhost:3001/api/documents/<doc-id> \
+curl http://localhost:8001/api/documents/<doc-id> \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -468,7 +468,7 @@ curl http://localhost:3001/api/documents/<doc-id> \
 
 ```env
 # Server
-PORT=3001
+PORT=8001
 NODE_ENV=development
 
 # Database
