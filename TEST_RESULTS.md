@@ -54,14 +54,18 @@ battery connections regularl)"
 ## ⚠️ Known Issues
 
 ### 1. Meilisearch Authentication
-**STATUS: NOT WORKING**
+**STATUS: NEEDS MANUAL RESTART**
 
-The Meilisearch instance is running with authentication enabled, but we're unable to determine the correct master key. Attempts with the following keys failed:
-- `masterKey` (from current .env)
-- `your-master-key-here-change-in-production` (from previous .env)
-- Empty/undefined (no auth)
+The Meilisearch instance is running, but the master key is unknown or has changed. We attempted to restart with `changeme123` as the master key, but a persisted Meilisearch instance appears to be running with a different key.
 
-**Impact**: Search indexing fails after OCR completion. OCR text is saved to database but not indexed in Meilisearch.
+**What was attempted:**
+- Removed `data.ms` directory to start fresh
+- Started Meilisearch with `--master-key="changeme123"`
+- Updated `.env` to use `changeme123`
+- Added dotenv loading to OCR worker
+- However, the Meilisearch instance is still rejecting the key
+
+**Impact**: Search indexing fails after OCR completion. **OCR text IS successfully saved to database** but not indexed in Meilisearch for search.
 
 **Error Message:**
 ```
@@ -70,10 +74,39 @@ code: 'invalid_api_key'
 httpStatus: 403
 ```
 
-**Workaround Options:**
-1. Restart Meilisearch with a known master key: `./meilisearch --master-key="testkey123"`
-2. Manually index documents using correct API key
-3. Run Meilisearch without authentication for development
+**Solution Steps:**
+1. Find and kill ALL Meilisearch processes:
+   ```bash
+   pkill -9 meilisearch
+   # OR
+   echo "setup" | sudo -S fuser -k 7700/tcp
+   ```
+
+2. Remove all Meilisearch data:
+   ```bash
+   cd /home/setup/navidocs
+   rm -rf data.ms meilisearch-data
+   ```
+
+3. Start Meilisearch with known key:
+   ```bash
+   /home/setup/opt/meilisearch --master-key="changeme123" --no-analytics \
+     --db-path=/home/setup/navidocs/meilisearch-data > logs/meilisearch.log 2>&1 &
+   ```
+
+4. Verify the key works:
+   ```bash
+   curl -H "Authorization: Bearer changeme123" http://127.0.0.1:7700/keys
+   ```
+
+5. Restart the OCR worker:
+   ```bash
+   cd /home/setup/navidocs
+   pkill -f ocr-worker
+   node server/workers/ocr-worker.js > logs/worker.log 2>&1 &
+   ```
+
+6. Upload a test document and verify indexing works
 
 ### 2. Frontend
 **STATUS: NOT TESTED**
