@@ -10,7 +10,7 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const MEILISEARCH_HOST = process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700';
-const MEILISEARCH_MASTER_KEY = process.env.MEILISEARCH_MASTER_KEY || 'masterKey';
+const MEILISEARCH_MASTER_KEY = process.env.MEILISEARCH_MASTER_KEY || 'changeme123';
 const INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-pages';
 
 let client = null;
@@ -18,6 +18,7 @@ let index = null;
 
 export function getMeilisearchClient() {
   if (!client) {
+    console.log(`[Meilisearch] Initializing client with host=${MEILISEARCH_HOST}, apiKey=${MEILISEARCH_MASTER_KEY}`);
     client = new MeiliSearch({
       host: MEILISEARCH_HOST,
       apiKey: MEILISEARCH_MASTER_KEY

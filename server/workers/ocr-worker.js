@@ -11,12 +11,20 @@
  * - Handle failures and update job status
  */
 
+import dotenv from 'dotenv';
 import { Worker } from 'bullmq';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { getDb } from '../config/db.js';
 import { extractTextFromPDF, cleanOCRText } from '../services/ocr.js';
 import { indexDocumentPage } from '../services/search.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Load environment variables from server directory
+dotenv.config({ path: join(__dirname, '../.env') });
 
 // Redis connection for BullMQ
 const connection = new Redis({
