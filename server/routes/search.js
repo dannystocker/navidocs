@@ -40,29 +40,30 @@ router.post('/token', async (req, res) => {
     const organizationIds = orgs.map(org => org.organization_id);
 
     if (organizationIds.length === 0) {
-      return res.status(403).json({
-        error: 'No organizations found for user'
-      });
+      return res.status(403).json({ error: 'No organizations found for user' });
     }
 
-    // Generate tenant token with user and organization filters
-    const token = await generateTenantToken(userId, organizationIds, tokenExpiry);
     const expiresAt = new Date(Date.now() + tokenExpiry * 1000);
+    const searchUrl = process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700';
 
-    res.json({
-      token,
-      expiresAt: expiresAt.toISOString(),
-      expiresIn: tokenExpiry,
-      indexName: INDEX_NAME,
-      searchUrl: process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700'
-    });
+    // Preferred: tenant token
+    try {
+      const token = await generateTenantToken(userId, organizationIds, tokenExpiry);
+      return res.json({ token, expiresAt: expiresAt.toISOString(), expiresIn: tokenExpiry, indexName: INDEX_NAME, searchUrl, mode: 'tenant' });
+    } catch (err) {
+      console.warn('Tenant token generation failed, falling back to search API key:', err?.message || err);
+    }
+
+    // Fallback: use default search API key
+    const client = getMeilisearchClient();
+    const keys = await client.getKeys();
+    const searchKey = keys.results?.find(k => k.actions?.includes('search') && (k.indexes?.includes('*') || k.indexes?.includes(INDEX_NAME)));
+    if (!searchKey?.key) throw new Error('No search API key available for fallback');
+    return res.json({ token: searchKey.key, expiresAt: null, expiresIn: null, indexName: INDEX_NAME, searchUrl, mode: 'search-key' });
 
   } catch (error) {
     console.error('Token generation error:', error);
-    res.status(500).json({
-      error: 'Failed to generate search token',
-      message: error.message
-    });
+    res.status(500).json({ error: 'Failed to generate search token', message: error.message });
   }
 });
 
@@ -124,24 +125,27 @@ router.post('/', async (req, res) => {
 
     const filterString = filterParts.join(' AND ');
 
-    // Get Meilisearch client and search
-    const client = getMeilisearchClient();
-    const index = client.index(INDEX_NAME);
-
-    const searchResults = await index.search(q, {
-      filter: filterString,
-      limit: parseInt(limit),
-      offset: parseInt(offset),
-      attributesToHighlight: ['text'],
-      attributesToCrop: ['text'],
-      cropLength: 200
+    // Use direct HTTP call with master key to avoid client cache issues
+    const host = process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700';
+    const apiKey = process.env.MEILISEARCH_MASTER_KEY;
+    const resp = await fetch(`${host}/indexes/${INDEX_NAME}/search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {})
+      },
+      body: JSON.stringify({ q, filter: filterString, limit: parseInt(limit), offset: parseInt(offset), attributesToHighlight: ['text'], attributesToCrop: ['text'], cropLength: 200 })
     });
-
-    res.json({
-      hits: searchResults.hits,
-      estimatedTotalHits: searchResults.estimatedTotalHits,
-      query: searchResults.query,
-      processingTimeMs: searchResults.processingTimeMs,
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(`Meilisearch HTTP ${resp.status}: ${txt}`);
+    }
+    const searchResults = await resp.json();
+    return res.json({
+      hits: searchResults.hits || [],
+      estimatedTotalHits: searchResults.estimatedTotalHits || 0,
+      query: searchResults.query || q,
+      processingTimeMs: searchResults.processingTimeMs || 0,
       limit: parseInt(limit),
       offset: parseInt(offset)
     });
