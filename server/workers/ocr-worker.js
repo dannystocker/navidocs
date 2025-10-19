@@ -18,8 +18,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from '../config/db.js';
-import { extractTextFromPDF, cleanOCRText } from '../services/ocr.js';
+import { extractTextFromPDF, cleanOCRText, extractTextFromImage } from '../services/ocr.js';
 import { indexDocumentPage } from '../services/search.js';
+import { extractImagesFromPage } from './image-extractor.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -179,16 +180,124 @@ async function processOCRJob(job) {
             // Continue processing other pages even if indexing fails
           }
         }
+
+        // Extract and process images from this page
+        try {
+          console.log(`[OCR Worker] Extracting images from page ${pageNumber}`);
+
+          const extractedImages = await extractImagesFromPage(filePath, pageNumber, documentId);
+
+          console.log(`[OCR Worker] Found ${extractedImages.length} image(s) on page ${pageNumber}`);
+
+          // Process each extracted image
+          for (const image of extractedImages) {
+            try {
+              console.log(`[OCR Worker] Running OCR on image: ${image.relativePath}`);
+
+              // Run Tesseract OCR on the extracted image
+              const imageOCR = await extractTextFromImage(image.path, document.language || 'eng');
+
+              const imageText = imageOCR.text ? cleanOCRText(imageOCR.text) : '';
+              const imageConfidence = imageOCR.confidence || 0;
+
+              console.log(`[OCR Worker] Image OCR complete (confidence: ${imageConfidence.toFixed(2)}, text length: ${imageText.length})`);
+
+              // Generate unique image ID for database
+              const imageDbId = `${image.id}_${Date.now()}`;
+
+              // Store image in document_images table
+              db.prepare(`
+                INSERT INTO document_images (
+                  id, documentId, pageNumber, imageIndex,
+                  imagePath, imageFormat, width, height,
+                  position, extractedText, textConfidence,
+                  createdAt
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `).run(
+                imageDbId,
+                documentId,
+                pageNumber,
+                image.imageIndex,
+                image.relativePath,
+                image.format,
+                image.width,
+                image.height,
+                JSON.stringify(image.position),
+                imageText,
+                imageConfidence,
+                now
+              );
+
+              console.log(`[OCR Worker] Stored image metadata in database: ${imageDbId}`);
+
+              // Index image in Meilisearch with type='image'
+              if (imageText && imageText.length > 0) {
+                try {
+                  // Build a search document for the image
+                  const imageSearchDoc = {
+                    id: `image_${documentId}_p${pageNumber}_i${image.imageIndex}`,
+                    vertical: 'boating', // Default, will be enriched by indexDocumentPage
+                    organizationId: document.organization_id,
+                    organizationName: 'Unknown Organization',
+                    entityId: document.entity_id || 'unknown',
+                    entityName: 'Unknown Entity',
+                    entityType: document.entity_type || 'unknown',
+                    docId: documentId,
+                    userId: document.uploaded_by,
+                    documentType: 'image', // Mark as image type
+                    title: `Image from page ${pageNumber}`,
+                    pageNumber: pageNumber,
+                    text: imageText,
+                    language: document.language || 'en',
+                    ocrConfidence: imageConfidence,
+                    createdAt: document.created_at,
+                    updatedAt: now,
+                    // Image-specific metadata
+                    imagePath: image.relativePath,
+                    imageWidth: image.width,
+                    imageHeight: image.height
+                  };
+
+                  // Get Meilisearch index and add document
+                  const { getMeilisearchIndex } = await import('../config/meilisearch.js');
+                  const index = await getMeilisearchIndex();
+                  await index.addDocuments([imageSearchDoc]);
+
+                  console.log(`[OCR Worker] Indexed image in Meilisearch: ${imageSearchDoc.id}`);
+                } catch (imageIndexError) {
+                  console.error(`[OCR Worker] Failed to index image in Meilisearch:`, imageIndexError.message);
+                  // Continue processing
+                }
+              }
+            } catch (imageOCRError) {
+              console.error(`[OCR Worker] Error processing image ${image.imageIndex} on page ${pageNumber}:`, imageOCRError.message);
+              // Continue with next image
+            }
+          }
+
+          // Update document image count
+          if (extractedImages.length > 0) {
+            db.prepare(`
+              UPDATE documents
+              SET imageCount = COALESCE(imageCount, 0) + ?
+              WHERE id = ?
+            `).run(extractedImages.length, documentId);
+          }
+        } catch (imageExtractionError) {
+          console.error(`[OCR Worker] Error extracting images from page ${pageNumber}:`, imageExtractionError.message);
+          // Continue processing other pages
+        }
       } catch (pageError) {
         console.error(`[OCR Worker] Error processing page ${pageNumber}:`, pageError.message);
         // Continue processing other pages
       }
     }
 
-    // Update document status to indexed
+    // Update document status to indexed and mark images as extracted
     db.prepare(`
       UPDATE documents
       SET status = 'indexed',
+          imagesExtracted = 1,
           updated_at = ?
       WHERE id = ?
     `).run(now, documentId);
