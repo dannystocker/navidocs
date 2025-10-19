@@ -5,6 +5,8 @@
 
 import express from 'express';
 import { getDb } from '../db/db.js';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -162,6 +164,50 @@ router.get('/:id', async (req, res) => {
       error: 'Failed to retrieve document',
       message: error.message
     });
+  }
+});
+
+/**
+ * GET /api/documents/:id/pdf
+ * Stream the original PDF file to the client (inline)
+ */
+router.get('/:id/pdf', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      return res.status(400).json({ error: 'Invalid document ID format' });
+    }
+
+    const userId = req.user?.id || 'test-user-id';
+    const db = getDb();
+
+    const doc = db.prepare(`
+      SELECT id, organization_id, file_path, file_name
+      FROM documents
+      WHERE id = ?
+    `).get(id);
+
+    if (!doc) return res.status(404).json({ error: 'Document not found' });
+
+    const hasAccess = db.prepare(`
+      SELECT 1 FROM user_organizations WHERE user_id = ? AND organization_id = ?
+      UNION SELECT 1 FROM documents WHERE id = ? AND uploaded_by = ?
+      UNION SELECT 1 FROM document_shares WHERE document_id = ? AND shared_with = ?
+    `).get(userId, doc.organization_id, id, userId, id, userId);
+
+    if (!hasAccess) return res.status(403).json({ error: 'Access denied' });
+
+    const absPath = path.resolve(doc.file_path);
+    if (!fs.existsSync(absPath)) return res.status(404).json({ error: 'PDF file not found' });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${path.basename(doc.file_name || absPath)}"`);
+    fs.createReadStream(absPath).pipe(res);
+  } catch (error) {
+    console.error('Serve PDF error:', error);
+    res.status(500).json({ error: 'Failed to serve PDF', message: error.message });
   }
 });
 
