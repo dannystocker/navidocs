@@ -54,7 +54,11 @@ router.post('/token', async (req, res) => {
       console.warn('Tenant token generation failed, falling back to search API key:', err?.message || err);
     }
 
-    // Fallback: use default search API key
+    // Fallback: use search API key (prefer env override)
+    const envSearchKey = process.env.MEILISEARCH_SEARCH_KEY;
+    if (envSearchKey) {
+      return res.json({ token: envSearchKey, expiresAt: null, expiresIn: null, indexName: INDEX_NAME, searchUrl, mode: 'search-key' });
+    }
     const client = getMeilisearchClient();
     const keys = await client.getKeys();
     const searchKey = keys.results?.find(k => k.actions?.includes('search') && (k.indexes?.includes('*') || k.indexes?.includes(INDEX_NAME)));
@@ -127,7 +131,7 @@ router.post('/', async (req, res) => {
 
     // Use direct HTTP call with master key to avoid client cache issues
     const host = process.env.MEILISEARCH_HOST || 'http://127.0.0.1:7700';
-    const apiKey = process.env.MEILISEARCH_MASTER_KEY;
+    const apiKey = process.env.MEILISEARCH_MASTER_KEY || process.env.MEILISEARCH_SEARCH_KEY;
     const resp = await fetch(`${host}/indexes/${INDEX_NAME}/search`, {
       method: 'POST',
       headers: {
