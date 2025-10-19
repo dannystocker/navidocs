@@ -110,10 +110,7 @@ export async function generateTenantToken(userId, organizationIds, expiresIn = 3
 
   // Ensure a string is returned across client versions
   const parentUid = await ensureTenantKeyUid();
-  const token = await client.generateTenantToken(searchRules, {
-    apiKey: parentUid,
-    expiresAt
-  });
+  const token = await client.generateTenantToken(parentUid, searchRules, { expiresAt });
 
   return typeof token === 'string' ? token : String(token);
 }
