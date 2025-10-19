@@ -10,6 +10,8 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import logger, { loggers } from './utils/logger.js';
+import { requestLogger } from './middleware/requestLogger.js';
 
 // Load environment variables
 dotenv.config();
@@ -48,6 +50,9 @@ app.use(cors({
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request logging
+app.use(requestLogger);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -105,9 +110,11 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`NaviDocs API listening on port ${PORT}`);
-  console.log(`Environment: ${NODE_ENV}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
+  logger.info(`NaviDocs API server started`, {
+    port: PORT,
+    environment: NODE_ENV,
+    healthCheck: `http://localhost:${PORT}/health`
+  });
 });
 
 export default app;
