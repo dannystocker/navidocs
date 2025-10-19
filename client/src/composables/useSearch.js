@@ -36,7 +36,8 @@ export function useSearch() {
           'Content-Type': 'application/json'
           // TODO: Add JWT auth header when auth is implemented
           // 'Authorization': `Bearer ${jwtToken}`
-        }
+        },
+        body: JSON.stringify({})
       })
 
       const data = await response.json()
@@ -64,7 +65,7 @@ export function useSearch() {
   }
 
   /**
-   * Perform search against Meilisearch
+   * Perform search via backend API
    */
   async function search(query, options = {}) {
     if (!query.trim()) {
@@ -77,26 +78,27 @@ export function useSearch() {
     const startTime = performance.now()
 
     try {
-      // Ensure we have a valid token
-      await getTenantToken()
+      // Use backend search endpoint instead of direct Meilisearch connection
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+          // TODO: Add JWT auth header when auth is implemented
+          // 'Authorization': `Bearer ${jwtToken}`
+        },
+        body: JSON.stringify({
+          q: query,
+          limit: options.limit || 20,
+          ...options.filters && { filter: buildFilters(options.filters) }
+        })
+      })
 
-      if (!searchClient.value) {
-        throw new Error('Search client not initialized')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Search failed')
       }
 
-      const index = searchClient.value.index(indexName.value)
-
-      // Build search params
-      const searchParams = {
-        limit: options.limit || 20,
-        attributesToHighlight: ['text', 'title'],
-        highlightPreTag: '<mark class="bg-yellow-200">',
-        highlightPostTag: '</mark>',
-        ...options.filters && { filter: buildFilters(options.filters) },
-        ...options.sort && { sort: options.sort }
-      }
-
-      const searchResults = await index.search(query, searchParams)
+      const searchResults = await response.json()
 
       results.value = searchResults.hits
       searchTime.value = Math.round(performance.now() - startTime)

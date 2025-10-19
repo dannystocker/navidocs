@@ -79,12 +79,14 @@ app.get('/health', async (req, res) => {
 
 // Import route modules
 import uploadRoutes from './routes/upload.js';
+import quickOcrRoutes from './routes/quick-ocr.js';
 import jobsRoutes from './routes/jobs.js';
 import searchRoutes from './routes/search.js';
 import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
 
 // API routes
+app.use('/api/upload/quick-ocr', quickOcrRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/search', searchRoutes);

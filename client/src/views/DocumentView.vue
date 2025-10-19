@@ -4,7 +4,7 @@
     <header class="bg-dark-900/90 backdrop-blur-lg border-b border-dark-700 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <button @click="$router.push('/')" class="text-dark-300 hover:text-white flex items-center gap-2 transition-colors">
+          <button @click="$router.push('/')" class="text-white/70 hover:text-pink-400 flex items-center gap-2 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -13,12 +13,12 @@
 
           <div class="text-center flex-1 px-4">
             <h1 class="text-lg font-bold text-white mb-1">{{ documentTitle }}</h1>
-            <p class="text-sm text-dark-400">{{ boatInfo }}</p>
+            <p class="text-sm text-white/70">{{ boatInfo }}</p>
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-dark-300 text-sm">Page {{ currentPage }} / {{ totalPages }}</span>
-            <span v-if="pageImages.length > 0" class="text-dark-400 text-sm">
+            <span class="text-white/70 text-sm">Page {{ currentPage }} / {{ totalPages }}</span>
+            <span v-if="pageImages.length > 0" class="text-white/70 text-sm">
               ({{ pageImages.length }} {{ pageImages.length === 1 ? 'image' : 'images' }})
             </span>
           </div>
@@ -28,8 +28,8 @@
         <div class="flex items-center justify-center gap-4 mt-4">
           <button
             @click="previousPage"
-            :disabled="currentPage <= 1"
-            class="px-4 py-2 bg-dark-700 hover:bg-dark-600 disabled:bg-dark-800 disabled:text-dark-500 text-white rounded-lg transition-colors flex items-center gap-2"
+            :disabled="currentPage <= 1 || isRendering"
+            class="px-4 py-2 bg-white/10 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/30 text-white rounded-lg transition-colors flex items-center gap-2 border border-white/10"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -44,17 +44,18 @@
               type="number"
               min="1"
               :max="totalPages"
-              class="w-16 px-3 py-2 bg-dark-700 text-white rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-primary-500"
+              :disabled="isRendering"
+              class="w-16 px-3 py-2 bg-white/10 text-white border border-white/20 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
             />
-            <button @click="goToPage" class="px-3 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+            <button @click="goToPage" :disabled="isRendering" class="px-3 py-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 disabled:bg-white/5 text-white rounded-lg transition-colors">
               Go
             </button>
           </div>
 
           <button
             @click="nextPage"
-            :disabled="currentPage >= totalPages"
-            class="px-4 py-2 bg-dark-700 hover:bg-dark-600 disabled:bg-dark-800 disabled:text-dark-500 text-white rounded-lg transition-colors flex items-center gap-2"
+            :disabled="currentPage >= totalPages || isRendering"
+            class="px-4 py-2 bg-white/10 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/30 text-white rounded-lg transition-colors flex items-center gap-2 border border-white/10"
           >
             Next
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,35 +69,57 @@
     <!-- PDF Viewer -->
     <main class="relative py-8">
       <div class="max-w-5xl mx-auto px-6">
-        <div v-if="loading" class="flex items-center justify-center py-20">
-          <div class="inline-block w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
-        </div>
+        <div class="relative">
+          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden relative min-h-[520px]">
+            <div ref="canvasContainer" class="relative">
+              <canvas
+                ref="pdfCanvas"
+                class="w-full block"
+              ></canvas>
 
-        <div v-else-if="error" class="bg-red-900/20 border border-red-500/50 rounded-2xl p-8 text-center">
-          <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h3 class="text-xl font-bold text-white mb-2">Error Loading Document</h3>
-          <p class="text-red-300">{{ error }}</p>
-        </div>
+              <!-- Text Layer for selectable text -->
+              <div
+                ref="textLayer"
+                class="textLayer"
+              ></div>
 
-        <div v-else class="bg-white rounded-2xl shadow-2xl overflow-hidden relative">
-          <div ref="canvasContainer" class="relative">
-            <canvas
-              ref="pdfCanvas"
-              class="w-full"
-            ></canvas>
+              <!-- Image Overlays -->
+              <ImageOverlay
+                v-for="image in pageImages"
+                :key="image.id"
+                :image="image"
+                :canvas-width="canvasWidth"
+                :canvas-height="canvasHeight"
+                :pdf-scale="pdfScale"
+                @click="openImageModal"
+              />
+            </div>
+          </div>
 
-            <!-- Image Overlays -->
-            <ImageOverlay
-              v-for="image in pageImages"
-              :key="image.id"
-              :image="image"
-              :canvas-width="canvasWidth"
-              :canvas-height="canvasHeight"
-              :pdf-scale="pdfScale"
-              @click="openImageModal"
-            />
+          <!-- Loading Overlay -->
+          <div
+            v-if="loading || isRendering"
+            class="absolute inset-0 bg-dark-900/60 backdrop-blur-sm flex items-center justify-center rounded-2xl"
+          >
+            <div class="inline-block w-12 h-12 border-4 border-white/20 border-t-pink-400 rounded-full animate-spin"></div>
+          </div>
+
+          <!-- Error Overlay -->
+          <div
+            v-if="error"
+            class="absolute inset-0 bg-red-900/70 backdrop-blur-sm flex flex-col items-center justify-center text-center px-10 rounded-2xl"
+          >
+            <svg class="w-12 h-12 text-red-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="text-xl font-bold text-white mb-2">Unable to Render Document</h3>
+            <p class="text-red-100 mb-4">{{ error }}</p>
+            <button
+              @click="retryRender"
+              class="px-4 py-2 bg-white/10 border border-white/30 text-white rounded-lg hover:bg-white/20 transition-colors"
+            >
+              Retry
+            </button>
           </div>
         </div>
       </div>
@@ -114,9 +137,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import * as pdfjsLib from 'pdfjs-dist'
+import 'pdfjs-dist/web/pdf_viewer.css'
 import ImageOverlay from '../components/ImageOverlay.vue'
 import FigureZoom from '../components/FigureZoom.vue'
 import { useDocumentImages } from '../composables/useDocumentImages'
@@ -131,7 +155,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 const route = useRoute()
 
 const documentId = ref(route.params.id)
-const currentPage = ref(parseInt(route.query.page) || 1)
+const currentPage = ref(parseInt(route.query.page, 10) || 1)
 const pageInput = ref(currentPage.value)
 const totalPages = ref(0)
 const documentTitle = ref('Loading...')
@@ -140,7 +164,7 @@ const loading = ref(true)
 const error = ref(null)
 const pdfCanvas = ref(null)
 const canvasContainer = ref(null)
-const pdfDoc = ref(null)
+const textLayer = ref(null)
 const isRendering = ref(false)
 
 // PDF rendering scale
@@ -151,7 +175,7 @@ const canvasWidth = ref(0)
 const canvasHeight = ref(0)
 
 // Image handling
-const { images: pageImages, fetchPageImages, getImageUrl } = useDocumentImages()
+const { images: pageImages, fetchPageImages, getImageUrl, clearImages } = useDocumentImages()
 const selectedImage = ref(null)
 
 // Computed property for selected image URL
@@ -160,12 +184,16 @@ const selectedImageUrl = computed(() => {
   return getImageUrl(documentId.value, selectedImage.value.id)
 })
 
+let pdfDoc = null
+let loadingTask = null
+let currentRenderTask = null
+let componentIsUnmounting = false
+
 async function loadDocument() {
   try {
     loading.value = true
     error.value = null
 
-    // Fetch document metadata
     const metaResponse = await fetch(`/api/documents/${documentId.value}`)
     if (!metaResponse.ok) throw new Error('Failed to load document metadata')
 
@@ -173,98 +201,176 @@ async function loadDocument() {
     documentTitle.value = metadata.title
     boatInfo.value = `${metadata.boatMake || ''} ${metadata.boatModel || ''} ${metadata.boatYear || ''}`.trim()
 
-    // Load PDF
     const pdfUrl = `/api/documents/${documentId.value}/pdf`
-    const loadingTask = pdfjsLib.getDocument(pdfUrl)
-    pdfDoc.value = await loadingTask.promise
+    loadingTask = pdfjsLib.getDocument(pdfUrl)
+    pdfDoc = await loadingTask.promise
 
-    totalPages.value = pdfDoc.value.numPages
+    totalPages.value = pdfDoc.numPages
 
     await renderPage(currentPage.value)
-    loading.value = false
   } catch (err) {
     console.error('Error loading document:', err)
-    error.value = err.message
+    error.value = err.message || 'Unable to load document.'
+  } finally {
     loading.value = false
   }
 }
 
 async function renderPage(pageNum) {
-  if (!pdfDoc.value || !pdfCanvas.value) return
-
-  // Prevent concurrent renders - wait for current one to finish
-  if (isRendering.value) {
-    console.log('Already rendering, skipping...')
-    return
-  }
-
-  isRendering.value = true
-  error.value = null
+  if (!pdfDoc || componentIsUnmounting) return
 
   try {
-    const page = await pdfDoc.value.getPage(pageNum)
+    await ensureCanvasReady()
+
+    if (currentRenderTask) {
+      currentRenderTask.cancel()
+      try {
+        await currentRenderTask.promise
+      } catch (err) {
+        if (err?.name !== 'RenderingCancelledException') {
+          console.error('Unexpected render cancellation error:', err)
+        }
+      } finally {
+        currentRenderTask = null
+      }
+    }
+
+    isRendering.value = true
+    error.value = null
+
+    const page = await pdfDoc.getPage(pageNum)
     const viewport = page.getViewport({ scale: pdfScale.value })
-
     const canvas = pdfCanvas.value
-    const context = canvas.getContext('2d')
+    const context = canvas.getContext('2d', { alpha: false })
 
-    canvas.height = viewport.height
+    if (!context) {
+      throw new Error('Failed to obtain 2D rendering context')
+    }
+
     canvas.width = viewport.width
-
-    // Store canvas dimensions for image overlays
+    canvas.height = viewport.height
     canvasWidth.value = viewport.width
     canvasHeight.value = viewport.height
 
-    const renderContext = {
-      canvasContext: context,
-      viewport: viewport
+    const renderTask = page.render({ canvasContext: context, viewport })
+    currentRenderTask = renderTask
+
+    try {
+      await renderTask.promise
+    } catch (err) {
+      if (err?.name === 'RenderingCancelledException') {
+        return
+      }
+      throw err
+    } finally {
+      currentRenderTask = null
     }
 
-    await page.render(renderContext).promise
+    // Render text layer for selectable text
+    if (textLayer.value) {
+      textLayer.value.innerHTML = ''
+      textLayer.value.style.width = `${viewport.width}px`
+      textLayer.value.style.height = `${viewport.height}px`
 
-    // Fetch images for this page after PDF is rendered
+      try {
+        const textContent = await page.getTextContent()
+        pdfjsLib.renderTextLayer({
+          textContentSource: textContent,
+          container: textLayer.value,
+          viewport: viewport,
+          textDivs: []
+        })
+      } catch (textErr) {
+        console.warn('Failed to render text layer:', textErr)
+      }
+    }
+
+    clearImages()
     await fetchPageImages(documentId.value, pageNum)
   } catch (err) {
+    if (err?.name === 'RenderingCancelledException') {
+      return
+    }
+
     console.error('Error rendering page:', err)
-    error.value = `Failed to render PDF page ${pageNum}: ${err.message}`
+    error.value = `Failed to render PDF page ${pageNum}: ${err.message || err}`
   } finally {
     isRendering.value = false
   }
 }
 
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-    pageInput.value = currentPage.value
-    renderPage(currentPage.value)
+async function ensureCanvasReady(maxAttempts = 20) {
+  if (pdfCanvas.value) return pdfCanvas.value
+
+  await nextTick()
+
+  let attempts = 0
+  while (!pdfCanvas.value && attempts < maxAttempts) {
+    await new Promise((resolve) => setTimeout(resolve, 25))
+    attempts += 1
   }
+
+  if (!pdfCanvas.value) {
+    throw new Error('Canvas element not mounted')
+  }
+
+  return pdfCanvas.value
 }
 
-function previousPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    pageInput.value = currentPage.value
-    renderPage(currentPage.value)
-  }
+async function nextPage() {
+  if (isRendering.value || currentPage.value >= totalPages.value) return
+  currentPage.value += 1
+  pageInput.value = currentPage.value
+  await renderPage(currentPage.value)
 }
 
-function goToPage() {
-  const page = parseInt(pageInput.value)
+async function previousPage() {
+  if (isRendering.value || currentPage.value <= 1) return
+  currentPage.value -= 1
+  pageInput.value = currentPage.value
+  await renderPage(currentPage.value)
+}
+
+async function goToPage() {
+  const page = parseInt(pageInput.value, 10)
+  if (Number.isNaN(page)) {
+    pageInput.value = currentPage.value
+    return
+  }
+
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
-    renderPage(currentPage.value)
+    await renderPage(currentPage.value)
   } else {
     pageInput.value = currentPage.value
   }
 }
 
-watch(() => route.query.page, (newPage) => {
-  if (newPage) {
-    currentPage.value = parseInt(newPage)
+watch(
+  () => route.query.page,
+  async (newPage) => {
+    if (!newPage || !pdfDoc) return
+    const parsed = parseInt(newPage, 10)
+    if (Number.isNaN(parsed) || parsed === currentPage.value) return
+    currentPage.value = parsed
     pageInput.value = currentPage.value
-    renderPage(currentPage.value)
+    await renderPage(currentPage.value)
   }
-})
+)
+
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (!newId || newId === documentId.value) return
+
+    documentId.value = newId
+    currentPage.value = parseInt(route.query.page, 10) || 1
+    pageInput.value = currentPage.value
+
+    await resetDocumentState()
+    await loadDocument()
+  }
+)
 
 function openImageModal(image) {
   selectedImage.value = image
@@ -274,7 +380,93 @@ function closeImageModal() {
   selectedImage.value = null
 }
 
+async function retryRender() {
+  if (!pdfDoc || componentIsUnmounting) return
+  error.value = null
+  await renderPage(currentPage.value)
+}
+
+async function resetDocumentState() {
+  clearImages()
+
+  if (currentRenderTask) {
+    currentRenderTask.cancel()
+    try {
+      await currentRenderTask.promise
+    } catch (err) {
+      if (err?.name !== 'RenderingCancelledException') {
+        console.error('Unexpected render cancellation error:', err)
+      }
+    } finally {
+      currentRenderTask = null
+    }
+  }
+
+  if (loadingTask) {
+    try {
+      await loadingTask.destroy()
+    } catch (err) {
+      console.warn('Failed to destroy loading task:', err)
+    } finally {
+      loadingTask = null
+    }
+  }
+
+  if (pdfDoc) {
+    try {
+      await pdfDoc.destroy()
+    } catch (err) {
+      console.warn('Failed to destroy PDF document:', err)
+    } finally {
+      pdfDoc = null
+    }
+  }
+}
+
 onMounted(() => {
   loadDocument()
 })
+
+onBeforeUnmount(() => {
+  componentIsUnmounting = true
+
+  const cleanup = async () => {
+    await resetDocumentState()
+  }
+
+  cleanup()
+})
 </script>
+
+<style>
+/* PDF.js text layer styles for selectable text */
+.textLayer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 1;
+  line-height: 1.0;
+  pointer-events: auto;
+  user-select: text;
+}
+
+.textLayer > span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  user-select: text;
+}
+
+.textLayer ::selection {
+  background: rgba(255, 92, 178, 0.3);
+}
+
+.textLayer ::-moz-selection {
+  background: rgba(255, 92, 178, 0.3);
+}
+</style>

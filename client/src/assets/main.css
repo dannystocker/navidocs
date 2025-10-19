@@ -8,11 +8,17 @@
 /* Custom styles */
 @layer base {
   * {
-    @apply border-dark-200;
+    @apply border-white/10;
   }
 
   body {
-    @apply font-sans antialiased bg-white text-dark-900;
+    @apply font-sans antialiased bg-black text-white;
+  }
+
+  /* Dark gradient background for app container */
+  #app {
+    background: linear-gradient(135deg, #1a0b2e 0%, #0a0118 50%, #000000 100%);
+    min-height: 100vh;
   }
 
   /* Smooth scrolling */
@@ -31,8 +37,8 @@
 
   /* Keyboard key styling */
   kbd {
-    @apply inline-block px-2 py-1 text-xs font-mono rounded border border-dark-200 bg-dark-50 text-dark-700;
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12);
+    @apply inline-block px-2 py-1 text-xs font-mono rounded border border-white/20 bg-white/10 text-white;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.1);
   }
 }
 
@@ -56,7 +62,7 @@
   }
 
   .btn-outline {
-    @apply border-2 border-dark-300 text-dark-700 hover:bg-dark-50 focus:ring-dark-500;
+    @apply border-2 border-white/20 text-white hover:bg-white/10 focus:ring-pink-400;
   }
 
   .btn-sm {
@@ -67,30 +73,32 @@
     @apply px-8 py-4 text-lg;
   }
 
-  /* Input styles */
+  /* Input styles - Dark theme */
   .input {
-    @apply w-full px-4 py-3 border border-dark-300 rounded bg-white;
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-4 py-3 border border-white/20 rounded bg-white/10 backdrop-blur-lg;
+    @apply text-white placeholder-white/50;
+    @apply focus:outline-none focus:ring-2 focus:ring-pink-400/50 focus:border-pink-400;
     @apply transition-all duration-200;
   }
 
-  /* Card styles */
+  /* Card styles - Dark glass theme */
   .card {
-    @apply bg-white rounded-lg shadow-soft p-6;
+    @apply bg-white/10 backdrop-blur-lg border border-white/10 rounded-lg shadow-soft p-6;
   }
 
   .card-hover {
-    @apply card hover:shadow-soft-lg transition-shadow duration-200;
+    @apply card hover:bg-white/15 hover:shadow-soft-lg transition-all duration-200;
   }
 
-  /* Search bar */
+  /* Search bar - Dark glass theme */
   .search-bar {
     @apply relative w-full max-w-2xl mx-auto;
   }
 
   .search-input {
-    @apply w-full h-14 px-6 pr-12 rounded-lg border-2 border-dark-200;
-    @apply focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-100;
+    @apply w-full h-14 px-6 pr-12 rounded-lg border-2 border-white/20 bg-white/10 backdrop-blur-lg;
+    @apply text-white placeholder-white/50;
+    @apply focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20;
     @apply transition-all duration-200 text-lg;
   }
 
@@ -106,11 +114,11 @@
 
   /* Modal */
   .modal-overlay {
-    @apply fixed inset-0 bg-dark-900 bg-opacity-50 flex items-center justify-center z-50;
+    @apply fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50;
   }
 
   .modal-content {
-    @apply bg-white rounded-lg shadow-soft-lg p-8 max-w-2xl w-full mx-4;
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg shadow-soft-lg p-8 max-w-2xl w-full mx-4;
     @apply max-h-screen overflow-y-auto;
   }
 
@@ -134,7 +142,7 @@
 
   /* Meilisearch highlighted text */
   mark {
-    @apply bg-primary-100 text-primary-900 font-semibold px-1 rounded;
+    @apply bg-pink-400/30 text-pink-300 font-semibold px-1 rounded;
   }
 
   /* Utility classes */
@@ -155,20 +163,24 @@
 
 /* Additional component styles (Meilisearch-like polish) */
 @layer components {
-  /* Badges & chips */
+  /* Badges & chips - Dark theme */
   .badge {
-    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-dark-100 text-dark-700;
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20;
   }
   .badge-primary {
-    @apply bg-primary-100 text-primary-700;
+    @apply bg-gradient-to-r from-pink-400/20 to-purple-500/20 text-white border-pink-400/30;
   }
   .badge-success {
-    @apply bg-success-100 text-success-700;
+    @apply bg-success-500/20 text-success-300 border-success-400/30;
   }
 
-  /* Glass panel */
+  /* Glass panel - Meilisearch style */
   .glass {
-    @apply bg-white/70 backdrop-blur-lg border border-dark-100 shadow-soft;
+    @apply bg-white/10 backdrop-blur-lg border border-white/10 shadow-soft;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-[7px] border border-white/10 shadow-inner;
   }
 
   /* Section helpers */
@@ -176,7 +188,7 @@
     @apply py-16 md:py-24;
   }
   .section-title {
-    @apply text-4xl md:text-5xl font-black tracking-tight text-dark-900;
+    @apply text-4xl md:text-5xl font-black tracking-tight text-white;
   }
 
   /* Gradient accent border */
@@ -203,14 +215,14 @@
 
   /* Skeleton shimmer */
   .skeleton {
-    @apply relative overflow-hidden bg-dark-100 rounded;
+    @apply relative overflow-hidden bg-white/10 rounded;
   }
   .skeleton:after {
     content: '';
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     animation: shimmer 1.25s infinite;
   }
   @keyframes shimmer {

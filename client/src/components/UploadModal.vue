@@ -4,10 +4,10 @@
       <div class="modal-content max-w-3xl">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-dark-900">Upload Boat Manual</h2>
+          <h2 class="text-2xl font-bold text-white">Upload Boat Manual</h2>
           <button
             @click="closeModal"
-            class="text-dark-400 hover:text-dark-900 transition-colors"
+            class="text-white/70 hover:text-pink-400 transition-colors"
             aria-label="Close modal"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,15 +25,15 @@
             @dragleave.prevent="isDragging = false"
             :class="[
               'border-2 border-dashed rounded-lg p-12 text-center transition-all',
-              isDragging ? 'border-primary-500 bg-primary-50' : 'border-dark-300 bg-dark-50'
+              isDragging ? 'border-pink-400 bg-pink-400/10' : 'border-white/20 bg-white/5'
             ]"
           >
             <div v-if="!selectedFile">
-              <svg class="w-16 h-16 mx-auto text-dark-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-16 h-16 mx-auto text-white/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p class="text-lg text-dark-700 mb-2">Drag and drop your PDF here</p>
-              <p class="text-sm text-dark-500 mb-4">or</p>
+              <p class="text-lg text-white mb-2">Drag and drop your PDF here</p>
+              <p class="text-sm text-white/70 mb-4">or</p>
               <label class="btn btn-outline cursor-pointer">
                 Browse Files
                 <input
@@ -44,24 +44,28 @@
                   @change="handleFileSelect"
                 />
               </label>
-              <p class="text-xs text-dark-500 mt-4">Maximum file size: 50MB</p>
+              <p class="text-xs text-white/70 mt-4">Maximum file size: 50MB</p>
             </div>
 
             <!-- Selected File Preview -->
             <div v-else class="text-left">
-              <div class="flex items-center justify-between bg-white rounded-lg p-4 shadow-soft">
+              <div class="flex items-center justify-between bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-4 shadow-soft">
                 <div class="flex items-center space-x-3">
-                  <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
-                  <div>
-                    <p class="font-medium text-dark-900">{{ selectedFile.name }}</p>
-                    <p class="text-sm text-dark-600">{{ formatFileSize(selectedFile.size) }}</p>
+                  <div class="flex-1">
+                    <p class="font-medium text-white">{{ selectedFile.name }}</p>
+                    <p class="text-sm text-white/70">{{ formatFileSize(selectedFile.size) }}</p>
+                    <p v-if="extractingMetadata" class="text-xs text-pink-400 mt-1 flex items-center gap-1">
+                      <div class="spinner border-pink-400" style="width: 12px; height: 12px; border-width: 2px;"></div>
+                      Extracting metadata from first page...
+                    </p>
                   </div>
                 </div>
                 <button
                   @click="removeFile"
-                  class="text-dark-400 hover:text-red-500 transition-colors"
+                  class="text-white/70 hover:text-red-400 transition-colors"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -74,7 +78,7 @@
           <!-- Metadata Form -->
           <div v-if="selectedFile" class="mt-6 space-y-4">
             <div>
-              <label class="block text-sm font-medium text-dark-700 mb-2">Boat Name</label>
+              <label class="block text-sm font-medium text-white/70 mb-2">Boat Name</label>
               <input
                 v-model="metadata.boatName"
                 type="text"
@@ -85,7 +89,7 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-dark-700 mb-2">Make</label>
+                <label class="block text-sm font-medium text-white/70 mb-2">Make</label>
                 <input
                   v-model="metadata.boatMake"
                   type="text"
@@ -94,7 +98,7 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-dark-700 mb-2">Model</label>
+                <label class="block text-sm font-medium text-white/70 mb-2">Model</label>
                 <input
                   v-model="metadata.boatModel"
                   type="text"
@@ -106,7 +110,7 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-dark-700 mb-2">Year</label>
+                <label class="block text-sm font-medium text-white/70 mb-2">Year</label>
                 <input
                   v-model.number="metadata.boatYear"
                   type="number"
@@ -117,7 +121,7 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-dark-700 mb-2">Document Type</label>
+                <label class="block text-sm font-medium text-white/70 mb-2">Document Type</label>
                 <select v-model="metadata.documentType" class="input">
                   <option value="owner-manual">Owner Manual</option>
                   <option value="component-manual">Component Manual</option>
@@ -129,7 +133,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-dark-700 mb-2">Title</label>
+              <label class="block text-sm font-medium text-white/70 mb-2">Title</label>
               <input
                 v-model="metadata.title"
                 type="text"
@@ -157,39 +161,39 @@
         <!-- Job Progress -->
         <div v-else class="py-8">
           <div class="text-center mb-6">
-            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-100 flex items-center justify-center">
-              <div v-if="jobStatus !== 'completed'" class="spinner border-primary-500"></div>
-              <svg v-else class="w-12 h-12 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-pink-400/20 flex items-center justify-center">
+              <div v-if="jobStatus !== 'completed'" class="spinner border-pink-400"></div>
+              <svg v-else class="w-12 h-12 text-success-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 class="text-xl font-semibold text-dark-900 mb-2">{{ statusMessage }}</h3>
-            <p class="text-dark-600">{{ statusDescription }}</p>
+            <h3 class="text-xl font-semibold text-white mb-2">{{ statusMessage }}</h3>
+            <p class="text-white/70">{{ statusDescription }}</p>
           </div>
 
           <!-- Progress Bar -->
           <div class="mb-6">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium text-dark-700">Processing</span>
-              <span class="text-sm font-medium text-dark-700">{{ jobProgress }}%</span>
+              <span class="text-sm font-medium text-white/70">Processing</span>
+              <span class="text-sm font-medium text-white/70">{{ jobProgress }}%</span>
             </div>
-            <div class="w-full bg-dark-200 rounded-full h-3 overflow-hidden">
+            <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
               <div
-                class="bg-primary-500 h-3 transition-all duration-500 ease-out rounded-full"
+                class="bg-gradient-to-r from-pink-400 to-purple-500 h-3 transition-all duration-500 ease-out rounded-full"
                 :style="{ width: `${jobProgress}%` }"
               ></div>
             </div>
           </div>
 
           <!-- Job Info -->
-          <div class="bg-dark-50 rounded-lg p-4 text-sm">
+          <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-4 text-sm">
             <div class="flex justify-between py-2">
-              <span class="text-dark-600">Job ID:</span>
-              <span class="text-dark-900 font-mono">{{ currentJobId.slice(0, 8) }}...</span>
+              <span class="text-white/70">Job ID:</span>
+              <span class="text-white font-mono">{{ currentJobId.slice(0, 8) }}...</span>
             </div>
             <div class="flex justify-between py-2">
-              <span class="text-dark-600">Status:</span>
-              <span class="text-dark-900 font-medium capitalize">{{ jobStatus }}</span>
+              <span class="text-white/70">Status:</span>
+              <span class="text-white font-medium capitalize">{{ jobStatus }}</span>
             </div>
           </div>
 
@@ -205,9 +209,9 @@
 
           <!-- Error Display -->
           <div v-if="jobStatus === 'failed'" class="mt-6">
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-              <p class="text-red-700 font-medium">Processing Failed</p>
-              <p class="text-red-600 text-sm mt-1">{{ errorMessage || 'An error occurred during OCR processing' }}</p>
+            <div class="bg-red-500/10 border-l-4 border-red-400 p-4 rounded">
+              <p class="text-red-300 font-medium">Processing Failed</p>
+              <p class="text-red-300/90 text-sm mt-1">{{ errorMessage || 'An error occurred during OCR processing' }}</p>
             </div>
             <button @click="uploadAnother" class="btn btn-outline w-full mt-4">
               Try Again
@@ -241,6 +245,7 @@ const uploading = ref(false)
 const currentJobId = ref(null)
 const currentDocumentId = ref(null)
 const errorMessage = ref(null)
+const extractingMetadata = ref(false)
 
 const metadata = ref({
   boatName: '',
@@ -287,18 +292,20 @@ const statusDescription = computed(() => {
   }
 })
 
-function handleFileSelect(event) {
+async function handleFileSelect(event) {
   const file = event.target.files[0]
   if (file && file.type === 'application/pdf') {
     selectedFile.value = file
-    // Auto-fill title from filename
+    // Auto-fill title from filename (fallback)
     if (!metadata.value.title) {
       metadata.value.title = file.name.replace('.pdf', '')
     }
+    // Trigger quick OCR for metadata extraction
+    await extractMetadataFromFile(file)
   }
 }
 
-function handleDrop(event) {
+async function handleDrop(event) {
   isDragging.value = false
   const file = event.dataTransfer.files[0]
   if (file && file.type === 'application/pdf') {
@@ -306,6 +313,58 @@ function handleDrop(event) {
     if (!metadata.value.title) {
       metadata.value.title = file.name.replace('.pdf', '')
     }
+    // Trigger quick OCR for metadata extraction
+    await extractMetadataFromFile(file)
+  }
+}
+
+async function extractMetadataFromFile(file) {
+  extractingMetadata.value = true
+
+  try {
+    console.log('[Upload Modal] Extracting metadata from first page...')
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch('/api/upload/quick-ocr', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      throw new Error('Metadata extraction failed')
+    }
+
+    const data = await response.json()
+
+    if (data.success && data.metadata) {
+      console.log('[Upload Modal] Extracted metadata:', data.metadata)
+
+      // Auto-fill form fields (only if empty)
+      if (data.metadata.title && !metadata.value.title) {
+        metadata.value.title = data.metadata.title
+      }
+      if (data.metadata.boatName && !metadata.value.boatName) {
+        metadata.value.boatName = data.metadata.boatName
+      }
+      if (data.metadata.boatMake && !metadata.value.boatMake) {
+        metadata.value.boatMake = data.metadata.boatMake
+      }
+      if (data.metadata.boatModel && !metadata.value.boatModel) {
+        metadata.value.boatModel = data.metadata.boatModel
+      }
+      if (data.metadata.boatYear && !metadata.value.boatYear) {
+        metadata.value.boatYear = data.metadata.boatYear
+      }
+
+      console.log('[Upload Modal] Form auto-filled with extracted data')
+    }
+  } catch (error) {
+    console.warn('[Upload Modal] Metadata extraction failed:', error)
+    // Don't show error to user - just fall back to filename
+  } finally {
+    extractingMetadata.value = false
   }
 }
 
@@ -323,11 +382,14 @@ async function uploadFile() {
   errorMessage.value = null
 
   try {
+    // Use boat name as organization ID (tenant), fallback to "Liliane 1"
+    const organizationId = metadata.value.boatName || 'Liliane 1'
+
     const formData = new FormData()
     formData.append('file', selectedFile.value) // Use 'file' field name (backend expects this)
     formData.append('title', metadata.value.title)
     formData.append('documentType', metadata.value.documentType)
-    formData.append('organizationId', 'test-org-123') // TODO: Get from auth context
+    formData.append('organizationId', organizationId) // Use boat name as tenant
     formData.append('boatName', metadata.value.boatName)
     formData.append('boatMake', metadata.value.boatMake)
     formData.append('boatModel', metadata.value.boatModel)

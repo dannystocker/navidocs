@@ -27,7 +27,7 @@ export function useDocumentImages() {
     error.value = null
 
     try {
-      const response = await fetch(`/api/documents/${documentId}/images?page=${pageNumber}`)
+      const response = await fetch(`/api/documents/${documentId}/pages/${pageNumber}/images`)
 
       if (!response.ok) {
         if (response.status === 404) {

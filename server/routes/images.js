@@ -6,8 +6,13 @@
 import express from 'express';
 import { getDb } from '../db/db.js';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const router = express.Router();
 
@@ -245,9 +250,9 @@ router.get('/images/:imageId', imageLimiter, async (req, res) => {
   try {
     const { imageId } = req.params;
 
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(imageId)) {
+    // Validate image ID format (img_<uuid>_p<num>_<num>_<timestamp> or just UUID)
+    const imageIdRegex = /^(img_[0-9a-f-]+_p\d+_\d+_\d+|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i;
+    if (!imageIdRegex.test(imageId)) {
       return res.status(400).json({ error: 'Invalid image ID format' });
     }
 
@@ -276,8 +281,10 @@ router.get('/images/:imageId', imageLimiter, async (req, res) => {
       return res.status(accessCheck.status).json({ error: accessCheck.error });
     }
 
-    // Resolve absolute path and verify file exists
-    const absPath = path.resolve(image.imagePath);
+    // Resolve absolute path relative to project root
+    // imagePath is like "/uploads/..." so we need to join with project root
+    const projectRoot = path.join(__dirname, '../..');
+    const absPath = path.join(projectRoot, image.imagePath);
 
     if (!fs.existsSync(absPath)) {
       console.error(`Image file not found: ${absPath}`);
@@ -289,7 +296,7 @@ router.get('/images/:imageId', imageLimiter, async (req, res) => {
 
     // Security check: ensure file is within expected directory
     // This prevents directory traversal attacks
-    const uploadDir = process.env.UPLOAD_DIR || path.join(path.dirname(process.cwd()), 'uploads');
+    const uploadDir = path.join(projectRoot, 'uploads');
     const normalizedPath = path.normalize(absPath);
     const normalizedUploadDir = path.normalize(uploadDir);
 

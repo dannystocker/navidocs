@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+  <div class="min-h-screen">
     <!-- Header -->
     <header class="glass sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 py-4">
@@ -28,7 +28,7 @@
               v-model="searchQuery"
               @input="performSearch"
               type="text"
-              class="w-full h-16 px-6 pr-14 rounded-2xl border-2 border-dark-100 bg-white shadow-lg focus:outline-none focus:border-primary-400 focus:ring-4 focus:ring-primary-100 transition-all duration-200 text-lg placeholder-dark-400"
+              class="w-full h-16 px-6 pr-14 rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-lg text-white placeholder-white/50 shadow-lg focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20 transition-all duration-200 text-lg"
               placeholder="Search your manuals..."
               autofocus
             />
@@ -44,7 +44,7 @@
       <!-- Results Meta -->
       <div v-if="!loading && results.length > 0" class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <span class="text-dark-900 font-semibold text-lg">{{ results.length }} results</span>
+          <span class="text-white font-semibold text-lg">{{ results.length }} results</span>
           <span class="badge badge-primary">
             {{ searchTime }}ms
           </span>
@@ -73,18 +73,18 @@
           <div class="p-6">
             <div class="flex items-start gap-4">
               <!-- Document Icon -->
-              <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex-shrink-0 w-12 h-12 bg-pink-400/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
 
               <!-- Content -->
               <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-bold text-dark-900 mb-1 group-hover:text-primary-600 transition-colors">
+                <h3 class="text-lg font-bold text-white mb-1 group-hover:text-pink-400 transition-colors">
                   {{ result.title }}
                 </h3>
-                <div class="flex items-center gap-3 text-sm text-dark-500 mb-3">
+                <div class="flex items-center gap-3 text-sm text-white/70 mb-3">
                   <span class="flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -98,11 +98,11 @@
                     Page {{ result.pageNumber }}
                   </span>
                 </div>
-                <p class="text-dark-700 leading-relaxed line-clamp-2" v-html="highlightMatch(result.text)"></p>
+                <p class="text-white/70 leading-relaxed line-clamp-2" v-html="highlightMatch(result.text)"></p>
               </div>
 
               <!-- Arrow Icon -->
-              <div class="flex-shrink-0 text-dark-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all duration-300">
+              <div class="flex-shrink-0 text-white/50 group-hover:text-pink-400 group-hover:translate-x-1 transition-all duration-300">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -114,27 +114,27 @@
 
       <!-- No Results -->
       <div v-else-if="searchQuery" class="text-center py-20">
-        <div class="w-20 h-20 bg-dark-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-dark-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-20 h-20 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-dark-900 mb-2">No results found</h3>
-        <p class="text-dark-600 mb-6">Try different keywords or check your spelling</p>
-        <button @click="searchQuery = ''" class="text-primary-600 hover:text-primary-700 font-medium">
+        <h3 class="text-xl font-bold text-white mb-2">No results found</h3>
+        <p class="text-white/70 mb-6">Try different keywords or check your spelling</p>
+        <button @click="searchQuery = ''" class="text-pink-400 hover:text-pink-300 font-medium">
           Clear search
         </button>
       </div>
 
       <!-- Empty State -->
       <div v-else class="text-center py-20">
-        <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-20 h-20 bg-pink-400/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-dark-900 mb-2">Start searching</h3>
-        <p class="text-dark-600">Enter a keyword to find what you need</p>
+        <h3 class="text-xl font-bold text-white mb-2">Start searching</h3>
+        <p class="text-white/70">Enter a keyword to find what you need</p>
       </div>
     </div>
   </div>
