@@ -18,6 +18,9 @@
 
           <div class="flex items-center gap-3">
             <span class="text-dark-300 text-sm">Page {{ currentPage }} / {{ totalPages }}</span>
+            <span v-if="pageImages.length > 0" class="text-dark-400 text-sm">
+              ({{ pageImages.length }} {{ pageImages.length === 1 ? 'image' : 'images' }})
+            </span>
           </div>
         </div>
 
@@ -77,21 +80,46 @@
           <p class="text-red-300">{{ error }}</p>
         </div>
 
-        <div v-else class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <canvas
-            ref="pdfCanvas"
-            class="w-full"
-          ></canvas>
+        <div v-else class="bg-white rounded-2xl shadow-2xl overflow-hidden relative">
+          <div ref="canvasContainer" class="relative">
+            <canvas
+              ref="pdfCanvas"
+              class="w-full"
+            ></canvas>
+
+            <!-- Image Overlays -->
+            <ImageOverlay
+              v-for="image in pageImages"
+              :key="image.id"
+              :image="image"
+              :canvas-width="canvasWidth"
+              :canvas-height="canvasHeight"
+              :pdf-scale="pdfScale"
+              @click="openImageModal"
+            />
+          </div>
         </div>
       </div>
     </main>
+
+    <!-- Full-size Image Modal -->
+    <FigureZoom
+      v-if="selectedImage"
+      :is-open="!!selectedImage"
+      :image-src="selectedImageUrl"
+      :image-alt="`Image ${selectedImage.imageIndex + 1} from page ${currentPage}`"
+      @close="closeImageModal"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import * as pdfjsLib from 'pdfjs-dist'
+import ImageOverlay from '../components/ImageOverlay.vue'
+import FigureZoom from '../components/FigureZoom.vue'
+import { useDocumentImages } from '../composables/useDocumentImages'
 
 // Configure PDF.js worker - use local worker file instead of CDN
 // This works with Vite's bundler and avoids CORS/CDN issues
@@ -111,8 +139,26 @@ const boatInfo = ref('')
 const loading = ref(true)
 const error = ref(null)
 const pdfCanvas = ref(null)
+const canvasContainer = ref(null)
 const pdfDoc = ref(null)
 const isRendering = ref(false)
+
+// PDF rendering scale
+const pdfScale = ref(1.5)
+
+// Canvas dimensions
+const canvasWidth = ref(0)
+const canvasHeight = ref(0)
+
+// Image handling
+const { images: pageImages, fetchPageImages, getImageUrl } = useDocumentImages()
+const selectedImage = ref(null)
+
+// Computed property for selected image URL
+const selectedImageUrl = computed(() => {
+  if (!selectedImage.value) return ''
+  return getImageUrl(documentId.value, selectedImage.value.id)
+})
 
 async function loadDocument() {
   try {
@@ -157,7 +203,7 @@ async function renderPage(pageNum) {
 
   try {
     const page = await pdfDoc.value.getPage(pageNum)
-    const viewport = page.getViewport({ scale: 1.5 })
+    const viewport = page.getViewport({ scale: pdfScale.value })
 
     const canvas = pdfCanvas.value
     const context = canvas.getContext('2d')
@@ -165,12 +211,19 @@ async function renderPage(pageNum) {
     canvas.height = viewport.height
     canvas.width = viewport.width
 
+    // Store canvas dimensions for image overlays
+    canvasWidth.value = viewport.width
+    canvasHeight.value = viewport.height
+
     const renderContext = {
       canvasContext: context,
       viewport: viewport
     }
 
     await page.render(renderContext).promise
+
+    // Fetch images for this page after PDF is rendered
+    await fetchPageImages(documentId.value, pageNum)
   } catch (err) {
     console.error('Error rendering page:', err)
     error.value = `Failed to render PDF page ${pageNum}: ${err.message}`
@@ -212,6 +265,14 @@ watch(() => route.query.page, (newPage) => {
     renderPage(currentPage.value)
   }
 })
+
+function openImageModal(image) {
+  selectedImage.value = image
+}
+
+function closeImageModal() {
+  selectedImage.value = null
+}
 
 onMounted(() => {
   loadDocument()
