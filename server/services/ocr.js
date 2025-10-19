@@ -172,9 +172,12 @@ async function convertPDFPageToImage(pdfPath, pageNumber) {
  */
 async function runTesseractOCR(imagePath, language = 'eng') {
   try {
+    // Ensure language code is 'eng' not 'en' for tesseract
+    const tessLang = language === 'en' ? 'eng' : language;
+
     // Use local system tesseract command (faster and more reliable)
     const result = execSync(
-      `tesseract "${imagePath}" stdout -l ${language} --psm 1`,
+      `TESSDATA_PREFIX=/usr/share/tesseract-ocr/5/tessdata tesseract "${imagePath}" stdout -l ${tessLang} --psm 1`,
       { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
     );
 
