@@ -2,13 +2,15 @@
  * Hybrid OCR Service
  *
  * Intelligently chooses between multiple OCR engines:
- * 1. Google Drive OCR (if configured) - Highest quality
- * 2. Google Cloud Vision API (if configured) - High quality, more control
- * 3. Tesseract (fallback) - Local, free, always available
+ * 1. Google Cloud Vision API (RECOMMENDED) - Best quality, fastest, real OCR API
+ * 2. Google Drive OCR (ALTERNATIVE) - Good quality, uses Docs conversion
+ * 3. Tesseract (FALLBACK) - Local, free, always available
  *
  * Configuration via .env:
- * - PREFERRED_OCR_ENGINE=google-drive|google-vision|tesseract
+ * - PREFERRED_OCR_ENGINE=google-vision|google-drive|tesseract|auto
  * - GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
+ *
+ * RECOMMENDATION: Use google-vision for production!
  */
 
 import { extractTextFromPDF as extractWithTesseract } from './ocr.js';
@@ -16,6 +18,10 @@ import {
   extractTextFromPDFGoogleDrive,
   isGoogleDriveConfigured
 } from './ocr-google-drive.js';
+import {
+  extractTextFromPDFVision,
+  isVisionConfigured
+} from './ocr-google-vision.js';
 
 const PREFERRED_ENGINE = process.env.PREFERRED_OCR_ENGINE || 'auto';
 
@@ -38,9 +44,15 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
 
   if (engine === 'auto') {
     // Auto-select best available engine
-    if (isGoogleDriveConfigured()) {
+    // Priority: Vision API > Drive API > Tesseract
+    if (isVisionConfigured()) {
+      selectedEngine = 'google-vision';
+    } else if (isGoogleDriveConfigured()) {
       selectedEngine = 'google-drive';
     }
+  } else if (engine === 'google-vision' && !isVisionConfigured()) {
+    console.warn('[OCR Hybrid] Google Vision requested but not configured, falling back');
+    selectedEngine = isGoogleDriveConfigured() ? 'google-drive' : 'tesseract';
   } else if (engine === 'google-drive' && !isGoogleDriveConfigured()) {
     console.warn('[OCR Hybrid] Google Drive requested but not configured, falling back to Tesseract');
   } else {
@@ -52,6 +64,9 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
   // Execute OCR with selected engine
   try {
     switch (selectedEngine) {
+      case 'google-vision':
+        return await extractWithVision(pdfPath, options);
+
       case 'google-drive':
         return await extractWithGoogleDrive(pdfPath, options);
 
@@ -65,6 +80,24 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
       console.warn(`[OCR Hybrid] ${selectedEngine} failed, falling back to Tesseract:`, error.message);
       return await extractWithTesseract(pdfPath, options);
     }
+    throw error;
+  }
+}
+
+/**
+ * Wrapper for Google Cloud Vision OCR with error handling
+ */
+async function extractWithVision(pdfPath, options) {
+  try {
+    const results = await extractTextFromPDFVision(pdfPath, options);
+
+    // Log quality metrics
+    const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
+    console.log(`[Google Vision OCR] Completed with avg confidence: ${avgConfidence.toFixed(2)}`);
+
+    return results;
+  } catch (error) {
+    console.error('[Google Vision OCR] Error:', error.message);
     throw error;
   }
 }
@@ -94,19 +127,35 @@ async function extractWithGoogleDrive(pdfPath, options) {
  */
 export function getAvailableEngines() {
   return {
+    'google-vision': {
+      available: isVisionConfigured(),
+      quality: 'excellent',
+      speed: 'fast',
+      cost: '$1.50/1000 pages (1000/month free)',
+      notes: 'RECOMMENDED: Real OCR API, fastest, most accurate',
+      handwriting: true,
+      pageByPage: true,
+      boundingBoxes: true
+    },
+    'google-drive': {
+      available: isGoogleDriveConfigured(),
+      quality: 'excellent',
+      speed: 'slow',
+      cost: 'free (unlimited)',
+      notes: 'Workaround using Docs conversion, slower',
+      handwriting: true,
+      pageByPage: false,
+      boundingBoxes: false
+    },
     tesseract: {
       available: true,
       quality: 'good',
       speed: 'fast',
       cost: 'free',
-      notes: 'Always available, runs locally'
-    },
-    'google-drive': {
-      available: isGoogleDriveConfigured(),
-      quality: 'excellent',
-      speed: 'medium',
-      cost: 'free (within quotas)',
-      notes: 'Requires Google Cloud credentials'
+      notes: 'Local, private, no handwriting support',
+      handwriting: false,
+      pageByPage: true,
+      boundingBoxes: false
     }
   };
 }
@@ -122,12 +171,17 @@ export function getAvailableEngines() {
 export function recommendEngine(documentInfo) {
   const { pageCount = 1, fileSize = 0 } = documentInfo;
 
-  // For large documents, prefer local Tesseract to avoid API quotas
-  if (pageCount > 50 || fileSize > 10 * 1024 * 1024) {
+  // For large documents, use Tesseract to save on Vision API costs
+  if (pageCount > 100 || fileSize > 20 * 1024 * 1024) {
     return 'tesseract';
   }
 
-  // For smaller documents, prefer Google Drive for quality
+  // For medium documents (where cost is acceptable), prefer Vision API
+  if (isVisionConfigured()) {
+    return 'google-vision';
+  }
+
+  // For small documents, Drive API is free and good enough
   if (isGoogleDriveConfigured()) {
     return 'google-drive';
   }
