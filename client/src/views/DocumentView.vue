@@ -93,8 +93,12 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import * as pdfjsLib from 'pdfjs-dist'
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+// Configure PDF.js worker - use local worker file instead of CDN
+// This works with Vite's bundler and avoids CORS/CDN issues
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).href
 
 const route = useRoute()
 
@@ -108,6 +112,7 @@ const loading = ref(true)
 const error = ref(null)
 const pdfCanvas = ref(null)
 const pdfDoc = ref(null)
+const isRendering = ref(false)
 
 async function loadDocument() {
   try {
@@ -141,6 +146,15 @@ async function loadDocument() {
 async function renderPage(pageNum) {
   if (!pdfDoc.value || !pdfCanvas.value) return
 
+  // Prevent concurrent renders - wait for current one to finish
+  if (isRendering.value) {
+    console.log('Already rendering, skipping...')
+    return
+  }
+
+  isRendering.value = true
+  error.value = null
+
   try {
     const page = await pdfDoc.value.getPage(pageNum)
     const viewport = page.getViewport({ scale: 1.5 })
@@ -159,7 +173,9 @@ async function renderPage(pageNum) {
     await page.render(renderContext).promise
   } catch (err) {
     console.error('Error rendering page:', err)
-    error.value = 'Failed to render PDF page'
+    error.value = `Failed to render PDF page ${pageNum}: ${err.message}`
+  } finally {
+    isRendering.value = false
   }
 }
 

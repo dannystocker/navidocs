@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-40">
+    <header class="glass sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-3">
@@ -17,13 +17,13 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <button @click="$router.push('/jobs')" class="px-4 py-2 text-dark-700 hover:text-primary-600 font-medium transition-colors flex items-center gap-2">
+            <button @click="$router.push('/jobs')" class="px-4 py-2 text-dark-700 hover:text-primary-600 font-medium transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               Jobs
             </button>
-            <button @click="showUploadModal = true" class="btn btn-primary flex items-center gap-2">
+            <button @click="showUploadModal = true" class="btn btn-primary flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
@@ -38,7 +38,7 @@
     <main class="max-w-7xl mx-auto px-6 py-16">
       <div class="text-center mb-16">
         <div class="inline-block mb-4">
-          <span class="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+          <span class="badge badge-primary inline-flex items-center gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
             </svg>
@@ -60,8 +60,7 @@
 
       <!-- Search Bar -->
       <div class="max-w-3xl mx-auto mb-20">
-        <div class="relative group">
-          <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
+        <div class="relative group accent-border">
           <div class="relative">
             <input
               v-model="searchQuery"
@@ -72,7 +71,7 @@
             />
             <button
               @click="handleSearch"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary-500"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -86,10 +85,9 @@
       </div>
 
       <!-- Features -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 bg-grid">
         <div class="group relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl opacity-0 group-hover:opacity-10 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-dark-100">
+          <div class="relative glass rounded-2xl p-8 hover:shadow-xl transition-all duration-300 accent-border">
             <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center mx-auto mb-5 shadow-lg transform group-hover:scale-110 transition duration-300">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -101,8 +99,7 @@
         </div>
 
         <div class="group relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-secondary-500 to-primary-500 rounded-2xl opacity-0 group-hover:opacity-10 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-dark-100">
+          <div class="relative glass rounded-2xl p-8 hover:shadow-xl transition-all duration-300 accent-border">
             <div class="w-14 h-14 bg-gradient-to-br from-secondary-500 to-primary-500 rounded-xl flex items-center justify-center mx-auto mb-5 shadow-lg transform group-hover:scale-110 transition duration-300">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -114,8 +111,7 @@
         </div>
 
         <div class="group relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-success-500 to-primary-500 rounded-2xl opacity-0 group-hover:opacity-10 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-dark-100">
+          <div class="relative glass rounded-2xl p-8 hover:shadow-xl transition-all duration-300 accent-border">
             <div class="w-14 h-14 bg-gradient-to-br from-success-500 to-success-600 rounded-xl flex items-center justify-center mx-auto mb-5 shadow-lg transform group-hover:scale-110 transition duration-300">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -131,14 +127,14 @@
       <div>
         <div class="flex items-center justify-between mb-8">
           <h3 class="text-3xl font-bold text-dark-900">Recent Documents</h3>
-          <button @click="showUploadModal = true" class="text-primary-600 hover:text-primary-700 font-medium flex items-center gap-2 transition-colors">
+          <button @click="showUploadModal = true" class="text-primary-600 hover:text-primary-700 font-medium flex items-center gap-2 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             Add Document
           </button>
         </div>
-        <div class="bg-white rounded-2xl shadow-md border border-dark-100 p-12">
+        <div class="glass rounded-2xl p-12">
           <div class="text-center">
             <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg class="w-10 h-10 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +145,7 @@
             <p class="text-dark-600 mb-6 max-w-md mx-auto">
               Upload your first boat manual to get started. We'll extract the text and make it searchable.
             </p>
-            <button @click="showUploadModal = true" class="btn btn-primary inline-flex items-center gap-2">
+            <button @click="showUploadModal = true" class="btn btn-primary inline-flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
@@ -161,7 +157,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-dark-100 mt-20">
+    <footer class="glass border-t border-dark-100 mt-20">
       <div class="max-w-7xl mx-auto px-6 py-8">
         <div class="flex items-center justify-between text-sm text-dark-600">
           <p>© 2025 NaviDocs. Built for mariners.</p>

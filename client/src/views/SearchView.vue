@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-40">
+    <header class="glass sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <button @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <button @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
             <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15c3-2 6-2 9 0s6 2 9 0M3 9c3-2 6-2 9 0s6 2 9 0" />
@@ -45,7 +45,7 @@
       <div v-if="!loading && results.length > 0" class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <span class="text-dark-900 font-semibold text-lg">{{ results.length }} results</span>
-          <span class="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+          <span class="badge badge-primary">
             {{ searchTime }}ms
           </span>
         </div>
@@ -53,8 +53,11 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-20">
-        <div class="inline-block w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-        <p class="text-dark-600 font-medium">Searching...</p>
+        <div class="space-y-4 max-w-3xl mx-auto">
+          <div class="skeleton h-24 rounded-2xl"></div>
+          <div class="skeleton h-24 rounded-2xl"></div>
+          <div class="skeleton h-24 rounded-2xl"></div>
+        </div>
       </div>
 
       <!-- Results Grid -->
@@ -62,8 +65,10 @@
         <div
           v-for="result in results"
           :key="result.id"
-          class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-dark-100 overflow-hidden cursor-pointer"
+          class="group glass accent-border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500"
           @click="viewDocument(result)"
+          tabindex="0"
+          @keypress.enter="viewDocument(result)"
         >
           <div class="p-6">
             <div class="flex items-start gap-4">

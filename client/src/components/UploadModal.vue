@@ -324,9 +324,10 @@ async function uploadFile() {
 
   try {
     const formData = new FormData()
-    formData.append('pdf', selectedFile.value)
+    formData.append('file', selectedFile.value) // Use 'file' field name (backend expects this)
     formData.append('title', metadata.value.title)
     formData.append('documentType', metadata.value.documentType)
+    formData.append('organizationId', 'test-org-123') // TODO: Get from auth context
     formData.append('boatName', metadata.value.boatName)
     formData.append('boatMake', metadata.value.boatMake)
     formData.append('boatModel', metadata.value.boatModel)

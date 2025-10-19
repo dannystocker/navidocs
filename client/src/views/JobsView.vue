@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-40">
+    <header class="glass sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <button @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <button @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
             <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15c3-2 6-2 9 0s6 2 9 0M3 9c3-2 6-2 9 0s6 2 9 0" />
@@ -14,7 +14,7 @@
               <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">NaviDocs</h1>
             </div>
           </button>
-          <button @click="refreshJobs" class="btn btn-outline btn-sm flex items-center gap-2">
+          <button @click="refreshJobs" class="btn btn-outline btn-sm flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -33,8 +33,11 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-20">
-        <div class="inline-block w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-        <p class="text-dark-600 font-medium">Loading jobs...</p>
+        <div class="space-y-4 max-w-4xl mx-auto">
+          <div class="skeleton h-32 rounded-2xl"></div>
+          <div class="skeleton h-32 rounded-2xl"></div>
+          <div class="skeleton h-32 rounded-2xl"></div>
+        </div>
       </div>
 
       <!-- Jobs List -->
@@ -42,7 +45,7 @@
         <div
           v-for="job in jobs"
           :key="job.id"
-          class="bg-white rounded-2xl shadow-md border border-dark-100 overflow-hidden"
+          class="glass accent-border rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
         >
           <div class="p-6">
             <div class="flex items-start justify-between mb-4">
@@ -85,7 +88,7 @@
                   </div>
 
                   <!-- Status Badge -->
-                  <span :class="getStatusBadgeClass(job.status)">
+                  <span class="badge" :class="getStatusBadgeClass(job.status)">
                     {{ getStatusText(job.status) }}
                   </span>
                 </div>
@@ -96,14 +99,14 @@
                 <button
                   v-if="job.status === 'completed'"
                   @click="viewDocument(job.documentId)"
-                  class="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-medium"
+                  class="px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-lg hover:shadow-lg transition-all duration-200 text-sm font-medium focus-visible:ring-2 focus-visible:ring-primary-500"
                 >
                   View Document
                 </button>
                 <button
                   v-if="job.status === 'failed'"
                   @click="retryJob(job.id)"
-                  class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors text-sm font-medium"
+                  class="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors text-sm font-medium focus-visible:ring-2 focus-visible:ring-dark-500"
                 >
                   Retry
                 </button>
@@ -189,12 +192,12 @@ function getStatusIconClass(status) {
 
 function getStatusBadgeClass(status) {
   const classes = {
-    pending: 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-dark-100 text-dark-700',
-    processing: 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700',
-    completed: 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success-700',
-    failed: 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700'
+    pending: '',
+    processing: 'badge-primary',
+    completed: 'badge-success',
+    failed: 'bg-red-100 text-red-700'
   }
-  return classes[status] || classes.pending
+  return classes[status] || ''
 }
 
 function getStatusText(status) {
