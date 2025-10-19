@@ -75,11 +75,11 @@ async function ensureTenantKeyUid() {
   const client = getMeilisearchClient();
   try {
     const keys = await client.getKeys();
-    const existing = keys.results?.find(k => k.name === 'navidocs-tenant-key' && k.actions?.includes('search'));
-    if (existing) {
-      tenantKeyUid = existing.uid;
-      return tenantKeyUid;
-    }
+    const byName = keys.results?.find(k => k.name === 'navidocs-tenant-key' && k.actions?.includes('search'));
+    if (byName) { tenantKeyUid = byName.uid; return tenantKeyUid; }
+    // Fallback: use any search key that covers our index
+    const anySearchKey = keys.results?.find(k => k.actions?.includes('search') && (k.indexes?.includes('*') || k.indexes?.includes(INDEX_NAME)));
+    if (anySearchKey) { tenantKeyUid = anySearchKey.uid; return tenantKeyUid; }
   } catch (e) {
     // proceed to create
   }
