@@ -157,6 +157,7 @@ const route = useRoute()
 const documentId = ref(route.params.id)
 const currentPage = ref(parseInt(route.query.page, 10) || 1)
 const pageInput = ref(currentPage.value)
+const searchQuery = ref(route.query.q || '')
 const totalPages = ref(0)
 const documentTitle = ref('Loading...')
 const boatInfo = ref('')
@@ -213,6 +214,41 @@ async function loadDocument() {
     error.value = err.message || 'Unable to load document.'
   } finally {
     loading.value = false
+  }
+}
+
+function highlightSearchTerms() {
+  if (!textLayer.value || !searchQuery.value) return
+
+  const spans = textLayer.value.querySelectorAll('span')
+  const query = searchQuery.value.toLowerCase().trim()
+  let firstMatch = null
+
+  spans.forEach(span => {
+    const text = span.textContent
+    if (!text) return
+
+    const lowerText = text.toLowerCase()
+    if (lowerText.includes(query)) {
+      // Create a highlighted version
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
+      const highlightedText = text.replace(regex, '<mark class="search-highlight">$1</mark>')
+
+      // Wrap in a container to preserve PDF.js positioning
+      span.innerHTML = highlightedText
+
+      // Track first match for scrolling
+      if (!firstMatch) {
+        firstMatch = span
+      }
+    }
+  })
+
+  // Scroll to first match
+  if (firstMatch) {
+    setTimeout(() => {
+      firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
   }
 }
 
@@ -280,6 +316,12 @@ async function renderPage(pageNum) {
           viewport: viewport,
           textDivs: []
         })
+
+        // Highlight search terms if query exists
+        if (searchQuery.value) {
+          await nextTick()
+          highlightSearchTerms()
+        }
       } catch (textErr) {
         console.warn('Failed to render text layer:', textErr)
       }
@@ -476,5 +518,24 @@ onBeforeUnmount(() => {
 
 .textLayer ::-moz-selection {
   background: rgba(255, 92, 178, 0.3);
+}
+
+/* Search highlighting */
+.search-highlight {
+  background-color: rgba(255, 215, 0, 0.6);
+  color: #000;
+  padding: 2px 0;
+  border-radius: 2px;
+  font-weight: 600;
+  animation: highlight-pulse 1.5s ease-in-out;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% {
+    background-color: rgba(255, 215, 0, 0.6);
+  }
+  50% {
+    background-color: rgba(255, 215, 0, 0.9);
+  }
 }
 </style>

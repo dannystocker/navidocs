@@ -187,7 +187,10 @@ function viewDocument(result) {
   router.push({
     name: 'document',
     params: { id: result.docId },
-    query: { page: result.pageNumber }
+    query: {
+      page: result.pageNumber,
+      q: searchQuery.value // Pass search query for highlighting
+    }
   })
 }
 
