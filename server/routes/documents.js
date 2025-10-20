@@ -5,10 +5,16 @@
 
 import express from 'express';
 import { getDb } from '../db/db.js';
+import { getMeilisearchClient } from '../config/meilisearch.js';
 import path from 'path';
 import fs from 'fs';
+import { rm } from 'fs/promises';
+import { loggers } from '../utils/logger.js';
 
 const router = express.Router();
+const logger = loggers.app.child('Documents');
+
+const MEILISEARCH_INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-pages';
 
 /**
  * GET /api/documents/:id
@@ -343,59 +349,64 @@ router.get('/', async (req, res) => {
 
 /**
  * DELETE /api/documents/:id
- * Soft delete a document (mark as deleted)
+ * Hard delete a document (removes from DB, filesystem, and search index)
+ * For single-tenant demo - simplified permissions
  */
 router.delete('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+  try {
+    logger.info(`Deleting document ${id}`);
 
     const db = getDb();
+    const searchClient = getMeilisearchClient();
 
-    // Check ownership
-    const document = db.prepare(`
-      SELECT id, organization_id, uploaded_by
-      FROM documents
-      WHERE id = ?
-    `).get(id);
+    // Get document info before deletion
+    const document = db.prepare('SELECT * FROM documents WHERE id = ?').get(id);
 
     if (!document) {
+      logger.warn(`Document ${id} not found`);
       return res.status(404).json({ error: 'Document not found' });
     }
 
-    // Verify user has permission (must be uploader or org admin)
-    const hasPermission = db.prepare(`
-      SELECT 1 FROM user_organizations
-      WHERE user_id = ? AND organization_id = ? AND role IN ('admin', 'manager')
-      UNION
-      SELECT 1 FROM documents
-      WHERE id = ? AND uploaded_by = ?
-    `).get(userId, document.organization_id, id, userId);
-
-    if (!hasPermission) {
-      return res.status(403).json({
-        error: 'Access denied',
-        message: 'You do not have permission to delete this document'
-      });
+    // Delete from Meilisearch index
+    try {
+      const index = await searchClient.getIndex(MEILISEARCH_INDEX_NAME);
+      const filter = `docId = "${id}"`;
+      await index.deleteDocuments({ filter });
+      logger.info(`Deleted search entries for document ${id}`);
+    } catch (err) {
+      logger.warn(`Meilisearch cleanup failed for ${id}:`, err);
+      // Continue with deletion even if search cleanup fails
     }
 
-    // Soft delete - update status
-    const timestamp = Date.now();
-    db.prepare(`
-      UPDATE documents
-      SET status = 'deleted', updated_at = ?
-      WHERE id = ?
-    `).run(timestamp, id);
+    // Delete from database (CASCADE will handle document_pages, ocr_jobs)
+    const deleteStmt = db.prepare('DELETE FROM documents WHERE id = ?');
+    deleteStmt.run(id);
+    logger.info(`Deleted database record for document ${id}`);
+
+    // Delete from filesystem
+    const uploadsDir = path.join(process.cwd(), '../uploads');
+    const docFolder = path.join(uploadsDir, id);
+
+    if (fs.existsSync(docFolder)) {
+      await rm(docFolder, { recursive: true, force: true });
+      logger.info(`Deleted filesystem folder for document ${id}`);
+    } else {
+      logger.warn(`Folder not found for document ${id}`);
+    }
+
+    logger.info(`Document ${id} deleted successfully`);
 
     res.json({
+      success: true,
       message: 'Document deleted successfully',
-      documentId: id
+      documentId: id,
+      title: document.title
     });
 
   } catch (error) {
-    console.error('Document deletion error:', error);
+    logger.error(`Failed to delete document ${id}`, error);
     res.status(500).json({
       error: 'Failed to delete document',
       message: error.message
