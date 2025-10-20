@@ -13,12 +13,16 @@
 
   body {
     @apply font-sans antialiased bg-black text-white;
+    user-select: auto;
+    -webkit-user-select: auto;
   }
 
   /* Dark gradient background for app container */
   #app {
     background: linear-gradient(135deg, #1a0b2e 0%, #0a0118 50%, #000000 100%);
     min-height: 100vh;
+    user-select: auto;
+    -webkit-user-select: auto;
   }
 
   /* Smooth scrolling */

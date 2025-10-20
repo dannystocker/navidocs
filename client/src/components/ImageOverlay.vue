@@ -95,7 +95,7 @@ const overlayStyle = computed(() => {
     width: `${width}px`,
     height: `${height}px`,
     cursor: 'pointer',
-    zIndex: 10
+    zIndex: 1
   }
 })
 
@@ -109,6 +109,7 @@ function handleClick(event) {
 .image-overlay {
   position: absolute;
   transition: all 0.2s ease;
+  pointer-events: auto;
 }
 
 .image-overlay:hover {

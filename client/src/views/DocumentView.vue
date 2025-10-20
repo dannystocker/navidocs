@@ -451,6 +451,10 @@ onBeforeUnmount(() => {
   line-height: 1.0;
   pointer-events: auto;
   user-select: text;
+  z-index: 2;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 .textLayer > span {
@@ -460,6 +464,10 @@ onBeforeUnmount(() => {
   cursor: text;
   transform-origin: 0% 0%;
   user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  pointer-events: auto;
 }
 
 .textLayer ::selection {
