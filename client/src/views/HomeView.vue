@@ -252,7 +252,7 @@
             </h4>
             <div class="space-y-3">
               <div v-for="doc in documentsByStatus.indexed" :key="doc.id"
-                   class="bg-white/10 backdrop-blur-lg rounded-lg p-4 hover:bg-white/15 transition-all cursor-pointer border border-white/10"
+                   class="bg-white/10 backdrop-blur-lg rounded-lg p-4 hover:bg-white/15 transition-all cursor-pointer border border-white/10 group"
                    @click="$router.push(`/document/${doc.id}`)">
                 <div class="flex items-center justify-between">
                   <div class="flex-1">
@@ -261,6 +261,15 @@
                   </div>
                   <div class="flex items-center gap-3">
                     <span class="badge badge-success">Ready</span>
+                    <button
+                      @click="confirmDelete(doc, $event)"
+                      class="p-2 rounded-lg text-white/50 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete document"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
                     <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -308,6 +317,18 @@
 
     <!-- Upload Modal -->
     <UploadModal :isOpen="showUploadModal" @close="showUploadModal = false" />
+
+    <!-- Delete Confirmation Dialog -->
+    <ConfirmDialog
+      :isOpen="showDeleteDialog"
+      title="Delete Document"
+      :message="`Are you sure you want to delete &quot;${documentToDelete?.title}&quot;? This action cannot be undone. All associated files and search data will be permanently removed.`"
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="danger"
+      @confirm="handleDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 
@@ -315,9 +336,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import UploadModal from '../components/UploadModal.vue'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
+import { useToast } from '../composables/useToast'
 
 const router = useRouter()
+const toast = useToast()
 const showUploadModal = ref(false)
+const showDeleteDialog = ref(false)
+const documentToDelete = ref(null)
 const searchQuery = ref('')
 const loading = ref(false)
 const documents = ref([])
@@ -371,6 +397,45 @@ function handleSearch() {
   if (query) {
     router.push({ name: 'search', query: { q: query } })
   }
+}
+
+function confirmDelete(doc, event) {
+  // Stop propagation to prevent navigation
+  event.stopPropagation()
+  documentToDelete.value = doc
+  showDeleteDialog.value = true
+}
+
+async function handleDelete() {
+  if (!documentToDelete.value) return
+
+  try {
+    const response = await fetch(`/api/documents/${documentToDelete.value.id}`, {
+      method: 'DELETE'
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to delete document')
+    }
+
+    const data = await response.json()
+    toast.success(`"${documentToDelete.value.title}" deleted successfully`)
+
+    // Remove from local list
+    documents.value = documents.value.filter(d => d.id !== documentToDelete.value.id)
+
+    // Close dialog
+    showDeleteDialog.value = false
+    documentToDelete.value = null
+  } catch (error) {
+    console.error('Delete error:', error)
+    toast.error(`Failed to delete document: ${error.message}`)
+  }
+}
+
+function cancelDelete() {
+  showDeleteDialog.value = false
+  documentToDelete.value = null
 }
 
 // Load documents on mount
