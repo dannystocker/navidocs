@@ -89,6 +89,7 @@ import jobsRoutes from './routes/jobs.js';
 import searchRoutes from './routes/search.js';
 import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
+import statsRoutes from './routes/stats.js';
 
 // API routes
 app.use('/api/upload/quick-ocr', quickOcrRoutes);
@@ -96,6 +97,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/stats', statsRoutes);
 app.use('/api', imagesRoutes);
 
 // Error handling
