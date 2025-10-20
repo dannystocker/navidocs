@@ -48,7 +48,7 @@
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
             </svg>
-            Powered by Meilisearch
+            Powered by Navisearch
           </span>
         </div>
         <h2 class="text-6xl font-black text-white mb-6 leading-tight">
