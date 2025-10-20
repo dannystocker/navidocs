@@ -90,6 +90,8 @@ import searchRoutes from './routes/search.js';
 import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
 import statsRoutes from './routes/stats.js';
+import contextRoutes from './routes/context.js';
+import tocRoutes from './routes/toc.js';
 
 // API routes
 app.use('/api/upload/quick-ocr', quickOcrRoutes);
@@ -98,6 +100,8 @@ app.use('/api/jobs', jobsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/context', contextRoutes);
+app.use('/api', tocRoutes);  // Handles /api/documents/:id/toc paths
 app.use('/api', imagesRoutes);
 
 // Error handling

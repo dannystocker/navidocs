@@ -8,7 +8,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span class="font-medium">Back</span>
+            <span class="font-medium">{{ $t('document.back') }}</span>
           </button>
 
           <div class="text-center flex-1 px-4">
@@ -17,10 +17,83 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-white/70 text-sm">Page {{ currentPage }} / {{ totalPages }}</span>
+            <span class="text-white/70 text-sm">{{ $t('document.page') }} {{ currentPage }} {{ $t('document.of') }} {{ totalPages }}</span>
             <span v-if="pageImages.length > 0" class="text-white/70 text-sm">
-              ({{ pageImages.length }} {{ pageImages.length === 1 ? 'image' : 'images' }})
+              ({{ pageImages.length }} {{ $t('document.images', pageImages.length) }})
             </span>
+            <LanguageSwitcher />
+          </div>
+        </div>
+
+        <!-- Find Bar -->
+        <div v-if="searchQuery" class="mt-4 bg-white/5 border border-white/10 rounded-lg p-3">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-1">
+              <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg">
+                <svg class="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span class="text-white font-medium text-sm">{{ searchQuery }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-white/70 text-sm">
+                  {{ totalHits === 0 ? $t('document.findBar.noMatches') : $t('document.findBar.matchCount', { current: currentHitIndex + 1, total: totalHits }) }}
+                </span>
+
+                <div class="flex gap-1">
+                  <button
+                    @click="prevHit"
+                    :disabled="totalHits === 0"
+                    class="px-3 py-1.5 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/30 text-white rounded transition-colors text-sm border border-white/10"
+                    :title="$t('document.findBar.previousMatch')"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    @click="nextHit"
+                    :disabled="totalHits === 0"
+                    class="px-3 py-1.5 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/30 text-white rounded transition-colors text-sm border border-white/10"
+                    :title="$t('document.findBar.nextMatch')"
+                  >
+                    ↓
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button
+              v-if="hitList.length > 0"
+              @click="jumpListOpen = !jumpListOpen"
+              class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded transition-colors text-sm border border-white/10 flex items-center gap-2"
+            >
+              <span>{{ $t('document.findBar.jumpTo') }}</span>
+              <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': jumpListOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Jump List -->
+          <div v-if="jumpListOpen && hitList.length > 0" class="mt-3 pt-3 border-t border-white/10">
+            <div class="grid gap-2 max-h-48 overflow-y-auto">
+              <button
+                v-for="(hit, idx) in hitList.slice(0, 5)"
+                :key="idx"
+                @click="jumpToHit(idx)"
+                class="text-left px-3 py-2 bg-white/5 hover:bg-white/10 rounded transition-colors border border-white/10"
+                :class="{ 'ring-2 ring-pink-400': idx === currentHitIndex }"
+              >
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-white/70 text-xs font-mono">{{ $t('document.findBar.match') }} {{ idx + 1 }}</span>
+                  <span class="text-white/50 text-xs">{{ $t('document.page') }} {{ hit.page }}</span>
+                </div>
+                <p class="text-white text-sm mt-1 line-clamp-2">{{ hit.snippet }}</p>
+              </button>
+              <div v-if="hitList.length > 5" class="text-white/50 text-xs text-center py-2">
+                + {{ hitList.length - 5 }} more matches
+              </div>
+            </div>
           </div>
         </div>
 
@@ -34,7 +107,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
-            Previous
+            {{ $t('document.previous') }}
           </button>
 
           <div class="flex items-center gap-2">
@@ -48,7 +121,7 @@
               class="w-16 px-3 py-2 bg-white/10 text-white border border-white/20 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
             />
             <button @click="goToPage" :disabled="isRendering" class="px-3 py-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 disabled:bg-white/5 text-white rounded-lg transition-colors">
-              Go
+              {{ $t('document.goToPage') }}
             </button>
           </div>
 
@@ -57,7 +130,7 @@
             :disabled="currentPage >= totalPages || isRendering"
             class="px-4 py-2 bg-white/10 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/30 text-white rounded-lg transition-colors flex items-center gap-2 border border-white/10"
           >
-            Next
+            {{ $t('document.next') }}
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -66,9 +139,19 @@
       </div>
     </header>
 
-    <!-- PDF Viewer -->
-    <main class="relative py-8">
-      <div class="max-w-5xl mx-auto px-6">
+    <!-- PDF Viewer with TOC Sidebar -->
+    <main class="viewer-wrapper relative">
+      <!-- TOC Sidebar -->
+      <TocSidebar
+        v-if="documentId"
+        :document-id="documentId"
+        :current-page="currentPage"
+        @navigate-to-page="handleTocJump"
+      />
+
+      <!-- PDF Pane -->
+      <div class="pdf-pane py-8">
+        <div class="max-w-5xl mx-auto px-6">
         <div class="relative">
           <div class="bg-white rounded-2xl shadow-2xl overflow-hidden relative min-h-[520px]">
             <div ref="canvasContainer" class="relative">
@@ -123,6 +206,7 @@
           </div>
         </div>
       </div>
+      </div>
     </main>
 
     <!-- Full-size Image Modal -->
@@ -143,6 +227,8 @@ import * as pdfjsLib from 'pdfjs-dist'
 import 'pdfjs-dist/web/pdf_viewer.css'
 import ImageOverlay from '../components/ImageOverlay.vue'
 import FigureZoom from '../components/FigureZoom.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import TocSidebar from '../components/TocSidebar.vue'
 import { useDocumentImages } from '../composables/useDocumentImages'
 
 // Configure PDF.js worker - use local worker file instead of CDN
@@ -167,6 +253,12 @@ const pdfCanvas = ref(null)
 const canvasContainer = ref(null)
 const textLayer = ref(null)
 const isRendering = ref(false)
+
+// Find bar state
+const currentHitIndex = ref(0)
+const totalHits = ref(0)
+const hitList = ref([])
+const jumpListOpen = ref(false)
 
 // PDF rendering scale
 const pdfScale = ref(1.5)
@@ -218,11 +310,17 @@ async function loadDocument() {
 }
 
 function highlightSearchTerms() {
-  if (!textLayer.value || !searchQuery.value) return
+  if (!textLayer.value || !searchQuery.value) {
+    totalHits.value = 0
+    hitList.value = []
+    currentHitIndex.value = 0
+    return
+  }
 
   const spans = textLayer.value.querySelectorAll('span')
   const query = searchQuery.value.toLowerCase().trim()
-  let firstMatch = null
+  const hits = []
+  let hitIndex = 0
 
   spans.forEach(span => {
     const text = span.textContent
@@ -230,26 +328,84 @@ function highlightSearchTerms() {
 
     const lowerText = text.toLowerCase()
     if (lowerText.includes(query)) {
-      // Create a highlighted version
+      // Create a highlighted version with data attributes
       const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
-      const highlightedText = text.replace(regex, '<mark class="search-highlight">$1</mark>')
+      const highlightedText = text.replace(regex, (match) => {
+        const idx = hitIndex
+        hitIndex++
+        return `<mark class="search-highlight" data-hit-index="${idx}">${match}</mark>`
+      })
 
-      // Wrap in a container to preserve PDF.js positioning
       span.innerHTML = highlightedText
 
-      // Track first match for scrolling
-      if (!firstMatch) {
-        firstMatch = span
-      }
+      // Collect hit information for jump list
+      const snippet = text.length > 100 ? text.substring(0, 100) + '...' : text
+      const marks = span.querySelectorAll('mark')
+      marks.forEach((mark) => {
+        hits.push({
+          element: mark,
+          snippet: snippet,
+          page: currentPage.value,
+          index: parseInt(mark.getAttribute('data-hit-index'))
+        })
+      })
     }
   })
 
+  totalHits.value = hits.length
+  hitList.value = hits
+  currentHitIndex.value = 0
+
   // Scroll to first match
-  if (firstMatch) {
-    setTimeout(() => {
-      firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
+  if (hits.length > 0) {
+    scrollToHit(0)
   }
+}
+
+function scrollToHit(index) {
+  if (index < 0 || index >= hitList.value.length) return
+
+  const hit = hitList.value[index]
+  if (!hit || !hit.element) return
+
+  // Remove active class from all marks
+  hitList.value.forEach(h => {
+    if (h.element) {
+      h.element.classList.remove('search-highlight-active')
+    }
+  })
+
+  // Add active class to current hit
+  hit.element.classList.add('search-highlight-active')
+
+  // Scroll to current hit
+  setTimeout(() => {
+    hit.element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, 100)
+}
+
+function nextHit() {
+  if (totalHits.value === 0) return
+
+  currentHitIndex.value = (currentHitIndex.value + 1) % totalHits.value
+  scrollToHit(currentHitIndex.value)
+}
+
+function prevHit() {
+  if (totalHits.value === 0) return
+
+  currentHitIndex.value = currentHitIndex.value === 0
+    ? totalHits.value - 1
+    : currentHitIndex.value - 1
+  scrollToHit(currentHitIndex.value)
+}
+
+function jumpToHit(index) {
+  if (index < 0 || index >= hitList.value.length) return
+
+  currentHitIndex.value = index
+  scrollToHit(index)
+  jumpListOpen.value = false
 }
 
 async function renderPage(pageNum) {
@@ -310,12 +466,14 @@ async function renderPage(pageNum) {
 
       try {
         const textContent = await page.getTextContent()
-        pdfjsLib.renderTextLayer({
+
+        // PDF.js 4.x uses TextLayer class instead of renderTextLayer function
+        const textLayerRender = new pdfjsLib.TextLayer({
           textContentSource: textContent,
           container: textLayer.value,
-          viewport: viewport,
-          textDivs: []
+          viewport: viewport
         })
+        await textLayerRender.render()
 
         // Highlight search terms if query exists
         if (searchQuery.value) {
@@ -364,6 +522,12 @@ async function nextPage() {
   currentPage.value += 1
   pageInput.value = currentPage.value
   await renderPage(currentPage.value)
+
+  // Update URL hash and dispatch event
+  window.location.hash = `#p=${currentPage.value}`
+  window.dispatchEvent(new CustomEvent('navidocs:pagechange', {
+    detail: { page: currentPage.value }
+  }))
 }
 
 async function previousPage() {
@@ -371,6 +535,12 @@ async function previousPage() {
   currentPage.value -= 1
   pageInput.value = currentPage.value
   await renderPage(currentPage.value)
+
+  // Update URL hash and dispatch event
+  window.location.hash = `#p=${currentPage.value}`
+  window.dispatchEvent(new CustomEvent('navidocs:pagechange', {
+    detail: { page: currentPage.value }
+  }))
 }
 
 async function goToPage() {
@@ -383,9 +553,24 @@ async function goToPage() {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
     await renderPage(currentPage.value)
+
+    // Update URL hash for deep linking
+    window.location.hash = `#p=${currentPage.value}`
+
+    // Dispatch custom event for page change
+    window.dispatchEvent(new CustomEvent('navidocs:pagechange', {
+      detail: { page: currentPage.value }
+    }))
   } else {
     pageInput.value = currentPage.value
   }
+}
+
+// Handle TOC navigation jumps
+function handleTocJump(pageNumber) {
+  const clamped = Math.max(1, Math.min(pageNumber, totalPages.value))
+  pageInput.value = clamped
+  goToPage()
 }
 
 watch(
@@ -467,6 +652,35 @@ async function resetDocumentState() {
 
 onMounted(() => {
   loadDocument()
+
+  // Handle deep links (#p=12)
+  const hash = window.location.hash
+  if (hash.startsWith('#p=')) {
+    const pageNum = parseInt(hash.substring(3), 10)
+    if (!Number.isNaN(pageNum) && pageNum >= 1) {
+      currentPage.value = pageNum
+      pageInput.value = pageNum
+    }
+  }
+
+  // Listen for hash changes
+  const handleHashChange = () => {
+    const newHash = window.location.hash
+    if (newHash.startsWith('#p=')) {
+      const pageNum = parseInt(newHash.substring(3), 10)
+      if (!Number.isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages.value) {
+        pageInput.value = pageNum
+        goToPage()
+      }
+    }
+  }
+
+  window.addEventListener('hashchange', handleHashChange)
+
+  // Clean up listener
+  onBeforeUnmount(() => {
+    window.removeEventListener('hashchange', handleHashChange)
+  })
 })
 
 onBeforeUnmount(() => {
@@ -527,15 +741,33 @@ onBeforeUnmount(() => {
   padding: 2px 0;
   border-radius: 2px;
   font-weight: 600;
-  animation: highlight-pulse 1.5s ease-in-out;
+  transition: background-color 0.2s ease;
 }
 
-@keyframes highlight-pulse {
+.search-highlight-active {
+  background-color: rgba(255, 92, 178, 0.8) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 2px rgba(255, 92, 178, 0.4);
+  animation: active-pulse 1.5s ease-in-out;
+}
+
+@keyframes active-pulse {
   0%, 100% {
-    background-color: rgba(255, 215, 0, 0.6);
+    background-color: rgba(255, 92, 178, 0.8);
   }
   50% {
-    background-color: rgba(255, 215, 0, 0.9);
+    background-color: rgba(255, 92, 178, 1);
   }
+}
+
+.viewer-wrapper {
+  display: flex;
+  min-height: calc(100vh - 64px); /* Account for header */
+}
+
+.pdf-pane {
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink */
+  overflow-x: auto;
 }
 </style>

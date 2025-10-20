@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "NaviDocs",
+    "tagline": "Intelligence Nautique"
+  },
+  "nav": {
+    "home": "Accueil",
+    "search": "Recherche",
+    "documents": "Documents",
+    "upload": "Téléverser",
+    "stats": "Statistiques"
+  },
+  "home": {
+    "welcome": "Bienvenue sur NaviDocs",
+    "searchPlaceholder": "Rechercher dans vos manuels et documentation nautique...",
+    "recentDocuments": "Documents récents",
+    "quickActions": "Actions rapides",
+    "uploadDocument": "Téléverser un document",
+    "viewAll": "Voir tous les documents"
+  },
+  "search": {
+    "title": "Résultats de recherche",
+    "placeholder": "Rechercher dans les manuels, spécifications et documentation...",
+    "searching": "Recherche en cours...",
+    "noResults": "Aucun résultat",
+    "noResultsHint": "Essayez d'autres termes ou vérifiez l'orthographe",
+    "resultsCount": "{count} résultat | {count} résultats",
+    "page": "Page",
+    "section": "Section",
+    "expand": "Afficher le contexte",
+    "collapse": "Masquer le contexte",
+    "viewDocument": "Voir le document",
+    "prevPage": "Page précédente",
+    "currentPage": "Page actuelle",
+    "nextPage": "Page suivante",
+    "noDiagram": "Pas de schéma"
+  },
+  "document": {
+    "title": "Visionneuse de documents",
+    "back": "Retour",
+    "page": "Page",
+    "of": "sur",
+    "images": "image | images",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "goToPage": "Aller",
+    "loading": "Chargement du document...",
+    "rendering": "Affichage de la page...",
+    "error": "Impossible d'afficher le document",
+    "retry": "Réessayer",
+    "findBar": {
+      "noMatches": "Aucune correspondance",
+      "matchCount": "{current} / {total}",
+      "previousMatch": "Correspondance précédente",
+      "nextMatch": "Correspondance suivante",
+      "jumpTo": "Aller à",
+      "match": "Correspondance",
+      "moreMatches": "+ {count} correspondances supplémentaires"
+    }
+  },
+  "upload": {
+    "title": "Téléverser des documents",
+    "dropZone": "Déposez les fichiers PDF ici ou cliquez pour parcourir",
+    "browseFiles": "Parcourir les fichiers",
+    "uploading": "Téléversement en cours...",
+    "processing": "Traitement en cours...",
+    "success": "Téléversement réussi",
+    "error": "Échec du téléversement",
+    "maxSize": "Taille maximale du fichier : {size}Mo",
+    "supportedFormats": "Formats pris en charge : PDF",
+    "documentInfo": "Informations du document",
+    "documentTitle": "Titre du document",
+    "documentType": "Type de document",
+    "boatInfo": "Informations du bateau",
+    "boatName": "Nom du bateau",
+    "boatMake": "Constructeur",
+    "boatModel": "Modèle",
+    "boatYear": "Année",
+    "submit": "Téléverser",
+    "cancel": "Annuler",
+    "types": {
+      "manual": "Manuel du propriétaire",
+      "service": "Manuel d'entretien",
+      "component": "Manuel de composant",
+      "wiring": "Schéma électrique",
+      "parts": "Liste de pièces",
+      "other": "Autre documentation"
+    }
+  },
+  "stats": {
+    "title": "Statistiques",
+    "overview": "Aperçu",
+    "totalDocuments": "Documents totaux",
+    "totalPages": "Pages totales",
+    "storageUsed": "Espace utilisé",
+    "recentActivity": "Activité récente",
+    "documentsByType": "Documents par type",
+    "pagesByBoat": "Pages par bateau",
+    "searchActivity": "Activité de recherche",
+    "topSearchTerms": "Termes les plus recherchés"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "actions": "Actions",
+    "viewDetails": "Voir les détails",
+    "download": "Télécharger",
+    "share": "Partager",
+    "print": "Imprimer"
+  },
+  "marine": {
+    "systems": {
+      "electrical": "Système électrique",
+      "plumbing": "Plomberie & eau",
+      "navigation": "Navigation",
+      "propulsion": "Propulsion",
+      "hvac": "Climatisation",
+      "safety": "Équipement de sécurité",
+      "galley": "Cuisine",
+      "head": "Toilettes",
+      "deck": "Équipement de pont",
+      "rigging": "Gréement"
+    },
+    "categories": {
+      "maintenance": "Entretien",
+      "troubleshooting": "Dépannage",
+      "installation": "Installation",
+      "operation": "Fonctionnement",
+      "safety": "Procédures de sécurité",
+      "specifications": "Spécifications"
+    }
+  },
+  "toc": {
+    "tableOfContents": "Table des matières",
+    "loading": "Chargement de l'index...",
+    "noTocFound": "Aucune table des matières trouvée dans ce document",
+    "extract": "Extraire la table",
+    "entries": "entrées",
+    "expand": "Développer l'index",
+    "collapse": "Réduire l'index",
+    "jumpToSection": "Aller à la section"
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "en": "English",
+    "fr": "Français"
+  }
+}

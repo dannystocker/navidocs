@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "NaviDocs",
+    "tagline": "Marine Manual Intelligence"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "documents": "Documents",
+    "upload": "Upload",
+    "stats": "Statistics"
+  },
+  "home": {
+    "welcome": "Welcome to NaviDocs",
+    "searchPlaceholder": "Search your boat manuals and documentation...",
+    "recentDocuments": "Recent Documents",
+    "quickActions": "Quick Actions",
+    "uploadDocument": "Upload Document",
+    "viewAll": "View All Documents"
+  },
+  "search": {
+    "title": "Search Results",
+    "placeholder": "Search manuals, specs, and documentation...",
+    "searching": "Searching...",
+    "noResults": "No matches found",
+    "noResultsHint": "Try different search terms or check the spelling",
+    "resultsCount": "{count} result | {count} results",
+    "page": "Page",
+    "section": "Section",
+    "expand": "Show context",
+    "collapse": "Hide context",
+    "viewDocument": "View document",
+    "prevPage": "Previous page",
+    "currentPage": "Current page",
+    "nextPage": "Next page",
+    "noDiagram": "No diagram"
+  },
+  "document": {
+    "title": "Document Viewer",
+    "back": "Back",
+    "page": "Page",
+    "of": "of",
+    "images": "image | images",
+    "previous": "Previous",
+    "next": "Next",
+    "goToPage": "Go",
+    "loading": "Loading document...",
+    "rendering": "Rendering page...",
+    "error": "Unable to render document",
+    "retry": "Retry",
+    "findBar": {
+      "noMatches": "No matches",
+      "matchCount": "{current} / {total}",
+      "previousMatch": "Previous match",
+      "nextMatch": "Next match",
+      "jumpTo": "Jump to",
+      "match": "Match",
+      "moreMatches": "+ {count} more matches"
+    }
+  },
+  "upload": {
+    "title": "Upload Documents",
+    "dropZone": "Drop PDF files here or click to browse",
+    "browseFiles": "Browse Files",
+    "uploading": "Uploading...",
+    "processing": "Processing...",
+    "success": "Upload successful",
+    "error": "Upload failed",
+    "maxSize": "Maximum file size: {size}MB",
+    "supportedFormats": "Supported formats: PDF",
+    "documentInfo": "Document Information",
+    "documentTitle": "Document Title",
+    "documentType": "Document Type",
+    "boatInfo": "Boat Information",
+    "boatName": "Boat Name",
+    "boatMake": "Manufacturer",
+    "boatModel": "Model",
+    "boatYear": "Year",
+    "submit": "Upload",
+    "cancel": "Cancel",
+    "types": {
+      "manual": "Owner's Manual",
+      "service": "Service Manual",
+      "component": "Component Manual",
+      "wiring": "Wiring Diagram",
+      "parts": "Parts List",
+      "other": "Other Documentation"
+    }
+  },
+  "stats": {
+    "title": "Statistics",
+    "overview": "Overview",
+    "totalDocuments": "Total Documents",
+    "totalPages": "Total Pages",
+    "storageUsed": "Storage Used",
+    "recentActivity": "Recent Activity",
+    "documentsByType": "Documents by Type",
+    "pagesByBoat": "Pages by Boat",
+    "searchActivity": "Search Activity",
+    "topSearchTerms": "Top Search Terms"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "download": "Download",
+    "share": "Share",
+    "print": "Print"
+  },
+  "marine": {
+    "systems": {
+      "electrical": "Electrical System",
+      "plumbing": "Plumbing & Water",
+      "navigation": "Navigation",
+      "propulsion": "Propulsion",
+      "hvac": "Climate Control",
+      "safety": "Safety Equipment",
+      "galley": "Galley",
+      "head": "Head",
+      "deck": "Deck Equipment",
+      "rigging": "Rigging"
+    },
+    "categories": {
+      "maintenance": "Maintenance",
+      "troubleshooting": "Troubleshooting",
+      "installation": "Installation",
+      "operation": "Operation",
+      "safety": "Safety Procedures",
+      "specifications": "Specifications"
+    }
+  },
+  "toc": {
+    "tableOfContents": "Table of Contents",
+    "loading": "Loading index...",
+    "noTocFound": "No table of contents found in this document",
+    "extract": "Extract TOC",
+    "entries": "entries",
+    "expand": "Expand index",
+    "collapse": "Collapse index",
+    "jumpToSection": "Jump to section"
+  },
+  "language": {
+    "select": "Select Language",
+    "en": "English",
+    "fr": "Français"
+  }
+}

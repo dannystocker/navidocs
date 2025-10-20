@@ -21,6 +21,7 @@ import { getDb } from '../config/db.js';
 import { extractTextFromPDF, cleanOCRText, extractTextFromImage } from '../services/ocr.js';
 import { indexDocumentPage } from '../services/search.js';
 import { extractImagesFromPage } from './image-extractor.js';
+import { extractSections, mapPagesToSections } from '../services/section-extractor.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -293,6 +294,39 @@ async function processOCRJob(job) {
       }
     }
 
+    // Extract section metadata
+    console.log('[OCR Worker] Extracting section metadata');
+    try {
+      const sections = await extractSections(filePath, ocrResults);
+      const pageMap = mapPagesToSections(sections, totalPages);
+
+      console.log(`[OCR Worker] Mapping ${pageMap.size} pages to sections`);
+
+      // Update each page with section metadata
+      const updateSectionStmt = db.prepare(`
+        UPDATE document_pages
+        SET section = ?,
+            section_key = ?,
+            section_order = ?
+        WHERE document_id = ? AND page_number = ?
+      `);
+
+      for (const [pageNum, sectionData] of pageMap.entries()) {
+        updateSectionStmt.run(
+          sectionData.section,
+          sectionData.sectionKey,
+          sectionData.sectionOrder,
+          documentId,
+          pageNum
+        );
+      }
+
+      console.log('[OCR Worker] Section metadata stored successfully');
+    } catch (sectionError) {
+      console.error('[OCR Worker] Section extraction failed:', sectionError.message);
+      // Continue even if section extraction fails
+    }
+
     // Update document status to indexed and mark images as extracted
     db.prepare(`
       UPDATE documents
@@ -312,6 +346,21 @@ async function processOCRJob(job) {
     `).run(now, jobId);
 
     console.log(`[OCR Worker] Job ${jobId} completed successfully`);
+
+    // Extract Table of Contents as post-processing step
+    try {
+      const { extractTocFromDocument } = await import('../services/toc-extractor.js');
+      const tocResult = await extractTocFromDocument(documentId);
+
+      if (tocResult.success && tocResult.entriesCount > 0) {
+        console.log(`[OCR Worker] TOC extracted: ${tocResult.entriesCount} entries from ${tocResult.pages.length} page(s)`);
+      } else {
+        console.log(`[OCR Worker] No TOC detected or extraction skipped`);
+      }
+    } catch (tocError) {
+      // Don't fail the whole job if TOC extraction fails
+      console.error(`[OCR Worker] TOC extraction error:`, tocError.message);
+    }
 
     return {
       success: true,
