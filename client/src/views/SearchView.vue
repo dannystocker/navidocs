@@ -28,7 +28,7 @@
               v-model="searchQuery"
               @input="performSearch"
               type="text"
-              class="w-full h-16 px-6 pr-14 rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-lg text-white placeholder-white/50 shadow-lg focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20 transition-all duration-200 text-lg"
+              class="w-full h-12 px-5 pr-14 rounded-xl border-2 border-white/20 bg-white/10 backdrop-blur-lg text-white placeholder-white/50 shadow-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/20 transition-all duration-200"
               placeholder="Search your manuals..."
               autofocus
             />
@@ -61,69 +61,62 @@
       </div>
 
       <!-- Results Grid -->
-      <div v-else-if="results.length > 0" class="space-y-4">
-        <div
+      <div v-else-if="results.length > 0" class="space-y-2">
+        <article
           v-for="result in results"
           :key="result.id"
-          class="group glass accent-border rounded-2xl hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer focus-visible:ring-2 focus-visible:ring-primary-500"
+          class="nv-card group cursor-pointer focus-visible:ring-2 focus-visible:ring-pink-400 focus:outline-none relative"
           @click="viewDocument(result)"
           tabindex="0"
           @keypress.enter="viewDocument(result)"
+          @keypress.space.prevent="viewDocument(result)"
         >
-          <div class="p-6">
-            <div class="flex items-start gap-4">
-              <!-- Image Thumbnail or Document Icon -->
-              <div v-if="result.imagePath" class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden group-hover:scale-105 transition-transform duration-300 border-2 border-pink-400/30">
-                <img
-                  :src="`/api${result.imagePath}`"
-                  :alt="`Image from ${result.title} page ${result.pageNumber}`"
-                  class="w-full h-full object-cover"
-                  @error="handleImageError"
-                />
-              </div>
-              <div v-else class="flex-shrink-0 w-12 h-12 bg-pink-400/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
+          <!-- Metadata Row -->
+          <header class="nv-meta">
+            <span class="nv-page">Page {{ result.pageNumber }}</span>
+            <span class="nv-dot">·</span>
+            <span v-if="result.boatMake || result.boatModel" class="nv-boat">
+              {{ result.boatMake }} {{ result.boatModel }}
+            </span>
+            <span class="nv-doc" :title="result.title">{{ result.title }}</span>
+          </header>
 
-              <!-- Content -->
-              <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-bold text-white mb-1 group-hover:text-pink-400 transition-colors">
-                  {{ result.title }}
-                </h3>
-                <div class="flex items-center gap-3 text-sm text-white/70 mb-3">
-                  <span v-if="result.imagePath" class="px-2 py-0.5 bg-pink-400/20 text-pink-400 rounded text-xs font-medium flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Diagram
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                    </svg>
-                    {{ result.boatMake }} {{ result.boatModel }}
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    Page {{ result.pageNumber }}
-                  </span>
-                </div>
-                <p class="text-white/70 leading-relaxed line-clamp-2" v-html="highlightMatch(result.text)"></p>
-              </div>
+          <!-- Snippet with Highlights -->
+          <p class="nv-snippet" v-html="formatSnippet(result.text)"></p>
 
-              <!-- Arrow Icon -->
-              <div class="flex-shrink-0 text-white/50 group-hover:text-pink-400 group-hover:translate-x-1 transition-all duration-300">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </div>
+          <!-- Footer Operations -->
+          <footer class="nv-ops">
+            <button
+              v-if="result.imagePath"
+              class="nv-chip"
+              @click.stop="togglePreview(result.id)"
+              @mouseenter="showPreview(result.id)"
+              @mouseleave="hidePreview(result.id)"
+            >
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Diagram
+            </button>
+            <span class="nv-link">Open page →</span>
+          </footer>
+
+          <!-- Diagram Preview Popover -->
+          <div
+            v-if="result.imagePath && activePreview === result.id"
+            class="nv-popover"
+            role="dialog"
+            aria-label="Diagram preview"
+            @click.stop
+          >
+            <img
+              :src="`/api${result.imagePath}`"
+              :alt="`Diagram from ${result.title} page ${result.pageNumber}`"
+              loading="lazy"
+              @error="handleImageError"
+            />
           </div>
-        </div>
+        </article>
       </div>
 
       <!-- No Results -->
@@ -164,6 +157,8 @@ const router = useRouter()
 
 const { results, loading, searchTime, search } = useSearch()
 const searchQuery = ref(route.query.q || '')
+const activePreview = ref(null)
+let previewTimer = null
 
 async function performSearch() {
   if (!searchQuery.value.trim()) {
@@ -178,9 +173,33 @@ async function performSearch() {
   }
 }
 
-function highlightMatch(text) {
-  // Meilisearch returns pre-highlighted text with <mark> tags
-  return text || ''
+function formatSnippet(text) {
+  if (!text) return ''
+
+  // Meilisearch returns <mark> tags, enhance them with bold
+  return text
+    .replace(/<mark>/g, '<mark class="nv-hi"><strong>')
+    .replace(/<\/mark>/g, '</strong></mark>')
+}
+
+function showPreview(id) {
+  clearTimeout(previewTimer)
+  previewTimer = setTimeout(() => {
+    activePreview.value = id
+  }, 300)
+}
+
+function hidePreview(id) {
+  clearTimeout(previewTimer)
+  previewTimer = setTimeout(() => {
+    if (activePreview.value === id) {
+      activePreview.value = null
+    }
+  }, 300)
+}
+
+function togglePreview(id) {
+  activePreview.value = activePreview.value === id ? null : id
 }
 
 function viewDocument(result) {
@@ -195,8 +214,7 @@ function viewDocument(result) {
 }
 
 function handleImageError(event) {
-  // Hide broken image, show fallback icon instead
-  event.target.style.display = 'none'
+  event.target.closest('.nv-popover')?.remove()
 }
 
 // Watch for query changes from URL
@@ -213,3 +231,147 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* Dense, information-first search results */
+.nv-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 10px 12px;
+  position: relative;
+  transition: background 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nv-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 92, 178, 0.2);
+}
+
+/* Metadata row - small, condensed */
+.nv-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.nv-page {
+  font-weight: 600;
+  color: #f4f4f6;
+}
+
+.nv-boat {
+  color: #a8acb3;
+}
+
+.nv-dot {
+  color: #6b6b7a;
+}
+
+.nv-doc {
+  margin-left: auto;
+  color: #9aa0a6;
+  border: 1px solid #3b3b4a;
+  padding: 2px 8px;
+  border-radius: 10px;
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+}
+
+/* Snippet - the star of the show */
+.nv-snippet {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #e6e6ea;
+  margin: 4px 0 8px;
+}
+
+/* Highlight styling - high contrast */
+.nv-snippet :deep(.nv-hi) {
+  background: #FFE666;
+  color: #1d1d1f;
+  border-radius: 3px;
+  padding: 1px 3px;
+  font-weight: inherit;
+}
+
+.nv-snippet :deep(.nv-hi strong) {
+  font-weight: 700;
+}
+
+/* Operations footer */
+.nv-ops {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.nv-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: rgba(255, 230, 102, 0.12);
+  color: #FFE666;
+  border: 1px solid rgba(255, 230, 102, 0.35);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nv-chip:hover {
+  background: rgba(255, 230, 102, 0.2);
+  border-color: rgba(255, 230, 102, 0.5);
+}
+
+.nv-link {
+  color: #cfa7ff;
+  font-weight: 500;
+}
+
+/* Diagram preview popover */
+.nv-popover {
+  position: absolute;
+  z-index: 50;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  padding: 8px;
+  background: #14131a;
+  border: 1px solid #2b2a34;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  max-width: 90vw;
+}
+
+.nv-popover img {
+  max-height: 320px;
+  max-width: 600px;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Reduce search bar height */
+.search-input {
+  height: 48px !important;
+}
+
+@media (max-width: 768px) {
+  .nv-doc {
+    display: none;
+  }
+
+  .nv-popover img {
+    max-width: calc(100vw - 40px);
+    max-height: 240px;
+  }
+}
+</style>
