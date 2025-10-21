@@ -10,8 +10,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import logger, { loggers } from './utils/logger.js';
-import { requestLogger } from './middleware/requestLogger.js';
+import logger, { requestLogger } from './utils/logger.js';
 
 // Load environment variables
 dotenv.config();
@@ -83,6 +82,10 @@ app.get('/health', async (req, res) => {
 });
 
 // Import route modules
+import authRoutes from './routes/auth.routes.js';
+import organizationRoutes from './routes/organization.routes.js';
+import permissionRoutes from './routes/permission.routes.js';
+import settingsRoutes from './routes/settings.routes.js';
 import uploadRoutes from './routes/upload.js';
 import quickOcrRoutes from './routes/quick-ocr.js';
 import jobsRoutes from './routes/jobs.js';
@@ -90,19 +93,38 @@ import searchRoutes from './routes/search.js';
 import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
 import statsRoutes from './routes/stats.js';
-import contextRoutes from './routes/context.js';
 import tocRoutes from './routes/toc.js';
 
 // API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/permissions', permissionRoutes);
+app.use('/api/admin/settings', settingsRoutes);
 app.use('/api/upload/quick-ocr', quickOcrRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/stats', statsRoutes);
-app.use('/api/context', contextRoutes);
 app.use('/api', tocRoutes);  // Handles /api/documents/:id/toc paths
 app.use('/api', imagesRoutes);
+
+// Client error logging endpoint (Tier 2)
+app.post('/api/client-log', express.json(), (req, res) => {
+  const { level, msg, context } = req.body;
+
+  if (!level || !msg) {
+    return res.status(400).json({ error: 'Missing level or msg' });
+  }
+
+  // Log with CLIENT_ prefix
+  const logLevel = level.toUpperCase();
+  const logMethod = logger[level.toLowerCase()] || logger.info;
+
+  logMethod(`CLIENT_${msg}`, context || {});
+
+  res.sendStatus(204);
+});
 
 // Error handling
 app.use((err, req, res, next) => {
