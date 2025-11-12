@@ -11,7 +11,7 @@
 
 ## Mission Statement
 
-Create compelling sales enablement materials for Riviera Plaisance meeting, translating technical architecture into business value with visual demonstrations and ROI justification.
+Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passive doc vault) that owners actually use because it solves real problems: inventory tracking, camera monitoring, maintenance reminders, expense visibility.
 
 ---
 
@@ -28,47 +28,50 @@ Create compelling sales enablement materials for Riviera Plaisance meeting, tran
 - Time: 15-minute presentation + 5-minute demo
 - Constraints: Technical audience (understands marine documentation)
 
-**Key Value Propositions (from Session 1):**
-- €8K-€33K warranty savings per yacht
-- €400K-€800K total warranty value tracking
-- 9-jurisdiction documentation automation
-- As-built package generation (6 hours → 20 minutes)
-- Remote monitoring via Home Assistant
+**Key Value Propositions (Sticky Engagement Model):**
+- **For Owners (daily use):** Camera check, maintenance reminders, expense tracking, crew contacts
+- **For Owners (resale):** Inventory tracking prevents €15K-€50K forgotten value
+- **For Brokers:** Sticky product = owners refer friends = more sales for Sylvain
+- **Differentiation:** Only boat app with daily engagement + perfect documentation
+- **Business model:** Included with every Riviera boat (Tesla app model)
 
 ---
 
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
-### Agent 1: Pitch Deck Structure
+### Agent 1: Pitch Deck Structure (Sticky Engagement Focus)
 **Design:**
-- Slide 1: Problem (broker documentation pain)
-- Slide 2: Market opportunity (Mediterranean yacht sales)
-- Slide 3: NaviDocs solution overview
-- Slide 4: Warranty tracking ROI (€8K-€33K savings)
-- Slide 5: Technical architecture (Home Assistant integration)
-- Slide 6: Implementation timeline (4-week roadmap)
-- Slide 7: Pricing & pilot program
+- Slide 1: Problem - "Owners ignore passive doc vaults" (show app abandonment stats)
+- Slide 2: Solution - "Daily-use app they actually open" (camera, maintenance, inventory)
+- Slide 3: Sticky features demo - Camera check, maintenance reminder, expense tracking
+- Slide 4: Resale value protection - €15K-€50K inventory tracking ROI
+- Slide 5: Broker benefit - Sticky product = referrals = more Riviera sales
+- Slide 6: Business model - Included with every boat (like Tesla app)
+- Slide 7: 4-week timeline + pilot program
 
-**Deliverable:** Pitch deck outline with speaker notes
+**Deliverable:** Pitch deck emphasizing daily engagement, NOT passive documentation
 
-### Agent 2: Demo Script Writer
+### Agent 2: Demo Script Writer (Daily Use Scenarios)
 **Create:**
-- 5-minute live demo walkthrough
-- Focus: Warranty expiration alert → claim package generation
-- Screen-by-screen annotations
-- Key talking points per screen
-- Objection pre-emption moments
+- 5-minute demo showing DAILY engagement (not just sale-time docs)
+- Screen 1: Camera check - "Is my boat OK?" (2 mins)
+- Screen 2: Maintenance reminder - "Engine service due" (1 min)
+- Screen 3: Inventory search - "Find tender warranty" with impeccable UX (1 min)
+- Screen 4: Expense tracking - "I've spent €18K this year" (1 min)
+- Key message: Owners open this app WEEKLY, not just at resale
 
-**Deliverable:** Demo script with screenshots placeholders
+**Deliverable:** Demo script showing sticky engagement, NOT passive vault
 
-### Agent 3: ROI Calculator Designer
+### Agent 3: ROI Calculator Designer (Inventory Focus)
 **Build:**
-- Input fields: yacht price, warranty count, annual claims
-- Calculations: warranty savings, documentation time savings, missed claim costs
-- Output: 3-year ROI projection
-- Comparison: Manual process vs NaviDocs automation
+- Input fields: boat purchase price, annual upgrades (€5K-€20K typical)
+- Inventory forgotten at resale: tender €15K, electronics €8K, blinds €3K
+- Total forgotten value over 10-year ownership: €30K-€50K
+- NaviDocs cost: €15/month × 120 months = €1,800
+- ROI: €30K-€50K saved - €1.8K cost = €28K-€48K net benefit
+- Comparison: With vs without inventory tracking
 
-**Deliverable:** ROI calculator spreadsheet/web app spec
+**Deliverable:** ROI calculator showing inventory tracking value (primary) + maintenance reminders (secondary)
 
 ### Agent 4: Objection Handling Playbook
 **Research:**
