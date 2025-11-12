@@ -11,113 +11,129 @@
 
 ## Mission Statement
 
-Gather comprehensive yacht sales market intelligence to support Riviera Plaisance sales pitch, focusing on Mediterranean yacht brokerage market and documentation pain points that NaviDocs solves.
+Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focusing on **recreational motor boat owners** (Jeanneau Prestige 40-50ft, €250K-€480K range) and the daily boat management pain points that NaviDocs solves with sticky engagement features.
 
 ---
 
 ## Context (Read First)
 
-**NaviDocs:** Marine documentation management platform with OCR, warranty tracking, and multi-jurisdiction document assembly.
+**NaviDocs:** Daily boat management app with sticky engagement (cameras, maintenance logs, inventory tracking) that happens to have perfect documentation when you need it.
 
-**Meeting:** Riviera Plaisance yacht sales agent (Sylvain) - pitch to include NaviDocs with every boat sale
+**Meeting:** Riviera Plaisance yacht sales agent (Sylvain) - pitch NaviDocs as included service with every boat sale
+
+**Riviera Plaisance Euro Voiles Profile:**
+- **Location:** Antibes, Golfe Juan, Beaulieu (French Riviera)
+- **Brands:** Jeanneau, Prestige Yachts, Fountaine Pajot, Monte Carlo Yachts
+- **Volume:** 150+ new boats/year, 20,500+ active customers
+- **Boat Types:** Recreational motor boats 40-50ft (€250K-€480K range)
+- **Owner Profile:** Weekend/holiday users (20-40 days/year), NOT crew-managed mega yachts
 
 **Current NaviDocs Status:**
 - 65% complete MVP
 - Production-ready architecture (13 tables, 40+ APIs)
 - OCR pipeline functional (Tesseract + Google Vision)
 - Multi-tenant ready
-- Gaps: MLS integration, sale workflow, expiration tracking
+- **Critical Gap:** Lacks sticky daily-use features (cameras, maintenance, inventory, contacts)
 
-**Key Documents Found (Local Research):**
-1. Warranty tracking prevents €8K-€33K losses per yacht
-2. €400K-€800K total active warranty value per yacht
-3. 9-jurisdiction documentation nightmare (flag changes)
-4. Charter operations need crew tracking, safety checklists
+**Key Insights from Local Research:**
+1. **Inventory tracking pain:** Owners forget €15K-€50K in upgrades when selling (tender, electronics, blinds)
+2. **Passive docs don't work:** Owners ignore documentation vault until emergency/sale
+3. **Sticky features needed:** Camera check, maintenance log, crew contacts, expense tracking
+4. **Warranty tracking:** Still valuable (€8K-€33K losses) but secondary to daily engagement
+5. **Search UX critical:** No long lists - structured, impeccable search results
 
 ---
 
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
-### Agent 1: Riviera Yacht Brokerage Market Size
+### Agent 1: Recreational Boat Market (Jeanneau Prestige Focus)
 **Research:**
-- Mediterranean yacht sales market size (2024-2025)
-- Number of yacht brokerages in French Riviera
-- Average yachts sold per brokerage per year
-- Average yacht prices (€300K-€5M range focus)
+- Jeanneau Prestige 40-50ft market (units sold annually, price range €250K-€480K)
+- Riviera Plaisance Euro Voiles volume (150+ boats/year validated)
+- Typical owner demographics (age, usage patterns, pain points)
+- Boat ownership costs (annual maintenance, storage, upgrades)
 
-**Deliverable:** Market sizing report with citations
+**Deliverable:** Market sizing report for recreational boat segment with citations
 
-### Agent 2: Competitor Analysis
+### Agent 2: Competitor Analysis (Boat Management Apps)
 **Research:**
-- Existing yacht documentation software (BoatVault, DeckDocs, etc.)
-- Pricing models ($50-$500/month range)
-- Feature gaps vs NaviDocs
-- Customer reviews and pain points
+- Boat management apps (Savvy Navvy, Dockwa, Boat Buddy, BoatVault, DeckDocs)
+- Daily engagement features (cameras, maintenance logs, inventory tracking)
+- Pricing models (€5-€50/month for consumer apps)
+- Feature gaps: Do they solve "forgot €15K tender" problem?
+- Customer reviews: What makes boat apps sticky vs abandoned?
 
-**Deliverable:** Competitive matrix with 5-10 competitors
+**Deliverable:** Competitive matrix showing NaviDocs differentiation (daily engagement + perfect docs)
 
-### Agent 3: Broker Pain Points
+### Agent 3: Owner Pain Points (Daily Boat Management)
 **Research:**
-- What documentation challenges do yacht brokers face?
-- Time spent on pre-sale documentation prep
-- Common deal delays due to missing paperwork
-- Value of "turnkey documentation" to buyers
+- What frustrates recreational boat owners? (maintenance tracking, expense tracking, remote monitoring)
+- "Forgot to sell the tender" problem - how common is inventory loss at resale?
+- Camera/remote monitoring needs (is my boat OK while I'm away?)
+- Crew/service contact management (who do I call for cleaning/repairs?)
+- Accounting pain (how much am I spending on this boat annually?)
 
-**Deliverable:** Pain point analysis with time/cost impacts
+**Deliverable:** Owner pain point analysis ranked by frequency and financial impact
 
-### Agent 4: Warranty Tracking Value Proposition
+### Agent 4: Inventory Tracking & Resale Value Protection
 **Research:**
-- Average warranty claims per yacht per year
-- Cost of missed warranty claims
-- Broker liability for undisclosed warranty issues
-- Value of warranty transfer during sale
+- Boat equipment upgrade market (tenders, electronics, deck refinishing, automatic systems)
+- Average upgrade spend per boat per year (Jeanneau Prestige 40-50ft owners)
+- "Forgotten inventory" problem - how much value is lost at resale?
+- Receipt/invoice management for boats (tax deduction, warranty claims, resale documentation)
+- Comparable: RV/car inventory tracking solutions
 
-**Deliverable:** ROI calculator inputs (warranty savings)
+**Deliverable:** ROI calculator for inventory tracking (€X forgotten value prevented)
 
-### Agent 5: Regulatory Requirements
+### Agent 5: Sticky Engagement Feature Research
 **Research:**
-- French maritime documentation requirements
-- Flag registration paperwork (French, Italian, Spanish flags)
-- Survey requirements for yacht sales
-- Insurance documentation needs
+- Boat camera/monitoring systems (Siren Marine, GOST, Nautic Alert)
+- Maintenance reminder apps (what makes them sticky vs ignored?)
+- Expense tracking for recreational vehicles (boats, RVs, classic cars)
+- Contact management for boat services (marina, mechanics, cleaners, charter crew)
+- User engagement metrics: daily active users for boat apps
 
-**Deliverable:** Regulatory checklist by jurisdiction
+**Deliverable:** Feature prioritization - which sticky features drive daily/weekly engagement?
 
-### Agent 6: Charter Fleet Documentation
+### Agent 6: Search UX Best Practices (Critical for Inventory)
 **Research:**
-- Charter company documentation requirements
-- Coast Guard compliance needs
-- Crew certification tracking
-- Pre-departure safety checklist regulations
+- Search UX for inventory/asset management (how to avoid long lists?)
+- Structured search results (Pinterest, Amazon, Airbnb approaches)
+- Filtering/faceting for boat equipment (by zone, category, value, warranty status)
+- Mobile-first search (owners check from phone)
+- Voice search for boat management ("Show me tender warranty")
 
-**Deliverable:** Charter fleet feature requirements
+**Deliverable:** Search UX recommendations - impeccable structured results, zero long lists
 
-### Agent 7: Pricing Strategy Research
+### Agent 7: Pricing Strategy Research (Broker-Included Model)
 **Research:**
-- SaaS pricing for marine software (€50-€500/month)
-- Per-boat vs per-brokerage pricing models
-- One-time setup fees vs recurring revenue
-- Freemium vs paid-only strategies
+- "Included with purchase" software models (Tesla app, luxury car apps)
+- Broker/dealer software bundling strategies
+- Freemium boat apps (free basic, paid premium features)
+- Monthly subscription tolerance (€5-€20/month for boat owners?)
+- Revenue share models (broker pays €X per boat sold, owner pays ongoing)
 
-**Deliverable:** Pricing model recommendations
+**Deliverable:** Pricing recommendation for "included with every Riviera boat" model
 
-### Agent 8: Integration Opportunities
+### Agent 8: Home Assistant & Camera Integration Research
 **Research:**
-- Yacht listing platforms (YachtWorld, Boat Trader)
-- Broker CRM systems (Salesforce, HubSpot marine)
-- MLS systems for yacht sales
-- Payment processing for documentation services
+- Home Assistant boat monitoring setups (camera feeds, bilge sensors, battery monitoring)
+- Marine camera systems compatible with HA (Hikvision, Reolink, marine-rated cameras)
+- Boat monitoring hardware (Victron, Siren Marine, GOST integrations)
+- Remote boat access use cases (security, maintenance alerts, peace of mind)
+- API integration patterns (webhook, MQTT, REST)
 
-**Deliverable:** Integration partnership targets
+**Deliverable:** Technical feasibility report for Home Assistant/camera integration
 
-### Agent 9: Sales Objection Research
+### Agent 9: Broker Sales Objection Research
 **Research:**
-- Why brokers resist new software adoption
-- Common objections to SaaS tools
-- What drives yacht broker technology decisions
-- Success stories from marine tech adoption
+- Why brokers resist including software with boat sales (complexity, support burden)
+- Owner adoption challenges (will they actually use it after purchase?)
+- Sticky product examples (what makes owners keep using bundled software?)
+- Success stories: software included with high-ticket purchases (luxury cars, boats, RVs)
+- "I already use X" objections (existing boat management apps)
 
-**Deliverable:** Objection handling playbook
+**Deliverable:** Objection handling playbook for Sylvain meeting
 
 ### Agent 10: Evidence Synthesis
 **Research:**

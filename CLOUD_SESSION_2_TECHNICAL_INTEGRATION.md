@@ -11,7 +11,7 @@
 
 ## Mission Statement
 
-Design comprehensive technical architecture for NaviDocs yacht sales features, leveraging InfraFabric's IF.bus and multi-agent patterns. Create 4-week implementation roadmap with acceptance criteria.
+Design technical architecture for **sticky daily-use features** (inventory tracking, cameras, maintenance logs, contacts, accounting) that make NaviDocs indispensable to recreational boat owners. Documentation features are secondary to engagement.
 
 ---
 
@@ -30,12 +30,13 @@ Design comprehensive technical architecture for NaviDocs yacht sales features, l
 - OCR: Tesseract + Google Vision
 - Auth: JWT + bcrypt
 
-**Integration Gaps (from Session 1):**
-- No MLS/listing platform integration
-- No sale workflow automation
-- No expiration tracking (surveys, warranties)
-- Limited notifications (only password reset)
-- No collaboration features (e-signatures)
+**Critical Feature Gaps (from Session 1):**
+- **No inventory tracking** (€15K-€50K forgotten value at resale)
+- **No camera/monitoring integration** (owners want "is my boat OK?" reassurance)
+- **No maintenance log** (when was last engine service? upcoming work alerts?)
+- **No contact management** (crew, marina, mechanics, cleaners)
+- **No expense tracking** (how much am I spending on this boat?)
+- **No impeccable search** (avoid long lists, structured faceted results)
 
 ---
 
@@ -50,59 +51,67 @@ Design comprehensive technical architecture for NaviDocs yacht sales features, l
 
 **Deliverable:** Architecture map with integration points
 
-### Agent 2: Warranty Tracking System Design
+### Agent 2: Inventory Tracking System Design (CRITICAL)
 **Design:**
-- Database schema for warranties (expiration, claims, transfers)
-- Expiration alert system (90, 30, 14 days)
-- Auto claim package generator workflow
-- Jurisdiction-aware document assembly
+- Database schema: `boat_inventory` (item_name, category, zone, purchase_date, purchase_price, receipt_url, warranty_expiration, current_value)
+- Categories: tender/zodiac, electronics, engine, deck, interior, safety
+- Zones: salon, galley, helm, engine room, stern storage
+- OCR receipt extraction (auto-populate item, price, date)
+- Resale value calculator (total upgrades since purchase)
+- Search facets (by category, zone, value range, warranty status)
 
-**Deliverable:** Warranty feature spec with DB migrations
+**Deliverable:** Inventory tracking spec with impeccable search UX
 
-### Agent 3: Sale Workflow Automation
+### Agent 3: Maintenance Log & Reminder System
 **Design:**
-- "As-built" document package generator
-- Pre-sale documentation checklist
-- Buyer handoff workflow (document transfer)
-- Broker collaboration tools (comments, approvals)
+- Database schema: `maintenance_log` (service_type, date, cost, provider, next_due_date, engine_hours)
+- Service types: engine, electronics, hull, deck, safety equipment
+- Reminder alerts (based on date OR engine hours)
+- Service provider contacts (auto-suggest from past services)
+- Expense rollup (total maintenance spend YTD, annual)
 
-**Deliverable:** Sale workflow spec with API endpoints
+**Deliverable:** Maintenance tracking spec with smart reminders
 
-### Agent 4: Home Assistant Integration
+### Agent 4: Camera & Remote Monitoring Integration (STICKY!)
 **Research + Design:**
-- Home Assistant webhook API
-- MQTT integration for onboard sensors
-- Camera system integration (security monitoring)
-- Automation triggers (document expiration → alert)
+- Home Assistant camera feed integration (Hikvision, Reolink, marine cameras)
+- Webhook architecture (NaviDocs ← HA events: motion detected, battery low, bilge alert)
+- Camera snapshot storage (link to boat, timestamp, auto-cleanup old images)
+- Mobile-first UI (owners check from phone: "is my boat OK?")
+- Use cases: security monitoring, dock check, weather damage assessment
 
-**Deliverable:** Home Assistant integration architecture
+**Deliverable:** Camera/HA integration architecture with peace-of-mind UX
 
-### Agent 5: Offline Mode Enhancement
+### Agent 5: Contact Management System
 **Design:**
-- Service worker caching strategy
-- Critical manual pre-caching (engine, safety)
-- Offline sync queue (upload when online)
-- Conflict resolution (offline edits)
+- Database schema: `boat_contacts` (name, role, phone, email, notes, last_used)
+- Roles: marina, mechanic, cleaner, charter crew, electrician, surveyor
+- One-tap call/email from mobile
+- Auto-suggest from maintenance log (provider → contact)
+- Quick actions: "Call my mechanic", "Email charter crew"
 
-**Deliverable:** Offline-first PWA spec
+**Deliverable:** Contact management spec with mobile-first UX
 
-### Agent 6: MLS/Listing Platform Integration
-**Research + Design:**
-- YachtWorld, Boat Trader APIs
-- Broker CRM sync (Salesforce, HubSpot)
-- Automated listing updates (documentation status)
-- Document sharing with prospective buyers
+### Agent 6: Expense Tracking & Accounting
+**Design:**
+- Database schema: expense tracking across inventory, maintenance, marina fees
+- Expense categories (maintenance, upgrades, insurance, marina, fuel, crew)
+- Annual/monthly rollups (how much is this boat costing me?)
+- Budget alerts ("You've spent €15K this year, €3K over budget")
+- Tax deduction report (for chartered boats)
 
-**Deliverable:** MLS integration spec with API contracts
+**Deliverable:** Expense tracking spec with budget management
 
-### Agent 7: Security & Compliance
-**Audit:**
-- Current security issues (5 vulnerabilities from handover doc)
-- DELETE endpoint protection needed
-- Auth enforcement gaps
-- GDPR/data protection requirements (EU yachts)
+### Agent 7: Impeccable Search UX Design (CRITICAL)
+**Design:**
+- Search architecture (Meilisearch faceted search)
+- Structured results (NO long lists - Pinterest/Airbnb grid layout)
+- Facets: category, zone, value range, warranty status, date range
+- Mobile-first (owners search from phone)
+- Voice search support ("Show me tender warranty")
+- Quick filters: "Show expensive items", "Show expiring warranties"
 
-**Deliverable:** Security remediation plan
+**Deliverable:** Search UX spec with visual mockups (avoid long lists!)
 
 ### Agent 8: Notification System Design
 **Design:**
