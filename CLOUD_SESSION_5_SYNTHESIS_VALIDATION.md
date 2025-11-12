@@ -1,11 +1,11 @@
 # Cloud Session 5: Evidence Synthesis & Guardian Validation
-## NaviDocs Intelligence Dossier & IF.guard Consensus
+## NaviDocs Sticky Engagement Model - Final Dossier
 
 **Session Type:** Guardian Council Coordinator + Evidence Curator
 **Lead Agent:** Sonnet (synthesis + validation)
 **Swarm Size:** 10 Haiku agents
 **Token Budget:** $25 (15K Sonnet + 60K Haiku)
-**Output:** Final intelligence dossier + Guardian Council vote + citation database
+**Output:** Intelligence dossier validating inventory tracking + daily engagement model
 
 ---
 
