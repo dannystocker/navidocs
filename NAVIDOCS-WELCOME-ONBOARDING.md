@@ -52,14 +52,16 @@ Riviera Plaisance Euro Voiles sells 150+ recreational motor boats per year (Jean
 
 **Key Features:**
 1. **Document tracking & versioning** (core value prop) - warranties, manuals, service records with IF.TTT traceability
-2. **Inventory tracking** - prevent forgotten value at resale
-3. **WhatsApp group integration** - boat-specific chat with owner, after-sales, captain, stakeholders
-4. **AI agent in group chat** - answers questions, posts updates, logs conversations (IF.TTT compliance)
-5. **Camera monitoring** - "is my boat OK?"
-6. **Maintenance log** - service reminders
-7. **Contact management** - one-tap call marina/mechanic
-8. **Expense tracking** - annual spend visibility
-9. **Impeccable search** - structured results, NO long lists
+2. **WhatsApp group integration** - boat-specific chat with owner, after-sales, captain, stakeholders
+3. **AI agent in group chat** - answers questions, posts updates, logs conversations (IF.TTT compliance)
+4. **Receipt/invoice upload + OCR** - photo → auto-extract amount, vendor, date, VAT
+5. **Multi-user accounting** - owner vs captain expenditure tracking with reimbursement workflow
+6. **Accounting module** (Spliit fork, MIT) - expense splitting, balance tracking, multi-currency, PWA mobile
+7. **Inventory tracking** - prevent forgotten value at resale
+8. **Camera monitoring** - "is my boat OK?"
+9. **Maintenance log** - service reminders
+10. **Contact management** - one-tap call marina/mechanic
+11. **Impeccable search** - structured results, NO long lists
 
 ### **Your Mission**
 

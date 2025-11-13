@@ -125,17 +125,50 @@ Each agent MUST:
 
 **Deliverable:** Contact management spec with mobile-first UX
 
-### Agent 6: Expense Tracking & Accounting
+### Agent 6: Receipt/Invoice Upload + Accounting Module Integration
 **AGENT ID:** S2-H06
 **
-**Design:**
-- Database schema: expense tracking across inventory, maintenance, marina fees
-- Expense categories (maintenance, upgrades, insurance, marina, fuel, crew)
-- Annual/monthly rollups (how much is this boat costing me?)
-- Budget alerts ("You've spent €15K this year, €3K over budget")
-- Tax deduction report (for chartered boats)
+**Research + Design:**
 
-**Deliverable:** Expense tracking spec with budget management
+**Open-Source Accounting Module Research:**
+- Review `/home/setup/navidocs/YACHT_ACCOUNTING_RESEARCH.md` (Haiku research completed)
+- **Recommended:** Spliit (MIT, 2.3K stars) - receipt scanning, expense splitting, PWA mobile
+- **Alternative:** SplitPro (MIT, 916 stars) - BigInt precision, multi-currency
+- **Foundation:** Medici (MIT, 330 stars) - double-entry GL, hierarchical accounts
+
+**Multi-User Expense Tracking:**
+- **Owner expenditure:**
+  - Cash payments (€X for marina, €Y for fuel)
+  - Card payments (auto-import from bank APIs if available)
+  - Bank transfers (boat maintenance, insurance)
+  - Categories: marina fees, insurance, major upgrades, professional services
+- **Captain expenditure:**
+  - Boat card (provisioning, fuel, minor repairs)
+  - Boat cash (tips, small purchases)
+  - Personal cash to reimburse (meals, supplies bought with personal funds)
+  - Categories: provisions, fuel, minor repairs, supplies, crew meals
+- **Reimbursement workflow:**
+  - Captain submits expense with receipt photo
+  - NaviDocs OCR extracts (amount, vendor, date, category)
+  - Owner approves/rejects via WhatsApp or app
+  - Mark as "paid" when reimbursed
+
+**Receipt/Invoice Upload Integration:**
+- Photo upload via mobile (camera + gallery)
+- OCR processing (existing Tesseract + Google Vision pipeline)
+- Auto-extraction: amount, vendor, date, VAT, category
+- Link to maintenance log, inventory, or general expense
+- Store original receipt image + extracted structured data
+- IF.TTT compliance: SHA-256 hash, ed25519 signature, citation ID
+
+**Accounting Module Architecture:**
+- Fork Spliit or integrate as library (MIT license allows)
+- Customize for boat workflows (owner vs captain vs crew)
+- Multi-currency support (€, $, £ for international owners)
+- Export to Excel/CSV for accountant (tax deduction reports)
+- Integration with WhatsApp: "@NaviDocs log expense €45 fuel" → AI creates expense entry
+
+**Deliverable:** Accounting module integration spec + receipt OCR workflow + multi-user expense tracking design
 
 ### Agent 7: Impeccable Search UX Design (CRITICAL)
 **AGENT ID:** S2-H07
