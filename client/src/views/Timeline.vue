@@ -12,8 +12,16 @@
       </div>
     </header>
 
-    <div v-if="loading && events.length === 0" class="loading">
-      Loading timeline...
+    <!-- Skeleton Loading -->
+    <div v-if="loading && events.length === 0" class="loading-skeleton">
+      <div v-for="i in 3" :key="i" class="skeleton-event">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-text"></div>
+          <div class="skeleton-text short"></div>
+        </div>
+      </div>
     </div>
 
     <div v-else class="timeline-container">
@@ -54,8 +62,14 @@
         </button>
       </div>
 
+      <!-- Enhanced Empty State -->
       <div v-if="events.length === 0 && !loading" class="empty-state">
-        <p>No activity yet. Upload a document to get started!</p>
+        <div class="empty-icon">📋</div>
+        <h2>No activity yet</h2>
+        <p>Upload your first document to see activity here!</p>
+        <router-link to="/" class="btn-primary">
+          Upload Document
+        </router-link>
       </div>
     </div>
   </div>
@@ -316,15 +330,166 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
+/* Skeleton Loading */
+.loading-skeleton {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.skeleton-event {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.skeleton-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-content {
+  flex: 1;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 60%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-text.short {
+  width: 40%;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Enhanced Empty State */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  color: #757575;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.loading {
-  text-align: center;
-  padding: 4rem 2rem;
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #424242;
+}
+
+.empty-state p {
   color: #757575;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: #1976d2;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1565c0;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .timeline-page {
+    padding: 1rem;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .timeline-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .filters {
+    width: 100%;
+  }
+
+  .filters select {
+    width: 100%;
+  }
+
+  .timeline-event {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .event-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .event-header {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+
+  .skeleton-event {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .skeleton-title {
+    width: 80%;
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.25rem;
+  }
 }
 </style>
