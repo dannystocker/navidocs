@@ -52,3 +52,8 @@ meilisearch-data/
 docs/handover/PATHS_AND_CREDENTIALS.md
 meilisearch
 data/
+
+# Manual test files
+playwright.config.manual.js
+tests/e2e/frontend-detailed.spec.js
+tests/e2e/frontend-manual.spec.js
