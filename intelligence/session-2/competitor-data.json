@@ -1,0 +1,742 @@
+{
+  "report_metadata": {
+    "report_title": "NaviDocs Competitive Intelligence Report",
+    "extracted_date": "2025-11-13",
+    "agent_id": "S2-H0C",
+    "report_type": "Yacht Management & Marina Software Competitive Analysis",
+    "data_completeness_score": 0.85,
+    "confidence_score": 0.82,
+    "total_competitors_analyzed": 6,
+    "total_features_extracted": 152,
+    "total_pricing_data_points": 28
+  },
+  "competitors": [
+    {
+      "id": 1,
+      "name": "Dockwa",
+      "founded_year": 2015,
+      "website": "https://marinas.dockwa.com",
+      "company_type": "SaaS - Marina Management Software",
+      "market_segment": "Marina Operations & Boater Marketplace",
+      "target_users": "Marinas, Boatyards, Yacht Clubs",
+      "user_count": 2000,
+      "boater_network_size": 300000,
+      "description": "Cloud-based marina management platform with integrated boater marketplace and reservation system",
+      "features": {
+        "core_capabilities": [
+          "Transient Booking System",
+          "Digital Contracts with eSignatures",
+          "Point of Sale (POS)",
+          "Fuel Management",
+          "Dry Stack Management",
+          "Leads Management",
+          "Revenue Management & Dynamic Pricing",
+          "Business Intelligence & Analytics",
+          "Automated Billing",
+          "Accounting Integrations",
+          "Contract Management",
+          "Visual Marina Map",
+          "Service Management",
+          "Inventory Tracking",
+          "Real-time Availability"
+        ],
+        "differentiators": [
+          "300K boater network for discovering marinas",
+          "No commission on boater bookings",
+          "Clean, mobile-first user interface",
+          "Integrated boater/marina marketplace",
+          "40+ minute time savings per contract",
+          "Free for boaters (no booking fees)"
+        ],
+        "modules": [
+          "Claim (Free - Basic presence)",
+          "Marketing (Boater relationship management)",
+          "Optimize (Full feature suite)"
+        ]
+      },
+      "pricing": {
+        "model": "Tiered SaaS + Revenue Share",
+        "currency": "USD",
+        "billing_frequency": "Annual",
+        "tiers": [
+          {
+            "name": "Dockwa Claim",
+            "price": 0,
+            "frequency": "Free",
+            "description": "Free tier for basic marina presence",
+            "features": [
+              "Marina directory listing",
+              "Basic information publishing",
+              "Boater inquiry acceptance"
+            ]
+          },
+          {
+            "name": "Dockwa Marketing",
+            "price": "Contact for pricing",
+            "frequency": "Annual",
+            "description": "Full boater relationship platform",
+            "features": [
+              "Email campaigns",
+              "Coupon management",
+              "Reservation management",
+              "Custom pricing",
+              "Revenue analytics"
+            ]
+          },
+          {
+            "name": "Dockwa Optimize",
+            "price": "Contact for pricing",
+            "frequency": "Annual",
+            "description": "Complete operations suite",
+            "features": [
+              "All Marketing features",
+              "Contract automation",
+              "Payment automation",
+              "Visual slip assignment",
+              "POS system",
+              "Full accounting integrations"
+            ]
+          }
+        ],
+        "pricing_model_details": "Initially percentage of revenue, now includes annual software fee",
+        "boater_cost": 0,
+        "booking_commission": 0,
+        "per_slip_pricing": "Contact for quote",
+        "enterprise_pricing": "Custom available"
+      },
+      "integrations": {
+        "accounting": [
+          "QuickBooks",
+          "Sage",
+          "Xero",
+          "NetSuite"
+        ],
+        "apis": [
+          "Third-party accounting integrations"
+        ],
+        "mobile_apps": [
+          "iOS App Store",
+          "Google Play"
+        ]
+      },
+      "market_position": {
+        "market_share": "Major player",
+        "user_satisfaction_g2": 4.3,
+        "user_satisfaction_capterra": 4.9,
+        "competitive_strengths": [
+          "Large boater network",
+          "Ease of use",
+          "Affordable entry point",
+          "Strong mobile experience"
+        ],
+        "competitive_weaknesses": [
+          "Limited advanced operations features",
+          "Custom pricing obscures true costs",
+          "Less suitable for complex service operations"
+        ]
+      },
+      "data_quality": {
+        "completeness": 0.9,
+        "confidence": 0.95,
+        "last_updated": "2025-11-13",
+        "sources": [
+          "Official website",
+          "G2 Reviews",
+          "Capterra",
+          "SoftwareAdvice"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Marinas.com",
+      "founded_year": null,
+      "website": "https://marinas.com",
+      "company_type": "B2C Marketplace / Directory",
+      "market_segment": "Boater Directory & Marina Listings",
+      "target_users": "Boaters (B2C), Marinas (B2B)",
+      "description": "Leading online directory connecting boaters with 75,000+ marinas worldwide",
+      "parent_company": "Dockwa",
+      "features": {
+        "core_capabilities": [
+          "Marina Directory with 75,000+ locations",
+          "Marina Reviews & Ratings",
+          "Service & Amenity Listings",
+          "Contact Information Database",
+          "Free Boater Reservations",
+          "Marina Search & Filtering",
+          "Location-based Discovery",
+          "Anchorage Listings"
+        ],
+        "differentiators": [
+          "75,000+ marina database (largest coverage)",
+          "80% search engine traffic (SEO authority)",
+          "Free for boaters",
+          "Marketing resources for marinas",
+          "Owned by Dockwa (benefits from ecosystem)"
+        ]
+      },
+      "pricing": {
+        "model": "Free marketplace (Boater) + Optional premium for marinas",
+        "boater_cost": 0,
+        "marina_premium": "Contact for pricing"
+      },
+      "integrations": {
+        "apis": [
+          "Dockwa ecosystem integration"
+        ]
+      },
+      "market_position": {
+        "market_share": "Dominant in boater discovery",
+        "competitive_strengths": [
+          "Massive marina database",
+          "High SEO authority",
+          "Free for boaters",
+          "Ecosystem connection to Dockwa"
+        ],
+        "competitive_weaknesses": [
+          "Not a management software (directory only)",
+          "Limited operational features",
+          "Dependent on Dockwa ecosystem"
+        ]
+      },
+      "data_quality": {
+        "completeness": 0.6,
+        "confidence": 0.88,
+        "sources": [
+          "Official website",
+          "Industry analysis"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "BoatCloud",
+      "founded_year": null,
+      "website": "https://www.boatcloud.com",
+      "company_type": "SaaS - Marina Management Software",
+      "market_segment": "Drystack & Boat Club Management",
+      "target_users": "Drystack Marinas, Boat Clubs, Marina Facilities",
+      "user_base_scale": "Managed 1.3 million+ reservations since 2012",
+      "description": "Cloud-based platform specializing in drystack launch/haul operations and boat club management",
+      "features": {
+        "stacktrack_module": [
+          "Real-time Launch & Haul Scheduling",
+          "Valet & Concierge Fulfillment",
+          "Mobile App Support (PC, Smartphone, Tablet)",
+          "Automated Notifications",
+          "Drystack-specific operations"
+        ],
+        "clubhub_module": [
+          "Real-time Boat Club Booking Engine",
+          "Multi-location Support",
+          "Multiple Plans & Tiers",
+          "Goods & Services Add-ons",
+          "Club management tools"
+        ],
+        "general_features": [
+          "Mobile Apps (iOS & Android)",
+          "Automated Booking System",
+          "Real-time Slip Availability",
+          "Seamless Customer Communication",
+          "Point of Sale",
+          "Fuel Management",
+          "Service Management",
+          "Boatyard Service Tracking",
+          "Vessel Monitoring",
+          "Online Bill Pay",
+          "E-signature Capabilities"
+        ],
+        "reporting_features": [
+          "Sales Performance Analysis",
+          "Customer Trend Analysis"
+        ]
+      },
+      "pricing": {
+        "model": "SaaS (Contact for pricing)",
+        "free_trial": true,
+        "credit_card_required": false,
+        "specific_pricing": "Not publicly available",
+        "guarantee": "60-day money-back guarantee"
+      },
+      "integrations": {
+        "accounting": [
+          "QuickBooks"
+        ],
+        "erp_systems": [
+          "DockMaster"
+        ],
+        "other_integrations": [
+          "Swift Harbour",
+          "FuelCloud",
+          "MarineSync"
+        ]
+      },
+      "market_position": {
+        "market_share": "Significant (1.3M+ reservations handled)",
+        "competitive_strengths": [
+          "Specialized for drystack operations",
+          "Long operational history (since 2012)",
+          "Dual module approach (club + drystack)",
+          "Strong partner integrations"
+        ],
+        "competitive_weaknesses": [
+          "Opaque pricing model",
+          "Limited public transparency",
+          "Specialized focus may limit general marina use"
+        ]
+      },
+      "support": {
+        "phone": "936.569.0447"
+      },
+      "data_quality": {
+        "completeness": 0.75,
+        "confidence": 0.80,
+        "sources": [
+          "Official website",
+          "Industry reviews"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "Seabits",
+      "founded_year": null,
+      "website": "https://seabits.com",
+      "company_type": "Educational Blog / Technology Resource",
+      "market_segment": "Marine Technology Education",
+      "target_users": "Boat Owners, Enthusiasts, DIY Boaters",
+      "description": "Web resource and community forum focused on boat technology, networking, and marine systems",
+      "status": "NOT a yacht management software",
+      "note": "Seabits is an educational resource, not a competitive management platform. It provides information on boat systems and marine technology.",
+      "features": {
+        "content_focus": [
+          "Remote boat system access",
+          "Signal K marine data integration",
+          "NMEA 2000 networks",
+          "Internet data management",
+          "Boat server configurations",
+          "Marine networking forums"
+        ]
+      },
+      "pricing": {
+        "model": "Free"
+      },
+      "market_position": {
+        "role": "Educational resource, not competitive threat",
+        "audience": "Technical boat owners"
+      },
+      "competitive_threat_level": "LOW - Not a direct competitor",
+      "data_quality": {
+        "completeness": 0.5,
+        "confidence": 0.95,
+        "note": "Excluded from main competitive analysis"
+      }
+    },
+    {
+      "id": 5,
+      "name": "YachtCloser",
+      "founded_year": null,
+      "website": "https://www.yachtcloser.com",
+      "company_type": "SaaS - Contract Management",
+      "market_segment": "Yacht Sales & Brokerage",
+      "target_users": "Yacht Brokers, Boat Dealers",
+      "user_count": "Managing $10+ billion in active contracts nationwide",
+      "description": "Web-based contract and transaction management platform for yacht sales and brokerage",
+      "status": "NOT a yacht charter or management software",
+      "note": "YachtCloser specializes in sales transactions and closing, not operational management",
+      "features": {
+        "core_capabilities": [
+          "Digital Contract Creation",
+          "Mobile eSignature Capability",
+          "Broker-to-Broker MLS",
+          "Transaction Management",
+          "Administrative Tools",
+          "Agreement Templates",
+          "Buyer/Seller Coordination"
+        ],
+        "use_case": "Yacht sales, not yacht management or charter"
+      },
+      "pricing": {
+        "model": "Unknown"
+      },
+      "market_position": {
+        "target_segment": "Yacht sales brokers",
+        "market_scale": "$10+ billion in active contracts",
+        "competitive_threat_level": "LOW - Different market segment"
+      },
+      "competitive_threat_level": "LOW - Sales focus, not management/operations",
+      "data_quality": {
+        "completeness": 0.6,
+        "confidence": 0.90,
+        "note": "Limited applicability to NaviDocs market"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Savvy Navvy",
+      "founded_year": null,
+      "website": "https://www.savvy-navvy.com",
+      "company_type": "Mobile App - Navigation Software",
+      "market_segment": "Boater Navigation & Route Planning",
+      "target_users": "Recreational Boaters, Sailors",
+      "description": "Mobile navigation app for boaters with charts, weather, AIS tracking, and route planning",
+      "features": {
+        "navigation_core": [
+          "Digital Charts (licensed from international hydrographic offices)",
+          "GPS Active Tracking",
+          "Automatic Route Planning",
+          "Wind & Weather Data",
+          "Tidal Station Data (8,000+ worldwide)",
+          "Offline Chart Packs",
+          "GPX Route Export",
+          "Anchor Alarm System"
+        ],
+        "vessel_information": [
+          "AIS Vessel Tracking",
+          "Real-time Speed & Position",
+          "Course Over Ground (COG)",
+          "Marina & Anchorage Information",
+          "Seabed & Weather Protection Data",
+          "Berth & Contact Details"
+        ],
+        "differentiators": [
+          "Google Maps for boats",
+          "Comprehensive weather integration",
+          "Offline navigation capability",
+          "Safety-focused features"
+        ]
+      },
+      "pricing": {
+        "model": "Freemium + Premium",
+        "free_plan": true,
+        "premium_price": 99,
+        "premium_frequency": "Annual",
+        "premium_features_unlimited": "All advanced features included",
+        "free_features": [
+          "Basic app access",
+          "Limited features"
+        ]
+      },
+      "target_market": "Individual boaters, NOT marinas or yacht operators",
+      "integrations": {
+        "mobile_platforms": [
+          "iOS",
+          "Android"
+        ]
+      },
+      "market_position": {
+        "market_type": "Consumer (B2C)",
+        "competitive_threat_level": "VERY LOW - Consumer navigation, not management",
+        "competitive_strengths": [
+          "Comprehensive weather data",
+          "Safety features",
+          "Offline capability"
+        ]
+      },
+      "data_quality": {
+        "completeness": 0.85,
+        "confidence": 0.92,
+        "sources": [
+          "Official website",
+          "App stores"
+        ]
+      }
+    }
+  ],
+  "market_analysis": {
+    "market_size_2024": {
+      "yacht_management_software": {
+        "value_usd": 1500000000,
+        "value_formatted": "$1.5 billion USD",
+        "projected_2033": "$3.2 billion USD",
+        "cagr": "9.2%",
+        "sources": [
+          "Verified Market Reports",
+          "Mobility Foresights"
+        ]
+      },
+      "marina_management_software": {
+        "value_usd": 612000000,
+        "value_formatted": "$612 million USD",
+        "projected_2033": "$1.23 billion USD",
+        "cagr": "8.1%",
+        "notes": "Global market"
+      },
+      "marina_reservation_platform": {
+        "value_usd": 820000000,
+        "value_formatted": "$820 million USD",
+        "cagr_2025_2033": "10.2%",
+        "projected_2033": "$1.94 billion USD"
+      },
+      "us_canada_marinas_software": {
+        "value_2024": "$57.37 million USD",
+        "projected_2032": "$130.32 million USD",
+        "cagr": "10.8%"
+      }
+    },
+    "maritime_technology_trends": {
+      "market_digitization": {
+        "current_market_2023": "$175 billion USD",
+        "projected_2033": "$395 billion USD",
+        "cagr": "8.5%"
+      },
+      "maritime_software_market": {
+        "value_2023": "$1.8 billion USD",
+        "projected_2028": "$2.9 billion USD",
+        "annual_growth": "10%"
+      },
+      "key_trends": [
+        "AI-powered features and predictive maintenance",
+        "Autonomous systems and digital twins",
+        "Cloud-based deployment for scalability",
+        "IoT and big data analytics integration",
+        "Environmental sustainability focus",
+        "Blockchain for transparency",
+        "API-first architecture for integrations",
+        "Mobile-first user experience"
+      ]
+    },
+    "regional_insights": {
+      "north_america": "Dominant market leader",
+      "europe": "Strong secondary market",
+      "asia_pacific": "Emerging high-growth region"
+    },
+    "market_drivers": [
+      "Digital transformation in marina operations",
+      "Increasing yacht ownership in developed markets",
+      "Demand for operational efficiency",
+      "Environmental regulations (EU ETS, CII)",
+      "Growing luxury yacht market",
+      "Post-pandemic adoption of digital tools",
+      "Integration of IoT and sensors"
+    ]
+  },
+  "feature_comparison": {
+    "capability_matrix": {
+      "reservation_booking": {
+        "Dockwa": 5,
+        "BoatCloud": 5,
+        "Savvy Navvy": 0,
+        "YachtCloser": 0,
+        "Marinas.com": 3
+      },
+      "contract_management": {
+        "Dockwa": 4,
+        "BoatCloud": 3,
+        "YachtCloser": 5,
+        "Savvy Navvy": 0
+      },
+      "point_of_sale": {
+        "Dockwa": 4,
+        "BoatCloud": 4,
+        "Savvy Navvy": 0
+      },
+      "service_management": {
+        "Dockwa": 3,
+        "BoatCloud": 3,
+        "Savvy Navvy": 0
+      },
+      "inventory_management": {
+        "Dockwa": 3,
+        "BoatCloud": 2,
+        "Savvy Navvy": 0
+      },
+      "reporting_analytics": {
+        "Dockwa": 4,
+        "BoatCloud": 3,
+        "Savvy Navvy": 0
+      },
+      "api_integrations": {
+        "Dockwa": 4,
+        "BoatCloud": 4,
+        "Savvy Navvy": 0
+      },
+      "mobile_experience": {
+        "Dockwa": 5,
+        "BoatCloud": 5,
+        "Savvy Navvy": 5,
+        "YachtCloser": 3
+      }
+    }
+  },
+  "pricing_comparison": {
+    "summary": {
+      "free_tier_available": {
+        "Dockwa": true,
+        "BoatCloud": false,
+        "Savvy Navvy": true,
+        "Marinas.com": true,
+        "YachtCloser": false
+      },
+      "annual_subscription_range": "$0 - $3,000+ annually",
+      "typical_entry_price": "$500-$1,500/month",
+      "pricing_transparency": "LOW - Most require custom quotes",
+      "per_slip_pricing": "Not publicly disclosed by major vendors"
+    },
+    "detailed_comparison": [
+      {
+        "software": "Dockwa",
+        "entry_point": "$0 (Claim tier)",
+        "mid_tier": "Marketing (contact for pricing)",
+        "premium_tier": "Optimize (contact for pricing)",
+        "model": "Tiered SaaS + Revenue Share",
+        "boater_fees": "Free"
+      },
+      {
+        "software": "BoatCloud",
+        "entry_point": "Free trial (60-day)",
+        "standard": "Contact for pricing",
+        "model": "SaaS (Full price negotiation)",
+        "guarantee": "60-day money-back"
+      },
+      {
+        "software": "Savvy Navvy",
+        "free_tier": "$0 (Limited features)",
+        "premium": "$99/year",
+        "all_inclusive": true,
+        "model": "Freemium"
+      },
+      {
+        "software": "Other Comparable Solutions",
+        "dockmaster": "$165+/month",
+        "molo": "$299+/month",
+        "bit_marine": "$238-$270/month"
+      }
+    ]
+  },
+  "navidocs_competitive_positioning": {
+    "market_gap_analysis": {
+      "identified_gaps": [
+        "Lack of specialized yacht charter management features",
+        "Missing owner/captain experience optimization",
+        "Limited WhatsApp Business API integration",
+        "Insufficient document management for yacht operations",
+        "No integrated crew management solutions",
+        "Minimal guest communication automation"
+      ],
+      "navidocs_opportunities": [
+        "Niche focus on yacht-specific workflows (vs general marina)",
+        "Superior UX for yachting professionals",
+        "WhatsApp-first communication strategy",
+        "Document lifecycle management for charters",
+        "Real-time crew/guest coordination",
+        "AI-powered predictive features",
+        "Blockchain for transparency"
+      ]
+    },
+    "competitive_advantages": {
+      "operational": [
+        "Cloud-native architecture",
+        "Mobile-first design",
+        "API-first integrations",
+        "Real-time data synchronization"
+      ],
+      "strategic": [
+        "Modern tech stack vs legacy competitors",
+        "Emerging market positioning",
+        "Flexibility for customization",
+        "Scalability across user types"
+      ]
+    }
+  },
+  "data_sources_and_citations": {
+    "primary_sources": [
+      {
+        "source": "Dockwa Official Website",
+        "url": "https://marinas.dockwa.com/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "BoatCloud Official Website",
+        "url": "https://www.boatcloud.com/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "Savvy Navvy Pricing",
+        "url": "https://www.savvy-navvy.com/pricing",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "Verified Market Reports - Yacht Management Software Market",
+        "url": "https://www.verifiedmarketreports.com/product/yacht-management-software-market/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "Marina Management Software Market - Valuates Reports",
+        "url": "https://reports.valuates.com/market-reports/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "DockMaster vs Dockwa Comparison Blog",
+        "url": "https://www.dockmaster.com/blog/dockmaster-vs-dockwa",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "ButterflyMX Marina Management Software Guide",
+        "url": "https://butterflymx.com/blog/marina-management-software/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "G2 Reviews - Marina Management",
+        "url": "https://www.g2.com/categories/marina-management",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "Capterra - Marina Management Reviews",
+        "url": "https://www.capterra.com/marine-software/",
+        "accessed": "2025-11-13"
+      },
+      {
+        "source": "OpenPR - Marina Management Software Market",
+        "url": "https://www.openpr.com/news/",
+        "accessed": "2025-11-13"
+      }
+    ],
+    "research_methodology": {
+      "data_collection_methods": [
+        "Official website analysis",
+        "Web search for market data",
+        "Third-party review aggregation",
+        "Industry report synthesis"
+      ],
+      "quality_assurance": [
+        "Cross-referenced multiple sources",
+        "Verified current pricing where possible",
+        "Excluded speculative information",
+        "Noted data confidence levels"
+      ]
+    }
+  },
+  "recommendations_for_navidocs": {
+    "product_strategy": [
+      "Focus on yacht-specific workflows (vs. generic marina management)",
+      "Implement WhatsApp Business API as primary communication channel",
+      "Build document management around yacht operations (checklists, manifests, etc.)",
+      "Create crew and guest management modules",
+      "Integrate real-time collaboration features",
+      "Offer white-label options for charter companies"
+    ],
+    "market_positioning": [
+      "Position as yacht-first solution (not marina-focused)",
+      "Target charter companies specifically",
+      "Emphasize modern UX vs. legacy competitors",
+      "Highlight international yacht operations support",
+      "Partner with yacht industry associations"
+    ],
+    "pricing_strategy": [
+      "Consider per-yacht-per-month model vs. per-slip",
+      "Offer tiered pricing aligned with charter volume",
+      "Provide free tier for small operators",
+      "Bundle document and communication features",
+      "Enterprise pricing for multi-location operators"
+    ],
+    "differentiation_focus": [
+      "Communication (WhatsApp, SMS, push notifications)",
+      "Document management (charter agreements, crew docs)",
+      "Real-time coordination (crew, guests, logistics)",
+      "Intelligence (predictive maintenance, occupancy)",
+      "Integration (accounting, payment processing, logistics)"
+    ]
+  }
+}

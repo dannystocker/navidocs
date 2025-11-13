@@ -1,0 +1,279 @@
+{
+  "performative": "inform",
+  "sender": "if://agent/session-2/haiku-09",
+  "receiver": ["if://agent/session-2/haiku-08"],
+  "timestamp": "2025-11-13T14:30:45Z",
+  "message_id": "msg-if-s2h09-document-uploads-001",
+  "protocol": "IF.bus/1.0",
+  "priority": "high",
+  "content": {
+    "integration_title": "Document Upload → WhatsApp Notifications",
+    "integration_description": "When users upload boat documents (warranties, manuals, service records, etc.), trigger real-time WhatsApp notifications to boat owner",
+    "source_system": "Document Versioning (S2-H09)",
+    "target_system": "WhatsApp Handler (S2-H08)",
+    "trigger_event": "document_uploaded",
+    "event_data_schema": {
+      "doc_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique document identifier"
+      },
+      "boat_id": {
+        "type": "string",
+        "description": "Boat identifier associated with document"
+      },
+      "category": {
+        "type": "enum",
+        "enum": ["warranty", "manual", "service_record", "invoice", "certificate", "insurance", "registration", "survey_report"],
+        "description": "Document category"
+      },
+      "filename": {
+        "type": "string",
+        "description": "Original filename"
+      },
+      "uploaded_by": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID who uploaded"
+      },
+      "uploaded_by_name": {
+        "type": "string",
+        "description": "Display name of uploader"
+      },
+      "uploaded_at": {
+        "type": "string",
+        "format": "iso8601",
+        "description": "Upload timestamp (ISO 8601 UTC)"
+      },
+      "citation_id": {
+        "type": "string",
+        "format": "uri",
+        "description": "IF.TTT citation ID (if://doc/navidocs/boat-{id}/...)"
+      },
+      "version_number": {
+        "type": "integer",
+        "description": "Document version number"
+      },
+      "file_size_bytes": {
+        "type": "integer",
+        "description": "Document size in bytes"
+      }
+    },
+    "webhook_configuration": {
+      "method": "POST",
+      "endpoint": "/api/webhooks/whatsapp",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer {webhook_secret}",
+        "X-IF-Bus-Signature": "sha256={hmac_signature}",
+        "X-Message-ID": "{message_id}",
+        "X-Timestamp": "{iso8601_timestamp}"
+      },
+      "timeout_seconds": 30,
+      "retry_policy": {
+        "max_retries": 3,
+        "initial_backoff_ms": 1000,
+        "backoff_strategy": "exponential",
+        "max_backoff_ms": 30000
+      }
+    },
+    "notification_templates": {
+      "new_document_uploaded": {
+        "title": "New Document Uploaded",
+        "message": "📄 New {category} document uploaded: {filename}\n\nBoat: {boat_name}\nUploaded by: {uploaded_by_name}\nTime: {uploaded_at}\n\nCitation: {citation_id}",
+        "quick_actions": [
+          {
+            "label": "View Document",
+            "action_type": "url",
+            "value": "navidocs://documents/{doc_id}"
+          },
+          {
+            "label": "View History",
+            "action_type": "url",
+            "value": "navidocs://documents/{doc_id}/versions"
+          },
+          {
+            "label": "Verify Signature",
+            "action_type": "url",
+            "value": "navidocs://documents/{doc_id}/verify"
+          }
+        ]
+      },
+      "warranty_uploaded": {
+        "title": "New Warranty Certificate",
+        "message": "🛡️ Warranty document uploaded: {filename}\n\nExpiration: {expiration_date}\nBoat: {boat_name}\n\nAll warranties are safely stored and versioned.",
+        "icon": "warranty"
+      },
+      "service_record_uploaded": {
+        "title": "Service Record Added",
+        "message": "🔧 New service record: {filename}\n\nBoat: {boat_name}\nDate: {service_date}\n\nService history is up to date.",
+        "icon": "service"
+      },
+      "certificate_uploaded": {
+        "title": "Certificate Added",
+        "message": "📋 New certificate: {filename}\n\nType: {certificate_type}\nBoat: {boat_name}\nExpires: {expiration_date}",
+        "icon": "certificate"
+      }
+    },
+    "recipient_routing": {
+      "boat_owner": {
+        "phone_field": "boat.owner_phone",
+        "always_notify": true,
+        "format": "whatsapp"
+      },
+      "crew_members": {
+        "phone_field": "crew.phone",
+        "access_level": "edit_or_higher",
+        "format": "whatsapp",
+        "optional": true
+      },
+      "administrators": {
+        "phone_field": "user.phone",
+        "role": "admin",
+        "format": "whatsapp",
+        "optional": true
+      }
+    },
+    "filtering_rules": {
+      "enabled": true,
+      "rules": [
+        {
+          "name": "Warranty documents only",
+          "condition": "category == 'warranty'",
+          "action": "send_immediate",
+          "recipient_groups": ["boat_owner"]
+        },
+        {
+          "name": "All documents for admin",
+          "condition": "uploaded_by.role == 'admin'",
+          "action": "send_immediate",
+          "recipient_groups": ["administrators"]
+        },
+        {
+          "name": "Service records for crew",
+          "condition": "category == 'service_record'",
+          "action": "send_immediate",
+          "recipient_groups": ["crew_members"],
+          "access_check": true
+        }
+      ]
+    },
+    "notification_frequency": {
+      "batch_notifications": false,
+      "send_timing": "immediate",
+      "quiet_hours": {
+        "enabled": true,
+        "start": "22:00",
+        "end": "08:00",
+        "timezone": "boat_timezone",
+        "queue_until_active_hours": true
+      }
+    },
+    "tracking_metrics": {
+      "enabled": true,
+      "track_delivery": true,
+      "track_read": true,
+      "track_action_clicks": true,
+      "retention_days": 30,
+      "analytics_endpoint": "/api/analytics/whatsapp"
+    },
+    "error_handling": {
+      "phone_invalid": {
+        "action": "log_error",
+        "notification": "Send email to boat owner with document details"
+      },
+      "delivery_failed": {
+        "action": "retry",
+        "max_attempts": 3,
+        "fallback": "Send email notification"
+      },
+      "webhook_timeout": {
+        "action": "async_queue",
+        "queue_name": "document_notifications"
+      }
+    },
+    "audit_logging": {
+      "enabled": true,
+      "log_all_notifications": true,
+      "log_failures": true,
+      "retention": "7_years",
+      "pii_handling": "encrypt_phone_numbers"
+    },
+    "dependencies": {
+      "requires": [
+        "S2-H08 (WhatsApp Handler)",
+        "Twilio API access",
+        "Phone number validation",
+        "Template rendering engine",
+        "Message queue (SQS/RabbitMQ)"
+      ]
+    },
+    "implementation_status": {
+      "phase": "design_complete",
+      "ready_for_implementation": true,
+      "estimated_implementation_time_hours": 8,
+      "testing_required": [
+        "unit_tests: webhook payload validation",
+        "integration_tests: end-to-end upload → WhatsApp",
+        "security_tests: signature verification, rate limiting",
+        "load_tests: high-volume document uploads"
+      ]
+    },
+    "communication_flow": {
+      "step_1": {
+        "actor": "User",
+        "action": "Upload document via mobile app",
+        "system": "S2-H09 (Document Versioning)"
+      },
+      "step_2": {
+        "actor": "S2-H09",
+        "action": "Validate, sign, hash, and store document",
+        "result": "Document stored with IF.TTT compliance"
+      },
+      "step_3": {
+        "actor": "S2-H09",
+        "action": "Send IF.bus message to S2-H08",
+        "message_type": "document_uploaded event"
+      },
+      "step_4": {
+        "actor": "S2-H08",
+        "action": "Receive webhook call with document metadata",
+        "processing": "Determine recipients, format message, send WhatsApp"
+      },
+      "step_5": {
+        "actor": "Twilio",
+        "action": "Deliver WhatsApp message to boat owner",
+        "result": "Real-time notification received"
+      },
+      "step_6": {
+        "actor": "S2-H08",
+        "action": "Log delivery status and user interactions",
+        "tracking": "Enable analytics and audit trails"
+      }
+    },
+    "example_payload": {
+      "event_type": "document_uploaded",
+      "timestamp": "2025-11-13T14:30:45Z",
+      "event_data": {
+        "doc_id": "doc-550e8400-e29b-41d4-a716-446655440000",
+        "boat_id": "boat-123",
+        "category": "warranty",
+        "filename": "engine-warranty-certificate.pdf",
+        "uploaded_by": "user-456",
+        "uploaded_by_name": "John Doe",
+        "uploaded_at": "2025-11-13T14:30:45Z",
+        "citation_id": "if://doc/navidocs/boat-123/warranty-engine-warranty-certificate-v1",
+        "version_number": 1,
+        "file_size_bytes": 2457600
+      },
+      "boat_details": {
+        "boat_id": "boat-123",
+        "boat_name": "Ocean Queen",
+        "owner_phone": "+1-555-123-4567",
+        "owner_name": "Captain Smith"
+      }
+    }
+  },
+  "acknowledgment_required": true,
+  "acknowledgment_deadline": "2025-11-13T16:30:45Z"
+}

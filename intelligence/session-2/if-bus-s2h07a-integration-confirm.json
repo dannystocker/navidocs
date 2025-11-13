@@ -1,0 +1,226 @@
+{
+  "performative": "confirm",
+  "sender": "if://agent/session-2/haiku-07A",
+  "receiver": [
+    "if://agent/session-2/haiku-03",
+    "if://agent/session-2/haiku-02",
+    "if://agent/session-2/haiku-03A",
+    "if://agent/session-2/haiku-06"
+  ],
+  "timestamp": "2025-11-13T12:00:00Z",
+  "message_id": "s2h07a-confirm-001",
+  "content": {
+    "integration_status": "ready",
+    "system": "Multi-Calendar System (S2-H07A)",
+    "capabilities": [
+      "Service Calendar - maintenance tracking",
+      "Warranty Calendar - equipment warranty management",
+      "Owner Onboard Calendar - owner availability tracking",
+      "Work Roadmap Calendar - maintenance planning with budgets",
+      "Tax/Exit Calendar - tax compliance tracking"
+    ],
+    "api_endpoints": {
+      "create_event": "POST /api/calendar/events",
+      "get_events": "GET /api/calendar/events?boat_id=X&event_type=Y&start_date=Z",
+      "update_event": "PATCH /api/calendar/events/:event_id",
+      "delete_event": "DELETE /api/calendar/events/:event_id",
+      "approve_work": "POST /api/calendar/work-roadmap/:work_event_id/approve",
+      "get_conflicts": "GET /api/calendar/conflicts?boat_id=X",
+      "export_ical": "GET /api/calendar/export/ical?boat_id=X",
+      "sync_google_calendar": "POST /api/calendar/export/google-calendar/sync"
+    },
+    "integrations": {
+      "S2-H03_maintenance_log": {
+        "status": "confirmed_ready",
+        "event_type": "maintenance_log_created",
+        "calendar_types": ["service_due", "service_completed"],
+        "fields_mapped": [
+          "service_type",
+          "next_due_date",
+          "next_due_engine_hours",
+          "provider_name",
+          "cost"
+        ],
+        "trigger_frequency": "on_create_or_update",
+        "reminder_schedule": [60, 30, 14, 7],
+        "reminder_days": "before service due date"
+      },
+      "S2-H02_inventory_tracking": {
+        "status": "confirmed_ready",
+        "event_type": "inventory_warranty_expiring",
+        "calendar_types": ["warranty_expires", "warranty_alert"],
+        "fields_mapped": [
+          "item_name",
+          "warranty_expiration_date",
+          "manufacturer",
+          "serial_number"
+        ],
+        "trigger_frequency": "daily_check_expiring_soon",
+        "reminder_schedule": [90, 60, 30],
+        "reminder_days": "before warranty expiration"
+      },
+      "S2-H06_expense_tracking": {
+        "status": "confirmed_ready",
+        "event_type": "work_expense_recorded",
+        "calendar_types": ["work_in_progress", "work_completed"],
+        "fields_mapped": [
+          "work_order_id",
+          "invoice_amount",
+          "invoice_type",
+          "cumulative_actual_cost"
+        ],
+        "trigger_frequency": "on_invoice_submitted",
+        "budget_variance_alert_threshold": "110%",
+        "variance_notification": "sms+email to owner"
+      },
+      "S2-H03A_tax_exit_calendar": {
+        "status": "confirmed_ready",
+        "event_type": "tax_exit_required",
+        "calendar_types": ["tax_exit_required"],
+        "fields_mapped": [
+          "requirement_type",
+          "due_date",
+          "jurisdiction",
+          "required_actions"
+        ],
+        "trigger_frequency": "on_calculation",
+        "notification_schedule": "90,60,30,14,7 days before"
+      }
+    },
+    "expected_message_format": {
+      "from_S2H03": {
+        "performative": "inform",
+        "sender": "if://agent/session-2/haiku-03",
+        "receiver": "if://agent/session-2/haiku-07A",
+        "content": {
+          "event": "maintenance_log_created",
+          "data": {
+            "maintenance_id": "number",
+            "boat_id": "number",
+            "service_type": "string",
+            "date": "ISO-8601",
+            "next_due_date": "ISO-8601",
+            "next_due_engine_hours": "integer",
+            "provider_name": "string",
+            "cost": "number"
+          }
+        }
+      },
+      "from_S2H02": {
+        "performative": "inform",
+        "sender": "if://agent/session-2/haiku-02",
+        "receiver": "if://agent/session-2/haiku-07A",
+        "content": {
+          "event": "inventory_warranty_expiring",
+          "data": {
+            "inventory_id": "number",
+            "boat_id": "number",
+            "item_name": "string",
+            "warranty_expiration": "ISO-8601",
+            "days_until_expiration": "integer"
+          }
+        }
+      },
+      "from_S2H06": {
+        "performative": "inform",
+        "sender": "if://agent/session-2/haiku-06",
+        "receiver": "if://agent/session-2/haiku-07A",
+        "content": {
+          "event": "work_expense_recorded",
+          "data": {
+            "work_event_id": "number",
+            "boat_id": "number",
+            "invoice_amount": "number",
+            "invoice_type": "string",
+            "cumulative_actual_cost": "number",
+            "budget_amount": "number"
+          }
+        }
+      },
+      "from_S2H03A": {
+        "performative": "inform",
+        "sender": "if://agent/session-2/haiku-03A",
+        "receiver": "if://agent/session-2/haiku-07A",
+        "content": {
+          "event": "tax_exit_required",
+          "data": {
+            "boat_id": "number",
+            "requirement_type": "string",
+            "due_date": "ISO-8601",
+            "jurisdiction": "string",
+            "required_actions": "array of strings"
+          }
+        }
+      }
+    },
+    "database_schema": {
+      "primary_table": "calendar_events",
+      "supporting_tables": [
+        "calendar_notification_rules",
+        "calendar_conflict_detection",
+        "calendar_exports"
+      ],
+      "key_columns": [
+        "event_id",
+        "boat_id",
+        "event_type",
+        "source_id",
+        "source_type",
+        "start_date",
+        "end_date",
+        "status",
+        "budget_amount",
+        "actual_cost",
+        "has_conflicts"
+      ]
+    },
+    "features": {
+      "conflict_detection": {
+        "types": [
+          "date_overlap",
+          "resource_conflict",
+          "owner_availability",
+          "work_blocking",
+          "budget_excess"
+        ],
+        "automatic_checks": "daily_run_at_midnight_utc",
+        "notification_on_conflict": "high_and_critical_severity"
+      },
+      "smart_notifications": {
+        "channels": ["email", "sms", "push", "in_app"],
+        "context_aware": true,
+        "examples": [
+          "Service due + Owner arriving in 3 days → flag as conflict",
+          "Work over budget 110% → urgent alert",
+          "Warranty expiring and service overdue → combined reminder"
+        ]
+      },
+      "export_sync": {
+        "formats": ["iCal", "Google Calendar"],
+        "sync_frequency": "daily",
+        "two_way_sync": "supported_for_google_calendar"
+      },
+      "budget_workflow": {
+        "states": ["proposed", "approved", "partial", "rejected"],
+        "approval_deadline": "7_days",
+        "variance_tracking": "actual_vs_budget",
+        "owner_approval_required": true
+      }
+    },
+    "performance_targets": {
+      "calendar_load_time_ms": 2000,
+      "conflict_detection_accuracy": "99%",
+      "notification_delivery_rate": "95%",
+      "calendar_export_success_rate": "99.9%",
+      "api_response_time_ms": 500
+    },
+    "readiness_confirmation": {
+      "database_ready": true,
+      "api_ready": false,
+      "notification_engine_ready": false,
+      "conflict_detection_ready": false,
+      "export_ready": false,
+      "overall_status": "specification_complete_implementation_pending"
+    }
+  }
+}

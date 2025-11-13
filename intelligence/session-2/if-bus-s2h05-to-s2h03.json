@@ -1,0 +1,196 @@
+{
+  "message_id": "if_bus_20251113_s2h05_s2h03_001",
+  "timestamp": "2025-11-13T11:00:00Z",
+  "performative": "confirm",
+  "sender": "if://agent/session-2/haiku-05",
+  "receiver": [
+    "if://agent/session-2/haiku-03"
+  ],
+  "subject": "Contact Management System Ready for Maintenance Log Integration",
+  "content": {
+    "agent_identity": "S2-H05",
+    "domain": "Contact Management System",
+    "status": "operational",
+    "integration": "Contact auto-suggest from maintenance log",
+    "capability_summary": "Contact Management System ready to accept service provider data from maintenance log entries and auto-suggest contact creation.",
+
+    "api_endpoint": {
+      "method": "POST",
+      "path": "/api/contacts/suggest",
+      "base_url": "https://navidocs.local/api",
+      "full_url": "https://navidocs.local/api/contacts/suggest",
+      "authentication": "Bearer {JWT_TOKEN}"
+    },
+
+    "expected_payload": {
+      "boat_id": {
+        "type": "number (BIGINT)",
+        "required": true,
+        "description": "Unique boat identifier"
+      },
+      "maintenance_log_id": {
+        "type": "number (BIGINT)",
+        "required": true,
+        "description": "Reference to S2-H03 maintenance log entry"
+      },
+      "extracted_provider": {
+        "type": "object",
+        "required": true,
+        "fields": {
+          "name": {
+            "type": "string",
+            "required": true,
+            "description": "Service provider name (extracted from maintenance log)"
+          },
+          "role": {
+            "type": "enum",
+            "required": false,
+            "options": [
+              "marina",
+              "mechanic",
+              "cleaner",
+              "charter_crew",
+              "electrician",
+              "surveyor",
+              "rigger",
+              "canvas_maker",
+              "detailer"
+            ],
+            "description": "Service provider role (auto-mapped from service_type if possible)"
+          },
+          "phone": {
+            "type": "string",
+            "required": false,
+            "description": "Provider phone number (if available in log)"
+          },
+          "email": {
+            "type": "string",
+            "required": false,
+            "description": "Provider email (if available in log)"
+          },
+          "company": {
+            "type": "string",
+            "required": false,
+            "description": "Provider company name"
+          }
+        }
+      }
+    },
+
+    "example_request": {
+      "boat_id": 123,
+      "maintenance_log_id": 456,
+      "extracted_provider": {
+        "name": "John's Marine Service",
+        "role": "mechanic",
+        "phone": "+1-555-0100",
+        "email": "john@marine.com",
+        "company": "John's Marine"
+      }
+    },
+
+    "expected_response": {
+      "status_code": 200,
+      "body": {
+        "suggestion_id": "number",
+        "boat_id": "number",
+        "maintenance_log_id": "number",
+        "status": "enum (pending | accepted | rejected | merged)",
+        "suggested_contact": {
+          "name": "string",
+          "role": "string",
+          "phone": "string",
+          "email": "string"
+        },
+        "actions": [
+          "create",
+          "merge_with_existing",
+          "skip"
+        ],
+        "existing_match": "object (if fuzzy match found)"
+      }
+    },
+
+    "example_response": {
+      "suggestion_id": 789,
+      "boat_id": 123,
+      "maintenance_log_id": 456,
+      "status": "pending",
+      "suggested_contact": {
+        "name": "John's Marine Service",
+        "role": "mechanic",
+        "phone": "+1-555-0100",
+        "email": "john@marine.com"
+      },
+      "actions": [
+        "create",
+        "merge_with_existing",
+        "skip"
+      ],
+      "existing_match": null
+    },
+
+    "workflow": {
+      "step_1_trigger": "S2-H03 maintenance log entry created with service provider details",
+      "step_2_extraction": "S2-H03 extracts provider name, service type, phone, email",
+      "step_3_api_call": "S2-H03 calls POST /api/contacts/suggest with extracted data",
+      "step_4_processing": "S2-H05 processes suggestion, performs fuzzy matching, creates suggestion record",
+      "step_5_response": "S2-H05 returns suggestion ID and matching options",
+      "step_6_user_action": "User reviews suggestion in Contact Management UI",
+      "step_7_confirmation": "User chooses: Create, Merge, or Skip",
+      "step_8_linkage": "S2-H05 updates contact and creates bidirectional link to maintenance_log_id"
+    },
+
+    "error_handling": {
+      "400_bad_request": "Missing required fields (boat_id, maintenance_log_id, name)",
+      "401_unauthorized": "Invalid authentication token",
+      "404_not_found": "Boat not found",
+      "409_conflict": "Contact already exists (merge suggested)",
+      "500_internal_error": "Database error processing suggestion"
+    },
+
+    "rate_limiting": {
+      "calls_per_minute": 100,
+      "calls_per_hour": 5000,
+      "per_boat_per_hour": 500
+    },
+
+    "features": {
+      "fuzzy_matching": "Automatically detect similar provider names to suggest merging",
+      "auto_role_detection": "Map maintenance service_type to contact role",
+      "suggestions_storage": "All suggestions stored in contact_suggestions table for audit",
+      "user_approval_required": true,
+      "bidirectional_linking": "Link contact to maintenance log entry upon acceptance"
+    },
+
+    "contact_roles_mapping": {
+      "engine_repair": "mechanic",
+      "hull_maintenance": "mechanic",
+      "electrical_work": "electrician",
+      "canvas_repair": "canvas_maker",
+      "rigging_work": "rigger",
+      "cleaning_service": "cleaner",
+      "boat_detailing": "detailer",
+      "survey_inspection": "surveyor",
+      "marina_service": "marina",
+      "crew_member": "charter_crew"
+    },
+
+    "next_steps": {
+      "s2_h03_action_1": "Implement extraction of provider details from maintenance log entries",
+      "s2_h03_action_2": "Add integration logic to call POST /api/contacts/suggest endpoint",
+      "s2_h03_action_3": "Implement fallback for cases where provider not fully specified",
+      "s2_h05_action_1": "Implement fuzzy matching algorithm for contact deduplication",
+      "s2_h05_action_2": "Create UI suggestions panel in Contact Management interface",
+      "s2_h05_action_3": "Implement batch processing for high-volume suggestions"
+    },
+
+    "success_criteria": {
+      "automation": "95% of provider mentions in maintenance log auto-suggest contacts",
+      "accuracy": "90% of suggestions are valid contacts (user acceptance rate)",
+      "deduplication": "Fuzzy matching prevents duplicate contacts for same provider",
+      "speed": "API response time < 500ms",
+      "linkage": "All accepted suggestions create proper maintenance_log <-> contact links"
+    }
+  }
+}

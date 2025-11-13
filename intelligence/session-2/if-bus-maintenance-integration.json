@@ -1,0 +1,232 @@
+{
+  "integration_request": {
+    "performative": "request",
+    "message_id": "maintenance-integration-001",
+    "timestamp": "2024-11-13T14:32:00Z",
+    "sender": "if://agent/session-2/haiku-03",
+    "receivers": [
+      "if://agent/session-2/haiku-05",
+      "if://agent/session-2/haiku-07A"
+    ],
+    "subject": "Maintenance Log System Integration Handshake",
+    "priority": "high",
+
+    "content": {
+      "integration_needed": "Maintenance log tracking system requires bidirectional integration with contact management and calendar systems",
+      "data_flows": [
+        {
+          "flow_id": "provider_contacts_flow",
+          "from_system": "maintenance-log (S2-H03)",
+          "to_system": "contact-management (S2-H05)",
+          "direction": "bidirectional",
+          "description": "Service provider contact auto-suggest and details lookup",
+          "data_elements": [
+            "maintenance_log.provider",
+            "maintenance_log.service_type",
+            "maintenance_log.cost",
+            "maintenance_log.date"
+          ],
+          "required_endpoints": [
+            "GET /api/v1/boats/{boatId}/contacts/providers (filter by service_type)",
+            "GET /api/v1/contacts/{contactId} (full contact details)",
+            "PATCH /api/v1/contacts/{contactId}/usage (update provider statistics)"
+          ],
+          "response_format": {
+            "contact_id": "string",
+            "name": "string",
+            "phone": "string",
+            "email": "string",
+            "address": "string",
+            "type": "marine_service|electrician|surveyor|etc",
+            "last_used": "date",
+            "times_used": "number",
+            "average_cost": "decimal",
+            "rating": "number"
+          },
+          "frequency": "on_demand",
+          "sla_requirement": "<500ms response time"
+        },
+        {
+          "flow_id": "calendar_sync_flow",
+          "from_system": "maintenance-log (S2-H03)",
+          "to_system": "calendar-system (S2-H07A)",
+          "direction": "unidirectional_push",
+          "description": "Maintenance due dates sync to boat calendar for event planning",
+          "data_elements": [
+            "maintenance_log.next_due_date",
+            "maintenance_log.next_due_engine_hours",
+            "maintenance_log.service_type",
+            "maintenance_log.provider",
+            "maintenance_log.id"
+          ],
+          "triggers": [
+            "On maintenance record creation",
+            "On maintenance record update",
+            "On maintenance record completion (mark as calendar event)",
+            "Nightly batch sync of upcoming services (7-90 day window)"
+          ],
+          "required_endpoints": [
+            "POST /api/v1/boats/{boatId}/calendar/events (create maintenance event)",
+            "PATCH /api/v1/boats/{boatId}/calendar/events/{eventId} (update event details)",
+            "DELETE /api/v1/boats/{boatId}/calendar/events/{eventId} (remove event when completed)"
+          ],
+          "event_payload": {
+            "title": "string (e.g. 'Oil Change Due')",
+            "description": "string",
+            "event_type": "maintenance",
+            "service_type": "enum (engine|electronics|hull|deck|safety_equipment|antifouling|survey)",
+            "due_date": "ISO8601 date",
+            "due_engine_hours": "number or null",
+            "location": "string",
+            "priority": "enum (low|medium|high|urgent|critical)",
+            "alert_days": "array of integers [7, 14, 30, 60]",
+            "provider_contact_id": "string",
+            "external_id": "string (maintenance_log.id)"
+          },
+          "frequency": "real_time + nightly batch",
+          "sla_requirement": "<1s response time"
+        },
+        {
+          "flow_id": "reminder_notifications_flow",
+          "from_system": "maintenance-log (S2-H03)",
+          "to_system": "notification-system (requires S2-H07A coordination)",
+          "direction": "unidirectional",
+          "description": "Trigger reminder notifications when maintenance due dates approach",
+          "notification_triggers": [
+            {
+              "threshold": "60_days_before",
+              "channels": ["in_app", "email"],
+              "frequency": "weekly"
+            },
+            {
+              "threshold": "30_days_before",
+              "channels": ["in_app", "email", "push"],
+              "frequency": "bi-weekly"
+            },
+            {
+              "threshold": "14_days_before",
+              "channels": ["in_app", "email", "push", "sms"],
+              "frequency": "weekly"
+            },
+            {
+              "threshold": "7_days_before",
+              "channels": ["in_app", "email", "push", "sms"],
+              "frequency": "daily"
+            },
+            {
+              "threshold": "overdue",
+              "channels": ["in_app", "email", "push", "sms"],
+              "frequency": "daily"
+            }
+          ]
+        }
+      ],
+
+      "implementation_requirements": {
+        "s2_h05_contact_management": {
+          "description": "S2-H05 must provide provider contact lookup and suggestion service",
+          "dependencies": [
+            "Maintain provider contact records with service type categorization",
+            "Track usage history (last_used, times_used) per boat",
+            "Calculate provider ratings based on maintenance cost history",
+            "Support filtering contacts by service_type"
+          ],
+          "acceptance_criteria": [
+            "Returns provider contacts in <500ms",
+            "Provider suggestions ranked by frequency and rating",
+            "Contact updates propagated to maintenance log within 1 minute",
+            "Support for custom provider addition during maintenance entry"
+          ]
+        },
+        "s2_h07a_calendar_integration": {
+          "description": "S2-H07A must accept and manage maintenance events on boat calendar",
+          "dependencies": [
+            "Calendar event creation/update/deletion for maintenance",
+            "Support multiple alert thresholds per event",
+            "Enable calendar sync to mobile calendar applications",
+            "Track event status (scheduled, in_progress, completed, overdue)"
+          ],
+          "acceptance_criteria": [
+            "Maintenance events appear in boat calendar within 2 seconds of creation",
+            "Calendar reminders trigger at configured thresholds (7, 14, 30, 60 days)",
+            "Completed maintenance marked in calendar for historical tracking",
+            "Calendar export includes maintenance events in iCal format"
+          ]
+        }
+      },
+
+      "data_integrity_requirements": {
+        "conflict_resolution": "If maintenance date conflicts with existing calendar event, calendar event takes precedence and maintenance system defers",
+        "sync_frequency": "Real-time for creation/updates, nightly batch at 02:00 UTC for verification",
+        "data_validation": "All dates must be ISO8601 format, costs must be positive decimals, engine hours must be monotonically increasing",
+        "audit_trail": "All integrations logged with timestamps and success/failure status"
+      },
+
+      "security_requirements": {
+        "authentication": "All inter-system calls use mutual TLS with service certificates",
+        "authorization": "Contact and calendar access verified against boat ownership",
+        "encryption": "All data in transit encrypted with TLS 1.3",
+        "rate_limiting": "Max 100 requests/minute per integration endpoint"
+      },
+
+      "error_handling": {
+        "contact_lookup_failure": "Fall back to manual provider entry during maintenance creation",
+        "calendar_sync_failure": "Queue event for retry with exponential backoff (max 5 retries over 24 hours)",
+        "data_conflict": "Log conflict, alert system administrator, maintain local record as source of truth"
+      },
+
+      "response_required": {
+        "s2_h05_acknowledgement": {
+          "confirm_capability": "Can S2-H05 provide provider contact endpoints?",
+          "timeline": "When can contact endpoints be available?",
+          "constraints": "Any limitations on contact data or filtering?",
+          "contact_point": "Who is the point person for integration questions?"
+        },
+        "s2_h07a_acknowledgement": {
+          "confirm_capability": "Can S2-H07A accept maintenance events via API?",
+          "event_schema": "Can S2-H07A accommodate the maintenance event payload structure?",
+          "alert_configuration": "How are multiple alert thresholds configured per event?",
+          "timeline": "When can calendar endpoints be ready?",
+          "contact_point": "Who is the point person for integration questions?"
+        }
+      }
+    },
+
+    "attachments": {
+      "database_schema": "/home/user/navidocs/intelligence/session-2/maintenance-log-spec.md",
+      "api_endpoints": "Section 2 of maintenance-log-spec.md",
+      "integration_diagrams": "Available upon request"
+    }
+  },
+
+  "system_integration_checklist": {
+    "s2_h03_responsibilities": [
+      "Provide maintenance tracking and reminder calculation",
+      "Call S2-H05 APIs for provider auto-suggest",
+      "Push maintenance events to S2-H07A calendar",
+      "Log all integration activities for audit trail",
+      "Handle graceful degradation if S2-H05 or S2-H07A unavailable"
+    ],
+    "s2_h05_responsibilities": [
+      "Maintain provider contact database with service categorization",
+      "Expose contact lookup endpoints filtered by boat_id and service_type",
+      "Track provider usage statistics (times_used, last_used, average_cost)",
+      "Calculate provider ratings",
+      "Support contact creation/update via API"
+    ],
+    "s2_h07a_responsibilities": [
+      "Accept maintenance event creation requests",
+      "Maintain maintenance events in boat calendar",
+      "Generate reminders based on configured thresholds",
+      "Support event status updates (completed, canceled, rescheduled)",
+      "Provide calendar export with maintenance events"
+    ]
+  },
+
+  "timeline": {
+    "phase_1_acknowledgement": "Immediate - confirm capability",
+    "phase_2_endpoint_availability": "Within 5 business days",
+    "phase_3_integration_testing": "5-10 business days",
+    "phase_4_production_launch": "Upon successful testing"
+  }
+}

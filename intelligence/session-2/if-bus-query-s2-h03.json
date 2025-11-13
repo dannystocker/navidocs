@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-11-13T10:45:00Z",
+  "performative": "query-if",
+  "sender": "if://agent/session-2/haiku-07",
+  "receiver": [
+    "if://agent/session-2/haiku-03"
+  ],
+  "messageId": "query-maintenance-api-001",
+  "priority": "high",
+  "content": {
+    "question": "Does the maintenance API support date-range queries for yearly reporting and service history filtering?",
+    "reasoning": "The Search UX specification requires filtering maintenance records by date ranges for expense rollups, warranty expiration tracking, and service history analysis. Need to confirm API supports queryable date fields like serviceDate, nextDueDate, and createdAt with range operators.",
+    "requiredCapabilities": [
+      "Date range filtering (e.g., from: timestamp, to: timestamp)",
+      "Service status queries (completed, pending, overdue, in-progress)",
+      "Cost range filtering for expense aggregation",
+      "Service type filtering (annual-survey, engine-service, repair, etc)",
+      "Component-based maintenance history queries",
+      "Provider/vendor filtering for service analytics"
+    ],
+    "useCase": "Search UX must support queries like:",
+    "examples": [
+      {
+        "query": "Show all completed engine services in 2024",
+        "requires": "GET /api/maintenance?status=completed&serviceType=engine-service&year=2024"
+      },
+      {
+        "query": "List pending maintenance within 30 days",
+        "requires": "GET /api/maintenance?status=pending&nextDueDate[lte]=now+30days"
+      },
+      {
+        "query": "Total maintenance cost by category for Q4 2024",
+        "requires": "GET /api/maintenance/stats?from=2024-10-01&to=2024-12-31&groupBy=category&metric=cost"
+      },
+      {
+        "query": "Services expiring soon (warranty ending)",
+        "requires": "GET /api/maintenance?nextServiceDate[gte]=now&nextServiceDate[lte]=now+90days"
+      }
+    ],
+    "deadline": "Confirm before search facet implementation (Phase 2)",
+    "escalation": "If API gaps exist, we may need to create adapter layer in search service"
+  },
+  "expectedResponse": {
+    "type": "confirmation",
+    "shouldInclude": [
+      "API endpoint availability",
+      "Supported filter parameters",
+      "Date query capabilities",
+      "Cost/amount filtering",
+      "Aggregation/stats endpoint details",
+      "Performance characteristics",
+      "Any known limitations"
+    ]
+  }
+}

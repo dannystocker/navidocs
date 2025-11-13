@@ -1,0 +1,69 @@
+{
+  "performative": "request",
+  "sender": "if://agent/session-2/haiku-02",
+  "receiver": ["if://agent/session-2/haiku-04"],
+  "message_id": "msg-s2-h02-s2-h04-001",
+  "timestamp": "2025-11-13T10:45:00Z",
+  "subject": "Camera-Assisted Equipment Detection for Inventory Tracking",
+  "content": {
+    "request": "Can camera feeds auto-detect equipment for inventory?",
+    "context": "Inventory tracking could be enhanced with Computer Vision detection",
+    "details": {
+      "use_case": "Automatically identify yacht equipment from camera feeds to supplement manual inventory tracking",
+      "objectives": [
+        "Detect equipment appearing in frames with confidence scores",
+        "Auto-suggest zone location based on camera placement",
+        "Flag new items appearing in feeds (forgotten equipment)",
+        "Alert when equipment is removed or relocated",
+        "Track condition changes over time (damage, wear)",
+        "Reconcile manual inventory with detected equipment"
+      ],
+      "equipment_types": [
+        "Electronics (radar, GPS, autopilot, fish finder)",
+        "Engine components (propeller, transmission, exhaust)",
+        "Safety equipment (life rafts, flares, fire extinguishers)",
+        "Deck equipment (winches, anchors, rigging)",
+        "Tender/dinghy and attachments",
+        "Interior furnishings and appliances"
+      ],
+      "integration_points": [
+        "Real-time or periodic frame analysis (configurable frequency)",
+        "ML model inference on yacht equipment database",
+        "Cross-reference with S2-H02 OCR system for label/serial detection",
+        "Storage for detection results with confidence metrics",
+        "UI workflow for accepting/rejecting auto-suggested items",
+        "Photo capture of detected equipment for inventory documentation"
+      ],
+      "value_proposition": {
+        "time_savings": "30-40% reduction in manual data entry",
+        "inventory_completeness": "Identify forgotten/overlooked equipment items",
+        "condition_monitoring": "Automated tracking of equipment wear and damage",
+        "insurance_support": "Generate comprehensive photo documentation for claims"
+      },
+      "technical_requirements": [
+        "Real-time inference on camera feeds",
+        "Equipment detection model accuracy >85%",
+        "Integration with S2-H02 inventory database API",
+        "Confidence scoring and quality metrics",
+        "Handling of occluded/partially visible equipment"
+      ]
+    },
+    "questions": [
+      "What is the current capability of S2-H04 camera feeds for object detection?",
+      "Are there existing ML models trained on marine equipment?",
+      "What is the maximum inference frequency that can be sustained?",
+      "Can equipment be detected with >85% confidence accuracy?",
+      "Is there integration capability between S2-H04 and S2-H02 systems?",
+      "What are the latency requirements for real-time detection?"
+    ],
+    "proposed_collaboration": "S2-H02 can provide equipment taxonomy and OCR text extraction to enhance S2-H04 detection accuracy",
+    "timeline": "Target integration in Phase 4 of 8-week implementation roadmap",
+    "priority": "High - significant value recovery opportunity"
+  },
+  "metadata": {
+    "document_reference": "intelligence/session-2/inventory-tracking-spec.md",
+    "section": "6. Integration with S2-H04 Cameras (Optional Enhancement)",
+    "agent_role": "S2-H02: Inventory Tracking System Design",
+    "domain": "CRITICAL - Yacht Equipment Value Recovery"
+  }
+}

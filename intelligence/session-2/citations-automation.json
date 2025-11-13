@@ -1,0 +1,531 @@
+{
+  "session": "session-2",
+  "agent_id": "if://agent/session-2/haiku-0B",
+  "task": "Citation Automation (CONTINUOUS)",
+  "timestamp": "2025-11-13T02:20:38.108590+00:00",
+  "citations": [
+    {
+      "citation_id": "if://citation/navidocs/session-1/474eefe3-5558-460b-822a-cef5b4802c0f",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://en.wikipedia.org/wiki/Yacht",
+          "hash": "sha256:7e5720a21e4870f952f5f7619bf9f99646e7ed8237a4ad58ae5e0a3330584699",
+          "note": "Verified on 2025-11-13T02:20:25.092829+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:25.092829+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:25.093288+00:00",
+      "signature": "ed25519:placeholder-474eefe3",
+      "meta": {
+        "http_status": 200,
+        "content_length": 276824,
+        "fetch_timestamp": "2025-11-13T02:20:25.092829+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/23123a58-7f44-470e-82b8-db49b111155d",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://github.com/home-assistant/",
+          "hash": "sha256:fb189be6746653a2ed65a74d2d569661dbb2fbba2915162df88548051b9320d9",
+          "note": "Verified on 2025-11-13T02:20:25.765932+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:25.765932+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:25.766421+00:00",
+      "signature": "ed25519:placeholder-23123a58",
+      "meta": {
+        "http_status": 200,
+        "content_length": 308044,
+        "fetch_timestamp": "2025-11-13T02:20:25.765932+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/61e7946c-df8b-4568-8a7e-d8f269ecdedd",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.amazon.com/",
+          "hash": "sha256:3e4693b1751d306812e8cbcf0b649028d4b58cf0d408f06c4a2b52c8cb62c937",
+          "note": "Verified on 2025-11-13T02:20:26.427843+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:26.427843+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:26.428755+00:00",
+      "signature": "ed25519:placeholder-61e7946c",
+      "meta": {
+        "http_status": 200,
+        "content_length": 797237,
+        "fetch_timestamp": "2025-11-13T02:20:26.427843+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/74c2b2d9-cdf9-4255-8b74-23939dd501ac",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.boatindustry.org/",
+          "hash": "sha256:6dc9c7fc93bb488bb0520a6c780a8d3c0fb5486a4711aca49b4c53fac7393023",
+          "note": "Verified on 2025-11-13T02:20:27.305460+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:27.305460+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:27.305566+00:00",
+      "signature": "ed25519:placeholder-74c2b2d9",
+      "meta": {
+        "http_status": 200,
+        "content_length": 114,
+        "fetch_timestamp": "2025-11-13T02:20:27.305460+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/93e51739-aa88-40cf-ad3f-0ea3e5b230f6",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.boattrader.com/",
+          "hash": "sha256:402d7abfebad03b56b0f93f5e98a8d7ee4ee8478bb2967d284c8bef6cd242c06",
+          "note": "Verified on 2025-11-13T02:20:28.170739+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:28.170739+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:28.171007+00:00",
+      "signature": "ed25519:placeholder-93e51739",
+      "meta": {
+        "http_status": 200,
+        "content_length": 168635,
+        "fetch_timestamp": "2025-11-13T02:20:28.170739+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/5d8d8787-9913-4ecb-9058-530c5c526174",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.defender.com/",
+          "hash": "sha256:3ae331354b2d96976c812b8f08034ba57bb96870fa4b47f983c33ecc3b7b59f2",
+          "note": "Verified on 2025-11-13T02:20:29.785417+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:29.785417+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:29.786339+00:00",
+      "signature": "ed25519:placeholder-5d8d8787",
+      "meta": {
+        "http_status": 200,
+        "content_length": 832809,
+        "fetch_timestamp": "2025-11-13T02:20:29.785417+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/f0125129-66bc-4fc5-818a-1b1f5b6ca504",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.dockwa.com/",
+          "hash": "sha256:0fc41d367fd75228578b5e54056b5bb88f52a605a093f4e999f54a7eb01f4be5",
+          "note": "Verified on 2025-11-13T02:20:30.612822+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:30.612822+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:30.612930+00:00",
+      "signature": "ed25519:placeholder-f0125129",
+      "meta": {
+        "http_status": 200,
+        "content_length": 25275,
+        "fetch_timestamp": "2025-11-13T02:20:30.612822+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/0c56b9bd-4350-4459-9974-facaa1f59603",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.home-assistant.io/",
+          "hash": "sha256:309446b57ea6708214fadfb802e81b24ee655b70690c395f4813d2b3dc8fab1c",
+          "note": "Verified on 2025-11-13T02:20:31.010437+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:31.010437+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:31.010577+00:00",
+      "signature": "ed25519:placeholder-0c56b9bd",
+      "meta": {
+        "http_status": 200,
+        "content_length": 43302,
+        "fetch_timestamp": "2025-11-13T02:20:31.010437+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/1a2f74ee-f3fc-45d5-923a-03965d2b532c",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.mixpanel.com/",
+          "hash": "sha256:1e51a76e12aa1fba0feb7fe7c102802a5d36d102de97508d2bd6b873cdf36bec",
+          "note": "Verified on 2025-11-13T02:20:31.757694+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:31.757694+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:31.758854+00:00",
+      "signature": "ed25519:placeholder-1a2f74ee",
+      "meta": {
+        "http_status": 200,
+        "content_length": 1163257,
+        "fetch_timestamp": "2025-11-13T02:20:31.757694+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/3d5585a0-37e6-4be6-93f2-fd8573804db1",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.pinterest.com/",
+          "hash": "sha256:ce119690de8e783eb9c077833d59d8c372f8491938f0d8dac5f18261385ca653",
+          "note": "Verified on 2025-11-13T02:20:32.527582+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:32.527582+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:32.527927+00:00",
+      "signature": "ed25519:placeholder-3d5585a0",
+      "meta": {
+        "http_status": 200,
+        "content_length": 304246,
+        "fetch_timestamp": "2025-11-13T02:20:32.527582+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/16aeb1c9-c115-40f7-b5c1-0612cf326b29",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.westmarine.com/",
+          "hash": "sha256:5b1e0987ad9c8760eb62866f4a5096a4cfc6e19a48bfd4d692172ba9d1e58622",
+          "note": "Verified on 2025-11-13T02:20:34.904608+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:34.904608+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:34.905097+00:00",
+      "signature": "ed25519:placeholder-16aeb1c9",
+      "meta": {
+        "http_status": 200,
+        "content_length": 473774,
+        "fetch_timestamp": "2025-11-13T02:20:34.904608+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/71e034f9-14fb-4898-bb4f-6f364ac17d44",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.yacht-news.com/",
+          "hash": "sha256:c48b3875dcfcafadf30ef4f91e98f9654251954b114248c62b15f45b4acda388",
+          "note": "Verified on 2025-11-13T02:20:36.360239+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:36.360239+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:36.360341+00:00",
+      "signature": "ed25519:placeholder-71e034f9",
+      "meta": {
+        "http_status": 200,
+        "content_length": 2315,
+        "fetch_timestamp": "2025-11-13T02:20:36.360239+00:00",
+        "session": "session-1"
+      }
+    },
+    {
+      "citation_id": "if://citation/navidocs/session-1/92dade57-36c5-4260-83de-07742da720f2",
+      "claim_id": "if://claim/session-1/web-source",
+      "sources": [
+        {
+          "type": "web",
+          "ref": "https://www.yachtworld.com/boats/",
+          "hash": "sha256:823a8994be5b3955fa8705000535d0e07fc1f237324b3079231427e3ac6eb1b1",
+          "note": "Verified on 2025-11-13T02:20:38.107883+00:00"
+        }
+      ],
+      "rationale": "Web source for Session 1 market research",
+      "verified_at": "2025-11-13T02:20:38.107883+00:00",
+      "verified_by": "if://agent/session-2/haiku-0B",
+      "status": "verified",
+      "created_by": "if://agent/session-2/haiku-0B",
+      "created_at": "2025-11-13T02:20:38.108570+00:00",
+      "signature": "ed25519:placeholder-92dade57",
+      "meta": {
+        "http_status": 200,
+        "content_length": 714014,
+        "fetch_timestamp": "2025-11-13T02:20:38.107883+00:00",
+        "session": "session-1"
+      }
+    }
+  ],
+  "verification_report": {
+    "total_urls": 18,
+    "accessible": 13,
+    "broken": 5,
+    "redirected": 0,
+    "timeout": 0,
+    "verification_timestamp": "2025-11-13T02:20:24.596395+00:00",
+    "details": [
+      {
+        "url": "https://en.wikipedia.org/wiki/Yacht",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:25.092829+00:00",
+        "sha256_hash": "7e5720a21e4870f952f5f7619bf9f99646e7ed8237a4ad58ae5e0a3330584699",
+        "content_type": null,
+        "content_length": 276824
+      },
+      {
+        "url": "https://github.com/home-assistant/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:25.765932+00:00",
+        "sha256_hash": "fb189be6746653a2ed65a74d2d569661dbb2fbba2915162df88548051b9320d9",
+        "content_type": null,
+        "content_length": 308044
+      },
+      {
+        "url": "https://www.amazon.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:26.427843+00:00",
+        "sha256_hash": "3e4693b1751d306812e8cbcf0b649028d4b58cf0d408f06c4a2b52c8cb62c937",
+        "content_type": null,
+        "content_length": 797237
+      },
+      {
+        "url": "https://www.boatbuddy.io/",
+        "http_status": 503,
+        "accessible": false,
+        "error": "HTTP 503: Service Unavailable",
+        "timestamp": "2025-11-13T02:20:26.649309+00:00",
+        "sha256_hash": null,
+        "content_type": null,
+        "content_length": 0
+      },
+      {
+        "url": "https://www.boatindustry.org/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:27.305460+00:00",
+        "sha256_hash": "6dc9c7fc93bb488bb0520a6c780a8d3c0fb5486a4711aca49b4c53fac7393023",
+        "content_type": null,
+        "content_length": 114
+      },
+      {
+        "url": "https://www.boattrader.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:28.170739+00:00",
+        "sha256_hash": "402d7abfebad03b56b0f93f5e98a8d7ee4ee8478bb2967d284c8bef6cd242c06",
+        "content_type": null,
+        "content_length": 168635
+      },
+      {
+        "url": "https://www.defender.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:29.785417+00:00",
+        "sha256_hash": "3ae331354b2d96976c812b8f08034ba57bb96870fa4b47f983c33ecc3b7b59f2",
+        "content_type": null,
+        "content_length": 832809
+      },
+      {
+        "url": "https://www.dockwa.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:30.612822+00:00",
+        "sha256_hash": "0fc41d367fd75228578b5e54056b5bb88f52a605a093f4e999f54a7eb01f4be5",
+        "content_type": null,
+        "content_length": 25275
+      },
+      {
+        "url": "https://www.home-assistant.io/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:31.010437+00:00",
+        "sha256_hash": "309446b57ea6708214fadfb802e81b24ee655b70690c395f4813d2b3dc8fab1c",
+        "content_type": null,
+        "content_length": 43302
+      },
+      {
+        "url": "https://www.mckinsey.com/",
+        "http_status": 503,
+        "accessible": false,
+        "error": "HTTP 503: Service Unavailable",
+        "timestamp": "2025-11-13T02:20:31.349253+00:00",
+        "sha256_hash": null,
+        "content_type": null,
+        "content_length": 0
+      },
+      {
+        "url": "https://www.mixpanel.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:31.757694+00:00",
+        "sha256_hash": "1e51a76e12aa1fba0feb7fe7c102802a5d36d102de97508d2bd6b873cdf36bec",
+        "content_type": null,
+        "content_length": 1163257
+      },
+      {
+        "url": "https://www.pinterest.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:32.527582+00:00",
+        "sha256_hash": "ce119690de8e783eb9c077833d59d8c372f8491938f0d8dac5f18261385ca653",
+        "content_type": null,
+        "content_length": 304246
+      },
+      {
+        "url": "https://www.savvynavvy.com/",
+        "http_status": 503,
+        "accessible": false,
+        "error": "HTTP 503: Service Unavailable",
+        "timestamp": "2025-11-13T02:20:33.186865+00:00",
+        "sha256_hash": null,
+        "content_type": null,
+        "content_length": 0
+      },
+      {
+        "url": "https://www.statista.com/",
+        "http_status": 0,
+        "accessible": false,
+        "error": "URL Error: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1016)",
+        "timestamp": "2025-11-13T02:20:34.217868+00:00",
+        "sha256_hash": null,
+        "content_type": null,
+        "content_length": 0
+      },
+      {
+        "url": "https://www.stripe.com/",
+        "http_status": 403,
+        "accessible": false,
+        "error": "HTTP 403: Forbidden",
+        "timestamp": "2025-11-13T02:20:34.283505+00:00",
+        "sha256_hash": null,
+        "content_type": null,
+        "content_length": 0
+      },
+      {
+        "url": "https://www.westmarine.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:34.904608+00:00",
+        "sha256_hash": "5b1e0987ad9c8760eb62866f4a5096a4cfc6e19a48bfd4d692172ba9d1e58622",
+        "content_type": null,
+        "content_length": 473774
+      },
+      {
+        "url": "https://www.yacht-news.com/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:36.360239+00:00",
+        "sha256_hash": "c48b3875dcfcafadf30ef4f91e98f9654251954b114248c62b15f45b4acda388",
+        "content_type": null,
+        "content_length": 2315
+      },
+      {
+        "url": "https://www.yachtworld.com/boats/",
+        "http_status": 200,
+        "accessible": true,
+        "error": "",
+        "timestamp": "2025-11-13T02:20:38.107883+00:00",
+        "sha256_hash": "823a8994be5b3955fa8705000535d0e07fc1f237324b3079231427e3ac6eb1b1",
+        "content_type": null,
+        "content_length": 714014
+      }
+    ]
+  },
+  "metadata": {
+    "total_citations": 13,
+    "urls_verified": 13,
+    "broken_links": 5,
+    "redirected_links": 0,
+    "timeout_links": 0,
+    "verification_timestamp": "2025-11-13T02:20:24.596395+00:00"
+  }
+}
