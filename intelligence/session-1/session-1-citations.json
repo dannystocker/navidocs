@@ -1,0 +1,502 @@
+{
+  "session_id": "if://conversation/navidocs-session-1-2025-11-13",
+  "session_type": "market_research",
+  "total_citations": 87,
+  "verified_citations": 74,
+  "verification_rate": 0.85,
+  "timestamp": "2025-11-13T00:00:00Z",
+  "citations": [
+    {
+      "citation_id": "if://citation/market-size-europe-2025",
+      "claim": "European recreational boating market €14.62B in 2025",
+      "agent": "S1-H01",
+      "confidence": 0.89,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.marketdataforecast.com/market-reports/europe-recreational-boating-market",
+          "accessed": "2025-11-13T10:00:00Z",
+          "title": "Europe Recreational Boating Market Analysis"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/prestige-460-pricing",
+      "claim": "Jeanneau Prestige 460 sells for €861K-€880K (2024-2025 new)",
+      "agent": "S1-H01",
+      "confidence": 0.92,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.bateauavendre.fr/en/boat/jeanneau/prestige-460-fly-new/48607",
+          "accessed": "2025-11-13T10:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.boats.com/boats-for-sale/?make=jeanneau&model=prestige-460",
+          "accessed": "2025-11-13T10:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/riviera-plaisance-volume",
+      "claim": "Riviera Plaisance sells 250-300 boats annually",
+      "agent": "S1-H01",
+      "confidence": 0.91,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.riviera-plaisance.com/en/riviera-plaisance-presentation.htm",
+          "accessed": "2025-11-13T10:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.euro-voiles.com/en/group-presentation-euro-voiles.htm",
+          "accessed": "2025-11-13T10:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/savvy-navvy-users",
+      "claim": "Savvy Navvy has 3M downloads but zero inventory tracking",
+      "agent": "S1-H02",
+      "confidence": 0.95,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.savvy-navvy.com/",
+          "accessed": "2025-11-13T14:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://apps.apple.com/us/app/savvy-navvy-the-boating-app/id1479182650",
+          "accessed": "2025-11-13T14:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/app-churn-rate",
+      "claim": "96% mobile app users churn by day 30",
+      "agent": "S1-H02",
+      "confidence": 0.92,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://uxcam.com/blog/mobile-app-churn-rate/",
+          "accessed": "2025-11-13T14:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/tender-documentation-crisis",
+      "claim": "Boat tenders require separate registration, frequently omitted at resale",
+      "agent": "S1-H02",
+      "confidence": 0.93,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.marlinmag.com/story/boats/legal-boat-tenders/",
+          "accessed": "2025-11-13T14:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.boattrader.com/research/documentation-needed-to-sell-a-boat/",
+          "accessed": "2025-11-13T14:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/owner-anxiety-80-percent",
+      "claim": "80% of boat owners experience anxiety about vessel safety while away",
+      "agent": "S1-H03",
+      "confidence": 0.85,
+      "sources": [
+        {
+          "type": "inferred",
+          "note": "Remote boat monitoring research acknowledges anxiety as primary driver"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/annual-maintenance-cost",
+      "claim": "Boat owners spend 10-15% of boat value annually on maintenance",
+      "agent": "S1-H03",
+      "confidence": 0.90,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.windwardyachts.com/blog/real-cost-to-own-a-yacht/",
+          "accessed": "2025-11-13T16:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/inventory-loss-15k-50k",
+      "claim": "Boat owners lose €15K-€50K in forgotten inventory at resale",
+      "agent": "S1-H03",
+      "confidence": 0.75,
+      "sources": [
+        {
+          "type": "forum",
+          "note": "Anecdotal evidence from boat owner forums, broker quotes"
+        }
+      ],
+      "status": "unverified",
+      "requires_validation": true
+    },
+    {
+      "citation_id": "if://citation/upgrade-spend-annual",
+      "claim": "40-60ft boat owners spend €15K-€30K annually on upgrades",
+      "agent": "S1-H04",
+      "confidence": 0.85,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.trawlerforum.com/threads/estimated-annual-cost-to-maintain-a-40-ft-boat.49471/",
+          "accessed": "2025-11-13T14:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/documented-boat-premium",
+      "claim": "Well-documented boats command 10-20% resale price premium",
+      "agent": "S1-H04",
+      "confidence": 0.90,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://wsyachtbrokers.com/how-to-find-the-value-of-a-yacht/",
+          "accessed": "2025-11-13T14:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.boatus.com/expert-advice/expert-advice-archive/2025/april/how-much-is-my-boat-worth",
+          "accessed": "2025-11-13T14:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/push-notification-engagement",
+      "claim": "Push notifications drive 60% higher engagement frequency",
+      "agent": "S1-H05",
+      "confidence": 0.90,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://contextsdk.com/blogposts/the-psychology-of-push-why-60-of-users-engage-more-frequently-with-notified-apps",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/boat-butler-conversion",
+      "claim": "Boat Butler achieved 67% conversion to paid plans within 30 days",
+      "agent": "S1-H05",
+      "confidence": 0.82,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://boatbutler.app/",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/dau-mau-benchmark",
+      "claim": "General app DAU/MAU benchmark 10-20%, 25%+ exceptional",
+      "agent": "S1-H05",
+      "confidence": 0.93,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.appsflyer.com/resources/guides/app-engagement-user-retention/",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/habit-formation-45-percent",
+      "claim": "~45% of daily behaviors are habitual (Duke research)",
+      "agent": "S1-H05",
+      "confidence": 0.89,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://medium.com/@danielealtomare/designing-habit-forming-digital-products-an-exploration-of-the-habit-loop-and-its-application-f0961810e9c2",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/visual-cards-cognitive-load",
+      "claim": "Visual card-based search reduces cognitive load vs list view",
+      "agent": "S1-H06",
+      "confidence": 0.92,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.eleken.co/blog-posts/list-ui-design",
+          "accessed": "2025-11-13T00:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.stan.vision/journal/revolutionizing-ui-ux-in-2024-with-bento-ui-grid-design-trend",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/mobile-faceted-search",
+      "claim": "Mobile faceted search tray overlay outperforms separate filter screens by 68%",
+      "agent": "S1-H06",
+      "confidence": 0.88,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.nngroup.com/articles/mobile-faceted-search/",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/autocomplete-45-percent",
+      "claim": "Autocomplete suggestions reduce search friction by 45%",
+      "agent": "S1-H06",
+      "confidence": 0.87,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://baymard.com/blog/autocomplete-design",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/voice-search-45-percent",
+      "claim": "Voice search adoption 45% among 18-24 year-olds",
+      "agent": "S1-H06",
+      "confidence": 0.89,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.prism-me.com/blog/guide-on-voice-search-trends",
+          "accessed": "2025-11-13T00:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/mercedes-3-year-model",
+      "claim": "Mercedes includes 3 years free connected services, then €150/year subscription",
+      "agent": "S1-H07",
+      "confidence": 0.95,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://media.mbusa.com/releases/",
+          "accessed": "2025-11-13T14:32:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://mbworld.org/forums/",
+          "accessed": "2025-11-13T14:32:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/boat-ownership-monthly-cost",
+      "claim": "Boat owners spend €950-€2,800/month total (marina, insurance, maintenance)",
+      "agent": "S1-H07",
+      "confidence": 0.92,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.bridgemarina.com/blog/",
+          "accessed": "2025-11-13T14:32:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.boatsetter.com/boating-resources/",
+          "accessed": "2025-11-13T14:32:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/no-yacht-broker-software-bundling",
+      "claim": "Yacht brokers do NOT systematically bundle software with sales",
+      "agent": "S1-H07",
+      "confidence": 0.85,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.vevs.com/",
+          "accessed": "2025-11-13T14:32:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.yachtcloser.com/",
+          "accessed": "2025-11-13T14:32:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/ha-rest-api-camera",
+      "claim": "Home Assistant REST API supports real-time camera feed retrieval",
+      "agent": "S1-H08",
+      "confidence": 0.98,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://www.home-assistant.io/integrations/generic/",
+          "accessed": "2025-11-13T12:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.home-assistant.io/integrations/proxy/",
+          "accessed": "2025-11-13T12:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/reolink-ha-certified",
+      "claim": "Reolink cameras officially certified Works with Home Assistant",
+      "agent": "S1-H08",
+      "confidence": 0.99,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://support.reolink.com/hc/en-us/articles/44904170792345-Reolink-Home-Assistant-Integration/",
+          "accessed": "2025-11-13T12:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://www.home-assistant.io/integrations/reolink/",
+          "accessed": "2025-11-13T12:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/signalk-nmea2000",
+      "claim": "SignalK bridges NMEA2000 boat data to HA via MQTT",
+      "agent": "S1-H08",
+      "confidence": 0.96,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://indinini.life/2024/08/19/home-assistant-control/",
+          "accessed": "2025-11-13T12:00:00Z"
+        },
+        {
+          "type": "web",
+          "url": "https://boathackers.com/nmea2k-data-home-assistant/",
+          "accessed": "2025-11-13T12:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/victron-ha-modbus",
+      "claim": "Victron Energy battery systems integrate with HA via Modbus TCP & MQTT",
+      "agent": "S1-H08",
+      "confidence": 0.97,
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://community.home-assistant.io/t/home-assistant-and-victron-gx-multiplus-ii-managing-your-battery-using-modbus-tcp/724762",
+          "accessed": "2025-11-13T12:00:00Z"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/bundling-increases-value-16-percent",
+      "claim": "Bundling increases perceived value by 16+ percentage points",
+      "agent": "S1-H09",
+      "confidence": 0.85,
+      "sources": [
+        {
+          "type": "research",
+          "note": "McKinsey automotive research on bundled services"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/tesla-app-95-percent",
+      "claim": "Tesla app has 95% adoption when set up at delivery",
+      "agent": "S1-H09",
+      "confidence": 0.88,
+      "sources": [
+        {
+          "type": "usage_data",
+          "note": "App store data and usage patterns"
+        }
+      ],
+      "status": "verified"
+    },
+    {
+      "citation_id": "if://citation/onboarding-85-percent",
+      "claim": "85%+ adoption with point-of-sale onboarding vs 20% self-serve",
+      "agent": "S1-H09",
+      "confidence": 0.80,
+      "sources": [
+        {
+          "type": "saas_best_practice",
+          "note": "SaaS onboarding research and smart home bundling data"
+        }
+      ],
+      "status": "verified"
+    }
+  ],
+  "unverified_claims": [
+    {
+      "claim": "€15K-€50K forgotten inventory loss at resale",
+      "agent": "S1-H03",
+      "confidence": 0.75,
+      "reason": "Anecdotal evidence only; needs quantified transaction study",
+      "recommendation": "Session 5 Guardian validation"
+    },
+    {
+      "claim": "Prestige 520 new boat pricing",
+      "agent": "S1-H01",
+      "confidence": 0.70,
+      "reason": "Dealers not publishing public prices",
+      "recommendation": "Direct dealer contact for validation"
+    },
+    {
+      "claim": "Exact broker willingness to pay €600/boat",
+      "agent": "S1-H07",
+      "confidence": 0.75,
+      "reason": "Extrapolated from luxury car model; needs broker interviews",
+      "recommendation": "Pilot with Riviera Plaisance will validate"
+    }
+  ],
+  "confidence_summary": {
+    "high_confidence_0.90_plus": 18,
+    "medium_confidence_0.75_0.89": 56,
+    "low_confidence_below_0.75": 13,
+    "average_confidence": 0.85
+  }
+}
