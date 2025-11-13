@@ -12,8 +12,8 @@
 | Session 1 | S1-H01 to S1-H10 | 🟡 READY | 0/10 agents | `intelligence/session-1/` |
 | Session 2 | S2-H01 to S2-H10 | 🟡 READY | 0/10 agents | `intelligence/session-2/` |
 | Session 3 | S3-H01 to S3-H10 | 🟡 READY | 0/10 agents | `intelligence/session-3/` |
-| Session 4 | S4-H01 to S4-H10 | 🟡 READY | 0/10 agents | `intelligence/session-4/` |
-| Session 5 | S5-H01 to S5-H10 | 🟡 READY | 0/20 guardians | `intelligence/session-5/` |
+| Session 4 | S4-H01 to S4-H10 | ✅ COMPLETE | 10/10 agents | `intelligence/session-4/` |
+| Session 5 | S5-H0A to S5-H10 | 🟢 ACTIVE (QA) | 0/13 agents | `intelligence/session-5/` |
 
 **Status Legend:**
 - 🟡 READY - Session initialized, waiting to start
@@ -131,22 +131,36 @@ fi
 
 ---
 
-### **Session 5: Guardian Validation**
+### **Session 5: Guardian Validation + Active Quality Assurance**
 
-**Current Task:** Guardian methodology review + evaluation criteria prep
+**Current Task:** PHASE 1 - Active QA Partner (NO DEPENDENCIES - START NOW)
 
-**Instructions:**
-1. **Parallel:** Guardians 1-12 + IF.sam facets review IF.TTT framework, prepare evaluation criteria
-2. **When Sessions 1+2+3+4 complete:** Poll for handoff files
-3. **Then:** Guardians review complete intelligence dossier
-4. **IF.sam Debate:** 8 facets debate findings (Light Side vs Dark Side)
-5. **Vote:** Agent 10 tallies consensus (need >80% approval)
-6. **ESCALATE:** If <80%, flag for human review
-7. Output to `intelligence/session-5/` (complete-intelligence-dossier.md, guardian-vote.md, consensus-report.md)
+**IMMEDIATE ACTIONS (Agents 0A, 0B, 0C):**
+1. **Agent 0A (CRITICAL - First 10 minutes):** Deploy `EVIDENCE_QUALITY_STANDARDS.md`
+   - Citation format templates (IF.TTT compliance)
+   - Evidence quality scoring rubric (primary/secondary/tertiary sources)
+   - Multi-source verification examples
+   - Commit to coordination branch → Sessions 1-4 read immediately
+2. **Agent 0B (CONTINUOUS - Every 5 minutes):** Real-time quality monitoring
+   - Poll `intelligence/session-*/` for new commits
+   - Review citations for IF.TTT compliance
+   - Create `QUALITY_FEEDBACK.md` (updated every 5 minutes)
+   - Sessions 1-4 read feedback → fix issues proactively
+3. **Agent 0C (PREP WORK):** Guardian briefing templates
+   - Create 20 guardian-specific briefing templates
+   - Consensus prediction formula
+   - Voting criteria checklists
+
+**PHASE 2 - Final Validation (WAIT FOR SESSIONS 1+2+3+4):**
+4. **When Sessions 1+2+3+4 complete:** Poll for handoff files
+5. **Agents 1-9:** Extract evidence, validate claims, compile citations
+6. **Agent 10:** Guardian Council vote (need >80% consensus)
+7. **ESCALATE:** If <80% approval, flag for human review
+8. Output to `intelligence/session-5/` (complete-intelligence-dossier.md, guardian-vote.md)
 
 **Dependencies:**
-- **Methodology review:** NONE (start immediately)
-- **Dossier validation:** Sessions 1+2+3+4 complete
+- **Agent 0A, 0B, 0C:** NONE (start immediately - assist Sessions 1-4)
+- **Agents 1-10:** Sessions 1+2+3+4 complete
 
 **Polling Command:**
 ```bash
