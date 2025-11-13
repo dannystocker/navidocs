@@ -68,32 +68,11 @@
                 </button>
                 <button
                   @click="performSearch"
-                  class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md hover:shadow-lg hover:scale-105 transition-transform"
-                  :class="[
-                    isHeaderCollapsed ? 'w-8 h-8' : 'w-10 h-10',
-                    { 'pointer-events-none': isSearching }
-                  ]"
-                  :title="isSearching ? 'Searching...' : 'Search'"
+                  class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md hover:shadow-lg hover:scale-105"
+                  :class="isHeaderCollapsed ? 'w-8 h-8' : 'w-10 h-10'"
+                  title="Search"
                 >
-                  <!-- Loading spinner when searching -->
-                  <svg
-                    v-if="isSearching"
-                    :class="isHeaderCollapsed ? 'w-4 h-4' : 'w-5 h-5'"
-                    class="animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <!-- Search icon when not searching -->
-                  <svg
-                    v-else
-                    :class="isHeaderCollapsed ? 'w-4 h-4' : 'w-5 h-5'"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg :class="isHeaderCollapsed ? 'w-4 h-4' : 'w-5 h-5'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </button>
@@ -477,55 +456,6 @@ async function loadDocument() {
   }
 }
 
-// Search all pages and build comprehensive hit list
-async function searchAllPages(query) {
-  if (!pdfDoc || !query) return []
-
-  const allResults = []
-  const normalizedQuery = query.toLowerCase().trim()
-
-  try {
-    isSearchingAllPages.value = true
-
-    for (let pageNum = 1; pageNum <= totalPages.value; pageNum++) {
-      const page = await pdfDoc.getPage(pageNum)
-      const textContent = await page.getTextContent()
-      const pageText = textContent.items.map(item => item.str).join(' ')
-      const pageLowerText = pageText.toLowerCase()
-
-      // Find all matches in this page
-      let matchIndex = 0
-      let searchIndex = 0
-      while ((searchIndex = pageLowerText.indexOf(normalizedQuery, searchIndex)) !== -1) {
-        // Extract snippet around the match
-        const snippetStart = Math.max(0, searchIndex - 40)
-        const snippetEnd = Math.min(pageText.length, searchIndex + normalizedQuery.length + 40)
-        let snippet = pageText.substring(snippetStart, snippetEnd)
-
-        // Add ellipsis if truncated
-        if (snippetStart > 0) snippet = '...' + snippet
-        if (snippetEnd < pageText.length) snippet = snippet + '...'
-
-        allResults.push({
-          page: pageNum,
-          matchIndex: matchIndex,
-          snippet: snippet,
-          textPosition: searchIndex
-        })
-
-        matchIndex++
-        searchIndex += normalizedQuery.length
-      }
-    }
-  } catch (err) {
-    console.error('Error searching all pages:', err)
-  } finally {
-    isSearchingAllPages.value = false
-  }
-
-  return allResults
-}
-
 function highlightSearchTerms() {
   if (!textLayer.value || !searchQuery.value) {
     totalHits.value = 0
@@ -572,52 +502,24 @@ function highlightSearchTerms() {
     }
   })
 
-  // Update current page hit list (for scrolling within page)
+  totalHits.value = hits.length
   hitList.value = hits
-
-  // If we have cross-page results, use those for total count and navigation
-  if (allPagesHitList.value.length > 0) {
-    totalHits.value = allPagesHitList.value.length
-
-    // Find the first hit on the current page in the all-pages list
-    const firstHitOnCurrentPage = allPagesHitList.value.findIndex(h => h.page === currentPage.value)
-    if (firstHitOnCurrentPage !== -1) {
-      currentHitIndex.value = firstHitOnCurrentPage
-    }
-  } else {
-    totalHits.value = hits.length
-    currentHitIndex.value = 0
-  }
+  currentHitIndex.value = 0
 
   // Highlight all matches on the current page (Apple Preview style)
   updateHighlightsForCurrentPage()
 
-  // Scroll to first match on current page
+  // Scroll to first match
   if (hits.length > 0) {
     scrollToHit(0)
   }
 }
 
 // Update highlights to show all matches with appropriate styling (Apple Preview style)
-function updateHighlightsForCurrentPage(activeLocalIndex = null) {
+function updateHighlightsForCurrentPage() {
   if (!textLayer.value || hitList.value.length === 0) return
 
-  // Determine which hit should be active on this page
-  let indexToHighlight = activeLocalIndex
-
-  // If no specific index provided, try to find it from global currentHitIndex
-  if (indexToHighlight === null && allPagesHitList.value.length > 0) {
-    const globalHit = allPagesHitList.value[currentHitIndex.value]
-    if (globalHit && globalHit.page === currentPage.value) {
-      // Find the corresponding local index in hitList for this page
-      indexToHighlight = hitList.value.findIndex(h => h.snippet === globalHit.snippet)
-      if (indexToHighlight === -1) indexToHighlight = 0
-    }
-  } else if (indexToHighlight === null && hitList.value.length > 0) {
-    indexToHighlight = 0 // Default to first match on page
-  }
-
-  // Apply styling to all matches on the page (yellow background)
+  // Apply styling to all matches on the page
   hitList.value.forEach((hit, index) => {
     if (hit.element) {
       // Remove active class from all first
@@ -630,9 +532,9 @@ function updateHighlightsForCurrentPage(activeLocalIndex = null) {
     }
   })
 
-  // Then apply active styling to the specified match (pink background)
-  if (indexToHighlight !== null && indexToHighlight >= 0 && indexToHighlight < hitList.value.length) {
-    const currentHit = hitList.value[indexToHighlight]
+  // Then apply active styling to the current match (pink background)
+  if (currentHitIndex.value >= 0 && currentHitIndex.value < hitList.value.length) {
+    const currentHit = hitList.value[currentHitIndex.value]
     if (currentHit && currentHit.element) {
       currentHit.element.classList.add('search-highlight-active')
     }
@@ -645,8 +547,15 @@ function scrollToHit(index) {
   const hit = hitList.value[index]
   if (!hit || !hit.element) return
 
-  // Update highlights to show all matches (yellow) with the specified one active (pink)
-  updateHighlightsForCurrentPage(index)
+  // Remove active class from all marks
+  hitList.value.forEach(h => {
+    if (h.element) {
+      h.element.classList.remove('search-highlight-active')
+    }
+  })
+
+  // Add active class to current hit
+  hit.element.classList.add('search-highlight-active')
 
   // Scroll to current hit
   setTimeout(() => {
@@ -654,175 +563,52 @@ function scrollToHit(index) {
   }, 100)
 }
 
-async function nextHit() {
+function nextHit() {
   if (totalHits.value === 0) return
 
-  // If we have cross-page results, check if we need to navigate to a different page
-  if (allPagesHitList.value.length > 0) {
-    const nextIndex = (currentHitIndex.value + 1) % totalHits.value
-    const nextHit = allPagesHitList.value[nextIndex]
-
-    if (nextHit && nextHit.page !== currentPage.value) {
-      // Navigate to the page with the next hit
-      currentHitIndex.value = nextIndex
-      currentPage.value = nextHit.page
-      pageInput.value = nextHit.page
-      await renderPage(nextHit.page)
-    } else {
-      // Stay on current page, just move to next hit
-      currentHitIndex.value = nextIndex
-      scrollToHit(currentHitIndex.value)
-    }
-  } else {
-    // Single page search
-    currentHitIndex.value = (currentHitIndex.value + 1) % totalHits.value
-    scrollToHit(currentHitIndex.value)
-  }
+  currentHitIndex.value = (currentHitIndex.value + 1) % totalHits.value
+  scrollToHit(currentHitIndex.value)
 }
 
-async function prevHit() {
+function prevHit() {
   if (totalHits.value === 0) return
 
-  // If we have cross-page results, check if we need to navigate to a different page
-  if (allPagesHitList.value.length > 0) {
-    const prevIndex = currentHitIndex.value === 0
-      ? totalHits.value - 1
-      : currentHitIndex.value - 1
-    const prevHit = allPagesHitList.value[prevIndex]
-
-    if (prevHit && prevHit.page !== currentPage.value) {
-      // Navigate to the page with the previous hit
-      currentHitIndex.value = prevIndex
-      currentPage.value = prevHit.page
-      pageInput.value = prevHit.page
-      await renderPage(prevHit.page)
-    } else {
-      // Stay on current page, just move to previous hit
-      currentHitIndex.value = prevIndex
-      scrollToHit(currentHitIndex.value)
-    }
-  } else {
-    // Single page search
-    currentHitIndex.value = currentHitIndex.value === 0
-      ? totalHits.value - 1
-      : currentHitIndex.value - 1
-    scrollToHit(currentHitIndex.value)
-  }
+  currentHitIndex.value = currentHitIndex.value === 0
+    ? totalHits.value - 1
+    : currentHitIndex.value - 1
+  scrollToHit(currentHitIndex.value)
 }
 
-async function jumpToHit(index) {
-  // If we're using cross-page results, index refers to allPagesHitList
-  if (allPagesHitList.value.length > 0) {
-    if (index < 0 || index >= allPagesHitList.value.length) return
+function jumpToHit(index) {
+  if (index < 0 || index >= hitList.value.length) return
 
-    const hit = allPagesHitList.value[index]
-    if (!hit) return
-
-    currentHitIndex.value = index
-    jumpListOpen.value = false
-
-    // Navigate to the page if necessary
-    if (hit.page !== currentPage.value) {
-      currentPage.value = hit.page
-      pageInput.value = hit.page
-      await renderPage(hit.page)
-    } else {
-      // Already on the right page, just scroll to it
-      scrollToHit(index)
-    }
-  } else {
-    // Single page search
-    if (index < 0 || index >= hitList.value.length) return
-
-    currentHitIndex.value = index
-    scrollToHit(index)
-    jumpListOpen.value = false
-  }
+  currentHitIndex.value = index
+  scrollToHit(index)
+  jumpListOpen.value = false
 }
 
-async function performSearch() {
+function performSearch() {
   const query = searchInput.value.trim()
-
-  // Clear search if query is empty
   if (!query) {
     clearSearch()
     return
   }
 
-  // Don't search if query is less than 2 characters
-  if (query.length < 2) {
-    return
-  }
+  searchQuery.value = query
 
-  // Cancel previous search if still running
-  if (searchAbortController) {
-    searchAbortController.abort()
-  }
-
-  // Create new abort controller for this search
-  searchAbortController = new AbortController()
-
-  try {
-    isSearching.value = true
-    searchQuery.value = query
-
-    // Check if search was aborted
-    if (searchAbortController.signal.aborted) {
-      return
-    }
-
-    // Re-highlight search terms on current page immediately
-    if (textLayer.value) {
-      highlightSearchTerms()
-    }
-
-    // Search all pages in the background
-    searchAllPages(query).then(results => {
-      // Check if this search is still valid
-      if (searchQuery.value === query && !searchAbortController?.signal.aborted) {
-        allPagesHitList.value = results
-        console.log(`Found ${results.length} matches across ${new Set(results.map(r => r.page)).size} pages`)
-
-        // Update the hit list display if we're still showing the same query
-        if (searchQuery.value === query) {
-          // Re-highlight current page with updated counts
-          if (textLayer.value) {
-            highlightSearchTerms()
-          }
-        }
-      }
-    })
-  } catch (error) {
-    if (error.name !== 'AbortError') {
-      console.error('Search error:', error)
-    }
-  } finally {
-    isSearching.value = false
-    searchAbortController = null
+  // Re-highlight search terms on current page
+  if (textLayer.value) {
+    highlightSearchTerms()
   }
 }
 
 function clearSearch() {
-  // Clear any pending debounced search
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-    searchDebounceTimer = null
-  }
-
-  // Cancel any ongoing search
-  if (searchAbortController) {
-    searchAbortController.abort()
-    searchAbortController = null
-  }
-
   searchInput.value = ''
   searchQuery.value = ''
   totalHits.value = 0
   hitList.value = []
-  allPagesHitList.value = []
   currentHitIndex.value = 0
   jumpListOpen.value = false
-  isSearching.value = false
 
   // Remove highlights
   if (textLayer.value) {
@@ -835,44 +621,8 @@ function clearSearch() {
 }
 
 function handleSearchInput() {
-  // Clear previous debounce timer
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-  }
-
-  // Cancel previous search if new input arrives
-  if (searchAbortController) {
-    searchAbortController.abort()
-    searchAbortController = null
-  }
-
-  const query = searchInput.value.trim()
-
-  // Clear results immediately if search input is cleared
-  if (!query) {
-    clearSearch()
-    return
-  }
-
-  // Don't search if query is less than 2 characters
-  if (query.length < 2) {
-    // Clear previous results but don't perform new search
-    searchQuery.value = ''
-    totalHits.value = 0
-    hitList.value = []
-    allPagesHitList.value = []
-    currentHitIndex.value = 0
-    return
-  }
-
-  // Set searching state to show loading indicator
-  isSearching.value = true
-
-  // Debounce search - wait 300ms after user stops typing
-  searchDebounceTimer = setTimeout(() => {
-    performSearch()
-    searchDebounceTimer = null
-  }, 300)
+  // Optional: Auto-search as user types (with debounce)
+  // For now, require Enter key or button click
 }
 
 function makeTocEntriesClickable() {
@@ -1329,7 +1079,7 @@ onBeforeUnmount(() => {
 
 /* Search highlighting */
 .search-highlight {
-  background-color: rgba(255, 215, 0, 0.4);
+  background-color: rgba(255, 215, 0, 0.6);
   color: #000 !important;  /* Force text visible */
   padding: 2px 0;
   border-radius: 2px;
