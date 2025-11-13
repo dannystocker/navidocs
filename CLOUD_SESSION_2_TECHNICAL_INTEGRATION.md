@@ -39,6 +39,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 - **No contact management** (crew, marina, mechanics, cleaners)
 - **No expense tracking** (how much am I spending on this boat?)
 - **No impeccable search** (avoid long lists, structured faceted results)
+- **No VAT/tax tracking** (non-VAT boats must leave EU for stamp; different regs ES/FR/IT/global jurisdictions)
+- **No calendar system** (service dates, warranty tracking, owner onboard dates, work roadmaps with budget signoff)
 
 ---
 
@@ -223,24 +225,93 @@ Each agent MUST:
 
 **Deliverable:** Document versioning spec with IF.TTT traceability architecture
 
+### Agent 3A: VAT/Tax Jurisdiction Tracking & Compliance Reminders (CRITICAL)
+**AGENT ID:** S2-H03A
+**
+**Research + Design:**
+- **Non-VAT boat regulations:** Research requirements for tax-exempt yachts in major jurisdictions
+  - **EU:** Must leave EU waters to get customs stamp (prevents VAT liability)
+  - **France:** Check exit requirements, grace periods, penalties for non-compliance
+  - **Spain:** Different exit requirements than France (research specific regs)
+  - **Italy:** Different exit requirements (research specific regs)
+  - **Global:** Check major yachting jurisdictions (Monaco, Gibraltar, Malta, Cayman Islands, US, Caribbean)
+- **VAT-paid vs Non-VAT tracking:**
+  - Database schema: `boat_tax_status` (vat_paid, home_jurisdiction, purchase_date, exemption_expiry, last_exit_date)
+  - Track: VAT status, home port, last EU exit, next required exit
+- **Compliance reminder system:**
+  - Calculate: days until required EU exit (based on jurisdiction rules)
+  - Alerts: 60/30/14/7 days before required exit
+  - Dashboard widget: "EU Exit Required in 23 days (Spain regs)"
+  - Integration with calendar system (scheduled exits on owner calendar)
+- **Jurisdiction-specific rules engine:**
+  - Store rules per jurisdiction (exit frequency, grace periods, documentation requirements)
+  - Update mechanism (regulations change - need easy updates)
+  - Multi-jurisdiction support (owner moves between FR/ES/IT marinas)
+
+**Deliverable:** VAT/tax tracking spec with compliance reminders + jurisdiction rules engine + integration with calendar system
+
+### Agent 7A: Multi-Calendar System (CRITICAL)
+**AGENT ID:** S2-H07A
+**
+**Design:**
+- **Calendar architecture** (4 separate calendar types, unified UI):
+  1. **Service Calendar:**
+     - Maintenance appointments (past + upcoming)
+     - Service due dates (based on date OR engine hours)
+     - Reminders: 60/30/14/7 days before service due
+     - Integration: Maintenance log (Agent 3) feeds service dates
+  2. **Warranty Calendar:**
+     - Warranty expiration dates (equipment-specific)
+     - Purchase anniversaries (for warranty tracking)
+     - Reminders: 90/60/30 days before warranty expires
+     - Integration: Inventory tracking (Agent 2) feeds warranty dates
+  3. **Owner Onboard Calendar:**
+     - Owner scheduled trips ("On boat: July 15-22, 2025")
+     - Captain can see owner arrival dates (prep boat)
+     - After-sales can see owner activity patterns (engagement tracking)
+     - Integration: Stakeholder dashboard (Session 3) shows owner engagement
+  4. **Work Roadmap Calendar:**
+     - Planned work with budget estimates ("Hull repaint: €15K, scheduled Aug 2025")
+     - Budget signoff workflow (owner approves/rejects planned work)
+     - Status tracking: Proposed → Approved → Scheduled → In Progress → Complete
+     - Integration: Expense tracking (Agent 6) for actual costs vs budget
+
+**Calendar Features:**
+- **Unified dashboard view:** All 4 calendars in one interface (color-coded)
+- **Mobile-first:** Owners check calendars from phone
+- **Smart notifications:** Context-aware (e.g., "Service due + Owner arriving in 3 days → notify captain to schedule service before arrival")
+- **Export:** iCal/Google Calendar sync (owners add to personal calendar)
+- **Conflict detection:** "Owner arriving July 15, but hull repaint scheduled July 10-20 → flag conflict"
+
+**Database Schema:**
+- `calendar_events` (event_type, date, boat_id, title, description, status, budget_amount, actual_cost, created_by, approved_by)
+- Event types: service_due, warranty_expires, owner_onboard, work_planned, tax_exit_required
+- Status: proposed, approved, scheduled, in_progress, completed, cancelled
+
+**Deliverable:** Multi-calendar system spec with unified dashboard + smart notifications + conflict detection + budget signoff workflow
+
 ### Agent 10: Architecture Synthesis & Sprint Planning
 **AGENT ID:** S2-H10
 **
-**Wait for:** Agents 1-9 to complete
+**Wait for:** Agents 1-9 + 3A + 7A to complete (11 agents total)
 
 **Compile:**
-- Integration architecture (all 9 features working together)
+- Integration architecture (all 11 features working together)
 - Week 1-4 task breakdown with priorities:
   - **Week 1:** Document tracking/versioning + WhatsApp integration (core value props)
-  - **Week 2:** Inventory tracking + maintenance log
-  - **Week 3:** Camera integration + contact management
-  - **Week 4:** Expense tracking + search UX + AI agent training
-- Dependencies mapped (e.g., WhatsApp AI agent needs document search working first)
+  - **Week 2:** Inventory tracking + maintenance log + VAT/tax tracking (Agent 3A)
+  - **Week 3:** Camera integration + contact management + multi-calendar system (Agent 7A)
+  - **Week 4:** Expense tracking + search UX + AI agent training + calendar integrations
+- Dependencies mapped:
+  - WhatsApp AI agent needs document search working first
+  - Calendar system needs maintenance log + inventory tracking data feeds
+  - VAT compliance alerts integrate with calendar system (exit reminders)
+  - Work roadmap calendar integrates with expense tracking (budget vs actual)
 - Acceptance criteria per feature
 - Testing strategy (unit, integration, E2E + IF.TTT audit validation)
 - IF.TTT dogfooding checklist (we're using our own traceability standards)
 
-**Deliverable:** Complete architecture document + 4-week sprint plan with IF.TTT compliance
+**Deliverable:** Complete architecture document + 4-week sprint plan with IF.TTT compliance + calendar/tax integration roadmap
 
 ---
 
