@@ -1012,18 +1012,20 @@ onBeforeUnmount(() => {
 /* Search highlighting */
 .search-highlight {
   background-color: rgba(255, 215, 0, 0.6);
-  color: #000;
+  color: #000 !important;  /* Force text visible */
   padding: 2px 0;
   border-radius: 2px;
   font-weight: 600;
   transition: background-color 0.2s ease;
+  opacity: 1 !important;  /* Ensure mark is visible */
 }
 
 .search-highlight-active {
   background-color: rgba(255, 92, 178, 0.8) !important;
-  color: #fff !important;
+  color: #fff !important;  /* Force white text visible */
   box-shadow: 0 0 0 2px rgba(255, 92, 178, 0.4);
   animation: active-pulse 1.5s ease-in-out;
+  opacity: 1 !important;  /* Ensure active mark is visible */
 }
 
 @keyframes active-pulse {
