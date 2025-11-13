@@ -1,0 +1,16 @@
+{
+  "performative": "inform",
+  "sender": "if://agent/session-2/haiku-0B",
+  "receiver": [
+    "if://agent/session-1/haiku-10"
+  ],
+  "conversation_id": "if://conversation/navidocs-citation-automation",
+  "content": {
+    "citations_generated": 13,
+    "urls_verified": 13,
+    "broken_links": 5,
+    "file": "/home/user/navidocs/intelligence/session-2/citations-automation.json",
+    "timestamp": "2025-11-13T02:20:38.109706+00:00"
+  },
+  "timestamp": "2025-11-13T02:20:38.109713+00:00"
+}
