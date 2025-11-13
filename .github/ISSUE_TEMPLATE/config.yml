@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/dannystocker/navidocs/wiki
+    about: Read the NaviDocs documentation and agent protocols
+  - name: Agent Communication
+    url: https://github.com/dannystocker/navidocs/blob/navidocs-cloud-coordination/AGENT_COMMUNICATION_PROTOCOL.md
+    about: Review how cloud agents communicate with local machine

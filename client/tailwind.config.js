@@ -76,5 +76,13 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        '.glass': {
+          '@apply bg-white/10 backdrop-blur-lg border border-white/10 shadow-soft': {}
+        }
+      })
+    }
+  ],
 }
