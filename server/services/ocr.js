@@ -18,6 +18,7 @@ import Tesseract from 'tesseract.js';
 import pdf from 'pdf-parse';
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
+import { extractNativeTextPerPage, hasNativeText } from './pdf-text-extractor.js';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'os';
@@ -34,7 +35,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @returns {Promise<Array<{pageNumber: number, text: string, confidence: number}>>}
  */
 export async function extractTextFromPDF(pdfPath, options = {}) {
-  const { language = 'eng', onProgress } = options;
+  const { language = 'eng', onProgress, forceOCR = false } = options;
+
+  // Environment configuration
+  const MIN_TEXT_THRESHOLD = parseInt(process.env.OCR_MIN_TEXT_THRESHOLD || '50', 10);
+  const FORCE_OCR_ALL_PAGES = process.env.FORCE_OCR_ALL_PAGES === 'true' || forceOCR;
 
   try {
     // Read the PDF file
@@ -44,54 +49,108 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
     const pdfData = await pdf(pdfBuffer);
     const pageCount = pdfData.numpages;
 
-    console.log(`OCR: Processing ${pageCount} pages from ${pdfPath}`);
+    console.log(`[OCR] Processing ${pageCount} pages from ${pdfPath}`);
 
     const results = [];
 
-    // Process each page
+    // NEW: Try native text extraction first (unless forced to OCR)
+    let pageTexts = [];
+    let useNativeExtraction = false;
+
+    if (!FORCE_OCR_ALL_PAGES) {
+      try {
+        console.log('[OCR Optimization] Attempting native text extraction...');
+        pageTexts = await extractNativeTextPerPage(pdfPath);
+
+        // Check if PDF has substantial native text
+        const totalText = pageTexts.join('');
+        if (totalText.length > 100) {
+          useNativeExtraction = true;
+          console.log(`[OCR Optimization] PDF has native text (${totalText.length} chars), using hybrid approach`);
+        } else {
+          console.log('[OCR Optimization] Minimal native text found, falling back to full OCR');
+        }
+      } catch (error) {
+        console.log('[OCR Optimization] Native extraction failed, falling back to full OCR:', error.message);
+        useNativeExtraction = false;
+      }
+    }
+
+    // Process each page with hybrid approach
     for (let pageNum = 1; pageNum <= pageCount; pageNum++) {
       try {
-        // Convert PDF page to image
-        const imagePath = await convertPDFPageToImage(pdfPath, pageNum);
+        let pageText = '';
+        let confidence = 0;
+        let method = 'tesseract-ocr';
 
-        // Run Tesseract OCR
-        const ocrResult = await runTesseractOCR(imagePath, language);
+        // Try native text first if available
+        if (useNativeExtraction && pageTexts[pageNum - 1]) {
+          const nativeText = pageTexts[pageNum - 1].trim();
+
+          // If page has substantial native text, use it
+          if (nativeText.length >= MIN_TEXT_THRESHOLD) {
+            pageText = nativeText;
+            confidence = 0.99;
+            method = 'native-extraction';
+            console.log(`[OCR] Page ${pageNum}/${pageCount} native text (${nativeText.length} chars, no OCR needed)`);
+          }
+        }
+
+        // Fallback to Tesseract OCR if no native text
+        if (!pageText) {
+          // Convert PDF page to image
+          const imagePath = await convertPDFPageToImage(pdfPath, pageNum);
+
+          // Run Tesseract OCR
+          const ocrResult = await runTesseractOCR(imagePath, language);
+
+          pageText = ocrResult.text.trim();
+          confidence = ocrResult.confidence;
+          method = 'tesseract-ocr';
+
+          // Clean up temporary image file
+          try {
+            unlinkSync(imagePath);
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+
+          console.log(`[OCR] Page ${pageNum}/${pageCount} OCR (confidence: ${confidence.toFixed(2)})`);
+        }
 
         results.push({
           pageNumber: pageNum,
-          text: ocrResult.text.trim(),
-          confidence: ocrResult.confidence
+          text: pageText,
+          confidence: confidence,
+          method: method
         });
-
-        // Clean up temporary image file
-        try {
-          unlinkSync(imagePath);
-        } catch (e) {
-          // Ignore cleanup errors
-        }
 
         // Report progress
         if (onProgress) {
           onProgress(pageNum, pageCount);
         }
 
-        console.log(`OCR: Page ${pageNum}/${pageCount} completed (confidence: ${ocrResult.confidence.toFixed(2)})`);
       } catch (error) {
-        console.error(`OCR: Error processing page ${pageNum}:`, error.message);
+        console.error(`[OCR] Error processing page ${pageNum}:`, error.message);
 
         // Return empty result for failed page
         results.push({
           pageNumber: pageNum,
           text: '',
           confidence: 0,
-          error: error.message
+          error: error.message,
+          method: 'error'
         });
       }
     }
 
+    const nativeCount = results.filter(r => r.method === 'native-extraction').length;
+    const ocrCount = results.filter(r => r.method === 'tesseract-ocr').length;
+    console.log(`[OCR] Complete: ${nativeCount} pages native extraction, ${ocrCount} pages OCR`);
+
     return results;
   } catch (error) {
-    console.error('OCR: Fatal error extracting text from PDF:', error);
+    console.error('[OCR] Fatal error extracting text from PDF:', error);
     throw new Error(`OCR extraction failed: ${error.message}`);
   }
 }

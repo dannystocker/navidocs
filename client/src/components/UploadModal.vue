@@ -32,19 +32,19 @@
               <svg class="w-16 h-16 mx-auto text-white/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p class="text-lg text-white mb-2">Drag and drop your PDF here</p>
+              <p class="text-lg text-white mb-2">Drag and drop your document here</p>
               <p class="text-sm text-white/70 mb-4">or</p>
               <label class="btn btn-outline cursor-pointer">
                 Browse Files
                 <input
                   ref="fileInput"
                   type="file"
-                  accept="application/pdf"
+                  accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx,.txt,.md"
                   class="hidden"
                   @change="handleFileSelect"
                 />
               </label>
-              <p class="text-xs text-white/70 mt-4">Maximum file size: 50MB</p>
+              <p class="text-xs text-white/70 mt-4">Supported: PDF, Images (JPG/PNG), Word, Excel, Text/Markdown • Max: 50MB</p>
             </div>
 
             <!-- Selected File Preview -->

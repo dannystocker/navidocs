@@ -14,6 +14,7 @@ import { dirname, join } from 'path';
 import { getDb } from '../db/db.js';
 import { validateFile, sanitizeFilename } from '../services/file-safety.js';
 import { addOcrJob } from '../services/queue.js';
+import { logActivity } from '../services/activity-logger.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
@@ -163,6 +164,24 @@ router.post('/', upload.single('file'), async (req, res) => {
       fileName: sanitizedFilename,
       organizationId,
       userId
+    });
+
+    // Log activity to timeline
+    await logActivity({
+      organizationId,
+      entityId,
+      userId,
+      eventType: 'document_upload',
+      eventAction: 'created',
+      eventTitle: title,
+      eventDescription: `Uploaded ${sanitizedFilename} (${(file.size / 1024).toFixed(1)}KB)`,
+      metadata: {
+        fileSize: file.size,
+        fileName: sanitizedFilename,
+        documentType: documentType
+      },
+      referenceId: documentId,
+      referenceType: 'document'
     });
 
     // Return success response

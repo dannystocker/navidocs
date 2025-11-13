@@ -34,6 +34,12 @@ const router = createRouter({
       component: () => import('./views/StatsView.vue')
     },
     {
+      path: '/timeline',
+      name: 'timeline',
+      component: () => import('./views/Timeline.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/library',
       name: 'library',
       component: () => import('./views/LibraryView.vue')
