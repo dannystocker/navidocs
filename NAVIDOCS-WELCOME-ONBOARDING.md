@@ -44,27 +44,47 @@ Riviera Plaisance Euro Voiles sells 150+ recreational motor boats per year (Jean
 - **Passive documentation vaults** that owners ignore until emergency/sale
 - **No daily engagement features** (cameras, maintenance logs, crew contacts)
 - **No impeccable search** for finding boat equipment/docs quickly
+- **After-sales communication scattered** across WhatsApp, email, phone calls with no audit trail
 
 ### **The Solution**
 
-**NaviDocs:** A sticky daily-use boat management app that happens to have perfect documentation when you need it.
+**NaviDocs:** A sticky daily-use boat management app with document tracking/versioning that happens to integrate seamlessly into Riviera Plaisance's after-sales workflow.
 
 **Key Features:**
-1. **Inventory tracking** - prevent forgotten value at resale
-2. **Camera monitoring** - "is my boat OK?"
-3. **Maintenance log** - service reminders
-4. **Contact management** - one-tap call marina/mechanic
-5. **Expense tracking** - annual spend visibility
-6. **Impeccable search** - structured results, NO long lists
+1. **Document tracking & versioning** (core value prop) - warranties, manuals, service records with IF.TTT traceability
+2. **Inventory tracking** - prevent forgotten value at resale
+3. **WhatsApp group integration** - boat-specific chat with owner, after-sales, captain, stakeholders
+4. **AI agent in group chat** - answers questions, posts updates, logs conversations (IF.TTT compliance)
+5. **Camera monitoring** - "is my boat OK?"
+6. **Maintenance log** - service reminders
+7. **Contact management** - one-tap call marina/mechanic
+8. **Expense tracking** - annual spend visibility
+9. **Impeccable search** - structured results, NO long lists
 
 ### **Your Mission**
 
-Build the **intelligence dossier** that convinces Riviera Plaisance (specifically: Sylvain, the sales agent) to **include NaviDocs with every boat sale**.
+Build the **intelligence dossier** that makes NaviDocs so compelling that Riviera Plaisance (specifically: Sylvain, the sales agent) **includes NaviDocs by default with every boat sale**.
+
+**The Sales Process Context:**
+- Sylvain sits with buyer listing boat options
+- Buyer asks: "Do I really need that?"
+- Sylvain decides: "Yes" or "No" or "You should have it by default"
+- **Goal:** NaviDocs becomes a "you should have it by default" item
+
+**The After-Sales Workflow:**
+- When boat is sold → WhatsApp group created for that boat
+- Group members: Owner, Riviera after-sales, captain, other stakeholders
+- **NaviDocs tenant joins the group** as AI agent:
+  - Logs all chats (IF.TTT audit trail)
+  - Answers questions ("Where's the tender warranty?")
+  - Posts updates ("Maintenance service due in 2 weeks")
+  - Document versioning notifications ("New manual uploaded for autopilot")
 
 **Why this matters:**
-- **Business impact:** 150+ boats/year × €15/month = €27K annual recurring revenue (starter case)
+- **Business impact:** 150+ boats/year × €15/month × 12 months = €27K ARR (Year 1)
 - **Owner value:** €30K-€50K saved over 10 years through inventory tracking
-- **Broker value:** Sticky engagement = higher customer retention
+- **Broker value:** After-sales engagement reduces support burden + IF.TTT compliance for warranty claims
+- **IF.TTT dogfooding:** We're using our own traceability standards in production
 
 ---
 

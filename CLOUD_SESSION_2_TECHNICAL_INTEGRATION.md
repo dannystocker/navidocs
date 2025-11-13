@@ -31,6 +31,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 - Auth: JWT + bcrypt
 
 **Critical Feature Gaps (from Session 1):**
+- **No document tracking/versioning** (core value prop: warranties, manuals, service records with IF.TTT traceability)
+- **No WhatsApp group integration** (boat-specific chat with owner, after-sales, captain + AI agent)
 - **No inventory tracking** (€15K-€50K forgotten value at resale)
 - **No camera/monitoring integration** (owners want "is my boat OK?" reassurance)
 - **No maintenance log** (when was last engine service? upcoming work alerts?)
@@ -148,38 +150,64 @@ Each agent MUST:
 
 **Deliverable:** Search UX spec with visual mockups (avoid long lists!)
 
-### Agent 8: Notification System Design
+### Agent 8: WhatsApp Group Integration (CRITICAL - NEW!)
 **AGENT ID:** S2-H08
 **
-**Design:**
-- Email notification service
-- SMS alerts (warranty expiration, document missing)
-- In-app notification center
-- Push notifications (PWA)
+**Research + Design:**
+- WhatsApp Business API integration (boat-specific group chat)
+- Group membership: Owner, Riviera after-sales, captain, stakeholders + NaviDocs AI agent
+- AI agent capabilities:
+  - **Log all chats** (IF.TTT audit trail: who said what, when, with citations)
+  - **Answer questions** ("Where's the tender warranty?" → NaviDocs searches, responds with doc link)
+  - **Post updates** ("Maintenance service due in 2 weeks" → proactive reminders)
+  - **Document versioning notifications** ("New manual uploaded for autopilot")
+- Technical architecture:
+  - Webhook from WhatsApp → NaviDocs tenant API
+  - AI agent response generation (Claude API integration)
+  - Message history storage (IF.TTT compliance: ed25519 signatures, SHA-256 hashes)
+  - Multi-tenant isolation (each boat's chat stays separate)
+- Use cases:
+  - Owner: "When was last engine service?" → AI responds with maintenance log data
+  - After-sales: "@NaviDocs upload warranty for new tender" → AI confirms, creates inventory entry
+  - Captain: "Bilge pump alarm triggered" → AI logs incident, suggests mechanic contact
 
-**Deliverable:** Notification architecture with templates
+**Deliverable:** WhatsApp integration architecture with AI agent spec + IF.TTT compliance checklist
 
-### Agent 9: Database Migration Plan
+### Agent 9: Document Tracking & Versioning (CORE VALUE PROP)
 **AGENT ID:** S2-H09
 **
-**Create:**
-- Migration scripts for warranty tracking
-- Charter mode fields (flag, crew, safety)
-- Expiration tracking tables
-- Collaboration features schema
+**Design:**
+- Document versioning system (git-style: track changes, rollback, history)
+- IF.TTT compliance: Every doc upload/edit gets:
+  - Ed25519 signature (who uploaded)
+  - SHA-256 content hash (tamper detection)
+  - Timestamp (when)
+  - Citation ID (if://doc/navidocs/boat-123/warranty-tender-v2)
+- Document categories: warranties, manuals, service records, invoices, certificates, insurance
+- Versioning metadata: version number, change description, changed_by, changed_at
+- Search integration: Meilisearch indexes doc content (OCR text + metadata)
+- Mobile-first: owners upload photos of receipts/manuals → OCR extraction → structured data
 
-**Deliverable:** SQL migrations + rollback scripts
+**Deliverable:** Document versioning spec with IF.TTT traceability architecture
 
-### Agent 10: Sprint Planning
+### Agent 10: Architecture Synthesis & Sprint Planning
 **AGENT ID:** S2-H10
 **
-**Compile:**
-- Week 1-4 task breakdown
-- Dependencies mapped (e.g., DB migrations before API work)
-- Acceptance criteria per feature
-- Testing strategy (unit, integration, E2E)
+**Wait for:** Agents 1-9 to complete
 
-**Deliverable:** 4-week sprint plan with Gantt chart
+**Compile:**
+- Integration architecture (all 9 features working together)
+- Week 1-4 task breakdown with priorities:
+  - **Week 1:** Document tracking/versioning + WhatsApp integration (core value props)
+  - **Week 2:** Inventory tracking + maintenance log
+  - **Week 3:** Camera integration + contact management
+  - **Week 4:** Expense tracking + search UX + AI agent training
+- Dependencies mapped (e.g., WhatsApp AI agent needs document search working first)
+- Acceptance criteria per feature
+- Testing strategy (unit, integration, E2E + IF.TTT audit validation)
+- IF.TTT dogfooding checklist (we're using our own traceability standards)
+
+**Deliverable:** Complete architecture document + 4-week sprint plan with IF.TTT compliance
 
 ---
 
