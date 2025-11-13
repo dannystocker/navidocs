@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaviDocs Complete Feature Selector - Riviera Plaisance Meeting</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #003D5C 0%, #0066CC 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        header {
+            background: #003D5C;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header p { opacity: 0.9; font-size: 1.1rem; }
+        .controls {
+            padding: 1.5rem 2rem;
+            background: #F5F1E8;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .controls button {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .controls button:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        .controls .secondary { background: #6c757d; }
+        .controls .secondary:hover { background: #5a6268; }
+        .controls .export-btn { background: #10b981; }
+        .controls .export-btn:hover { background: #059669; }
+        .stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.95rem;
+            color: #003D5C;
+            flex-wrap: wrap;
+        }
+        .stats strong { font-size: 1.2rem; color: #0066CC; }
+        .content { padding: 2rem; }
+        .section-header {
+            background: linear-gradient(to right, #003D5C, #0066CC);
+            color: white;
+            padding: 1rem 1.5rem;
+            margin: 2rem -2rem 1.5rem -2rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .feature {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+        .feature.selected {
+            border-color: #0066CC;
+            background: #F0F8FF;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+        }
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .checkbox-wrapper { padding-top: 0.25rem; }
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        .feature-info { flex: 1; }
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .feature-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .badge.deployed { background: #d1fae5; color: #065f46; }
+        .badge.ready { background: #dbeafe; color: #1e40af; }
+        .badge.priority { background: #fef3c7; color: #92400e; }
+        .badge.time { background: #f3e8ff; color: #6b21a8; }
+        .badge.savings { background: #fecaca; color: #991b1b; }
+        .feature-why {
+            background: #F5F1E8;
+            padding: 1rem;
+            border-left: 4px solid #0066CC;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .feature-why strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .description-box {
+            background: #F9F7F4;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #444;
+        }
+        .benefits {
+            margin-bottom: 1rem;
+        }
+        .benefits strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .benefits ul {
+            list-style: none;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .benefits li {
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: #555;
+            position: relative;
+        }
+        .benefits li:before {
+            content: "✓";
+            position: absolute;
+            left: -1.2rem;
+            color: #10b981;
+            font-weight: bold;
+        }
+        .demo-value {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #0c4a6e;
+            font-style: italic;
+        }
+        .notes-section { margin: 1rem 0; }
+        .notes-section label {
+            font-weight: 600;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .notes {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.2s;
+        }
+        .notes:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        .tech-spec {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .source-cite {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚤 NaviDocs Complete Feature Portfolio</h1>
+            <p>Riviera Plaisance Partnership - All Features from 5 Cloud Sessions</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats">
+                <div>Selected: <strong id="selectedCount">0</strong> / <strong id="totalCount">15</strong></div>
+                <div>Deployed: <strong id="deployedCount">0</strong></div>
+                <div>Ready: <strong id="readyCount">0</strong></div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="selectNone()" class="secondary">Clear All</button>
+                <button onclick="exportJSON()" class="export-btn">Export JSON</button>
+                <button onclick="window.print()" class="secondary">Print</button>
+            </div>
+        </div>
+
+        <div class="content" id="features"></div>
+    </div>
+
+    <script>
+        const features = [
+            // DEPLOYED FEATURES (Phase 1 - Already Live)
+            {
+                section: 'deployed',
+                id: 'smart-ocr',
+                title: 'Smart OCR Document Processing',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 19, 2025',
+                savings: '36x speedup',
+                why: 'Extract text from 100+ page technical manuals in milliseconds. Instant searchability of all boat documentation.',
+                description: 'Lightning-fast OCR extraction from PDF pages with text highlighting, typo tolerance, and full-text indexing via Meilisearch.',
+                benefits: [
+                    '36x faster than manual search',
+                    'Instant search across all documents (<50ms)',
+                    'Full-text indexing of 8+ entries per 100-page manual',
+                    'Image extraction from PDFs with OCR'
+                ],
+                demoValue: 'Search "network diagram" → 8 results instantly → Click → Navigate to exact page → Highlighted text',
+                source: 'Session 2 Agent S2-H07 (Search UX)'
+            },
+            {
+                section: 'deployed',
+                id: 'multi-format',
+                title: 'Multi-Format Document Upload',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 20, 2025',
+                savings: '15 min/upload saved',
+                why: 'Auto-fill metadata from any document type using smart OCR and filename parsing. Duplicate detection prevents redundant uploads.',
+                description: 'Drag-and-drop upload with automatic metadata extraction. Intelligent fallback to filename parsing. Real-time progress tracking.',
+                benefits: [
+                    'Upload and metadata fills automatically',
+                    'Supports PDFs, images, Word docs, Excel',
+                    'Duplicate detection with smart warnings',
+                    'Real-time OCR confidence scores'
+                ],
+                demoValue: 'Drag PDF → Watch metadata auto-fill → Verify accuracy → Instant indexing',
+                source: 'Session 2 Agent S2-H07 (Search UX)'
+            },
+            {
+                section: 'deployed',
+                id: 'timeline',
+                title: 'Activity Timeline & Audit Trail',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 20, 2025',
+                savings: 'IF.TTT compliance',
+                why: 'Chronological activity feed showing all boat events. Complete audit trail for warranty claims and legal requirements.',
+                description: 'All events in reverse chronological order, auto-grouped by date. Click events to navigate to resources. IF.TTT compliant.',
+                benefits: [
+                    'Never lose track of maintenance history',
+                    'Event filtering by type, date, entity',
+                    'User attribution for each action',
+                    'Direct navigation from events to resources'
+                ],
+                demoValue: 'Show 20+ historical events → Filter by "Upload" → Click event → Navigate to document',
+                source: 'Session 2 Agent S2-H09 (Document Versioning)'
+            },
+
+            // READY TO BUILD FEATURES (Phase 2 - Priority Order)
+            {
+                section: 'inventory',
+                id: 'inventory-warranty',
+                title: 'Photo-Based Inventory & Warranty Tracking',
+                status: 'READY TO BUILD',
+                priority: 'P0 Demo - CRITICAL',
+                buildTime: '90-120 minutes',
+                savings: '€15K-€50K per boat at resale',
+                why: 'Solves #1 pain point: Brokers lose €15K-€50K per boat at resale due to incomplete inventory documentation. NaviDocs provides photo-based equipment catalog with depreciation calculator.',
+                description: 'Upload photos of every equipment item, link receipts/warranties, track depreciation. 11 predefined categories (Engine, Electronics, Electrical, Plumbing, HVAC, Safety, Hardware, Galley, Entertainment, Communication, Other).',
+                benefits: [
+                    'Never miss warranty expiration (Green/Yellow/Red status)',
+                    'Photo evidence for insurance claims',
+                    'Depreciation calculator for resale value',
+                    'Service history linked per equipment'
+                ],
+                demoValue: 'Show equipment list (10+ items) → Highlight 3 expiring warranties → Click item → Attached docs + service history',
+                source: 'Session 2 Agent S2-H02 (Inventory Tracking)'
+            },
+            {
+                section: 'inventory',
+                id: 'maintenance-scheduler',
+                title: 'Smart Maintenance Tracking & Reminders',
+                status: 'READY TO BUILD',
+                priority: 'P0 Demo - CRITICAL',
+                buildTime: '90-120 minutes',
+                savings: '€5K-€100K in warranty penalties',
+                why: 'Prevents €5K-€100K penalties. 100% of boats experience maintenance chaos. Smart reminders ensure service deadlines never missed.',
+                description: 'One-time or recurring tasks with flexible patterns (days, hours, miles). Link to equipment. Automated alerts X days before due. Status tracking (Pending/Due/Overdue/Completed). Cost tracking.',
+                benefits: [
+                    'Never miss critical maintenance deadlines',
+                    'Automated reminders (personalized, <2/week)',
+                    'Monthly calendar view color-coded by priority',
+                    'Service provider tracking and cost history'
+                ],
+                demoValue: 'Dashboard: 5 pending, 3 due soon, 2 overdue → Click overdue → Add completion notes → Calendar view',
+                source: 'Session 2 Agent S2-H03 (Maintenance Log)'
+            },
+            {
+                section: 'inventory',
+                id: 'multi-calendar',
+                title: 'Multi-Calendar System (4 Types)',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '60-90 minutes',
+                savings: 'Organizational value',
+                why: 'Yacht owners need 4 separate calendars: (1) Service deadlines, (2) Warranty expirations, (3) Owner onboard periods, (4) Work roadmap. Unified view prevents scheduling conflicts.',
+                description: '4 calendar types in one view: Service calendar, Warranty calendar, Owner onboard calendar, Work roadmap. Color-coded, integrated view, iCal export.',
+                benefits: [
+                    'Never double-book critical service windows',
+                    'Conflict detection (service vs owner onboard)',
+                    'Budget tracking for work roadmap items',
+                    'Smart notifications 90/60/30 days before'
+                ],
+                demoValue: 'Show unified calendar → Highlight conflict (service during owner onboard) → Filter by type → Export to Google Calendar',
+                source: 'Session 2 Agent S2-H07A (Multi-Calendar)'
+            },
+
+            {
+                section: 'compliance',
+                id: 'compliance-certification',
+                title: 'Compliance & Certification Tracker',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '75-90 minutes',
+                savings: '€20K-€100K VAT penalties prevented',
+                why: '30% of EU yachts face €20K-€100K VAT penalties. NaviDocs tracks EU entry/exit, sends 6-month reminders, prevents catastrophic fines.',
+                description: '7 compliance types (vessel registration, safety inspection, crew certification, insurance, equipment certification, environmental, other). Mandatory flagging. Renewal history. Status visualization.',
+                benefits: [
+                    'Stay legal - never miss compliance deadline',
+                    'Prevents €20K-€100K VAT penalties',
+                    'Compliance dashboard with statistics',
+                    'Complete audit trail of renewals'
+                ],
+                demoValue: 'Dashboard: 12 valid, 4 expiring, 2 expired → Red banner for mandatory expired → Show renewal form → Upload certificate',
+                source: 'Session 2 Agent S2-H03A (VAT/Tax Tracking) + intelligence/session-2/vat-tax-tracking-spec.md'
+            },
+            {
+                section: 'compliance',
+                id: 'document-versioning',
+                title: 'Document Versioning & Audit Trail',
+                status: 'READY TO BUILD',
+                priority: 'P0 Demo - CRITICAL',
+                buildTime: '90-120 minutes',
+                savings: '€1K-€10K in delayed claims',
+                why: 'IF.TTT compliance required for warranty claims and legal requirements. Complete audit trail prevents €1K-€10K in delayed insurance/warranty claims.',
+                description: 'Version history for all documents. Conflict resolution. Complete audit trail. IF.TTT compliance with ed25519 signatures. Document access control per user.',
+                benefits: [
+                    'Never lose a document version',
+                    'Proof of submission for warranty claims',
+                    'Cryptographic signatures (ed25519 + SHA-256)',
+                    'Document access control and sharing'
+                ],
+                demoValue: 'Show document with 5 versions → Compare v1 vs v5 → Show audit log → Verify signature → Share with expiring link',
+                source: 'Session 2 Agent S2-H09 (Document Versioning)'
+            },
+
+            {
+                section: 'contacts',
+                id: 'crew-contacts',
+                title: 'Crew & Contact Management',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '60-90 minutes',
+                savings: '€500-€5K per repair in delays',
+                why: 'Finding qualified service providers costs €500-€5K per repair in delays. Contact directory with service history, ratings, and one-tap access.',
+                description: '6 contact types (Crew, Service Provider, Marina, Emergency, Broker, Other). Service history with ratings. Emergency contacts widget. Star favorites. Search & filter.',
+                benefits: [
+                    'One-tap access to the right person',
+                    'Service provider ratings and past work',
+                    'Emergency contacts widget',
+                    'Saves €500-€5K per repair in search delays'
+                ],
+                demoValue: 'Show 20+ contacts → Click provider → 12 jobs, 4.8 rating → Star favorite → Emergency widget (Coast Guard, TowBoatUS, Marina)',
+                source: 'Session 2 Agent S2-H05 (Contact Management)'
+            },
+            {
+                section: 'contacts',
+                id: 'fuel-expense',
+                title: 'Fuel Log & Expense Tracker',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '90-120 minutes',
+                savings: '€60K-€100K/year hidden costs',
+                why: 'Uncovers €60K-€100K per year in hidden costs. OCR receipt processing + multi-user approval + VAT visibility. 17 expense categories.',
+                description: 'Fuel logging with quantity, price, location. Auto-calculate MPG/gal per hour. 17 expense categories. OCR receipt processing. Multi-currency support. Budget vs actual analysis.',
+                benefits: [
+                    'Control costs - see where every dollar goes',
+                    'Uncovers €60K-€100K/year in hidden costs',
+                    'OCR receipt processing + approval workflow',
+                    'VAT/tax tracking and budget alerts'
+                ],
+                demoValue: 'Fuel log: 12 entries, 2.8 MPG avg, $2,450 total → Expense dashboard: $23.4K YTD → Monthly trend → 112% over maintenance budget',
+                source: 'Session 2 Agent S2-H06 (Accounting Module)'
+            },
+
+            {
+                section: 'engagement',
+                id: 'camera-integration',
+                title: 'Home Assistant Camera Integration',
+                status: 'READY TO BUILD',
+                priority: 'P2 Engagement - HIGH',
+                buildTime: '120-150 minutes',
+                savings: 'Psychological value - 80% anxiety reduction',
+                why: '80% of high-net-worth owners experience remote monitoring anxiety. Daily camera alerts create sticky engagement. Open HA integration works with any RTSP camera (competitive advantage).',
+                description: 'Home Assistant RTSP/ONVIF integration. Live camera feeds. Motion detection alerts. Daily health digest (battery, bilge, temperature). Webhook architecture with HMAC-SHA256 security.',
+                benefits: [
+                    'Peace of mind - "Is my boat OK?" answered daily',
+                    'Motion detection with AI object classification',
+                    'Works with any RTSP/ONVIF camera',
+                    'Snapshot gallery with event timeline'
+                ],
+                demoValue: 'Show camera dashboard → 3 cameras live → Motion alert (person detected) → Snapshot gallery → Daily digest email',
+                source: 'Session 2 Agent S2-H04 (Camera Integration)'
+            },
+            {
+                section: 'engagement',
+                id: 'whatsapp-integration',
+                title: 'WhatsApp Group AI Agent',
+                status: 'READY TO BUILD',
+                priority: 'P2 Engagement - MEDIUM',
+                buildTime: '120-180 minutes',
+                savings: '98% open rate vs 20% email',
+                why: 'Multi-channel notifications (email + SMS + WhatsApp + in-app) ensure owners never miss critical alerts. WhatsApp has 98% open rate vs 20% for email. AI agent answers questions.',
+                description: 'WhatsApp Business API integration. Boat-specific group chats. NaviDocs AI agent searches documentation, logs conversations, posts reminders, executes @NaviDocs commands.',
+                benefits: [
+                    'Never miss critical alerts (98% open rate)',
+                    'AI agent answers "Where is the tender warranty?"',
+                    'Group chat: owner + captain + after-sales team',
+                    '@NaviDocs commands create expenses, inventory'
+                ],
+                demoValue: 'Show WhatsApp group → AI agent answers question → Post warranty reminder → @NaviDocs log expense $250 fuel',
+                source: 'Session 2 Agent S2-H08 (WhatsApp Integration)'
+            },
+
+            {
+                section: 'sales',
+                id: 'roi-calculator',
+                title: 'ROI Calculator & Sales Enablement',
+                status: 'READY TO BUILD',
+                priority: 'P3 Sales',
+                buildTime: '45-60 minutes',
+                savings: 'Broker sales tool',
+                why: 'Interactive calculator shows boat owners exact resale value recovery (€15K-€50K inventory + €5K-€100K warranty penalties avoided). Brokers use in sales presentations.',
+                description: 'Embed in pitch decks and websites. Calculate total savings: inventory recovery + warranty penalties + time savings + VAT compliance. Generates shareable results.',
+                benefits: [
+                    'Quantify NaviDocs value in 30 seconds',
+                    'Shareable results for decision makers',
+                    'Embedded in broker presentations',
+                    'Updates based on boat value'
+                ],
+                demoValue: 'Enter €800K boat value → Show €28K inventory recovery + €15K warranty savings = €43K total value',
+                source: 'Session 2 Agent S2-H0D (ROI Calculator) + Session 3 UX/Sales'
+            },
+            {
+                section: 'sales',
+                id: 'sale-workflow',
+                title: 'Yacht Sale Workflow Automation',
+                status: 'READY TO BUILD',
+                priority: 'P3 Sales',
+                buildTime: '90-120 minutes',
+                savings: '6 hours broker prep time',
+                why: 'Automates as-built documentation package generation for yacht sales. Generates ZIP with organized folders: Registration, Surveys, Warranties, Manuals, Service Records. 30-day expiring download tokens.',
+                description: 'One-click sale initiation. Auto-generate as-built package. Buyer notification emails. Document transfer workflow. Package metadata (file count, total size). Status tracking: initiated → generated → transferred → completed.',
+                benefits: [
+                    'Save 6 hours of broker documentation assembly',
+                    'Professional buyer experience',
+                    'Automatic expiration for security',
+                    'Complete audit trail of document transfer'
+                ],
+                demoValue: 'Initiate sale → Generate package (157 files, 2.3GB) → Send buyer link → Track download → Complete transfer',
+                source: 'Session 4 API Specification (api-specification.yaml)'
+            },
+
+            {
+                section: 'advanced',
+                id: 'search-ux',
+                title: 'Impeccable Search (Meilisearch)',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core - DEPLOYED PARTIAL',
+                buildTime: '60-90 minutes (full integration)',
+                savings: '19-25 hours/year time savings',
+                why: 'User requirement: "No long lists - structured, impeccable search results." Meilisearch faceting finds any manual page in seconds. Critical for 19-25 hour time savings claim.',
+                description: 'Meilisearch faceting. Structured results (equipment facets, category filtering). Typo tolerance. Instant search (<200ms). Highlight matching text. Apple Preview-style cross-page search.',
+                benefits: [
+                    'Find any manual page in <200ms',
+                    'Typo tolerance ("netwrok" → "network")',
+                    'Faceted search (filter by equipment, date)',
+                    'Google-style autocomplete as you type'
+                ],
+                demoValue: 'Search "network" → 8 results across 3 manuals → Filter by Equipment:Engine → Highlight text → Jump to page',
+                source: 'Session 2 Agent S2-H07 (Search UX) + APPLE_PREVIEW_SEARCH_DEMO.md'
+            },
+            {
+                section: 'advanced',
+                id: 'notification-engine',
+                title: 'Multi-Channel Notification Engine',
+                status: 'READY TO BUILD',
+                priority: 'P2 Engagement',
+                buildTime: '75-90 minutes',
+                savings: 'Engagement multiplier',
+                why: 'Unified notification system across email, SMS, WhatsApp, in-app, push. Template-based rendering. Event filtering. Read/unread tracking. Delivery status monitoring.',
+                description: '4 notification channels with delivery tracking. Template-based rendering with variable substitution. Event type filtering. Exponential backoff retry. HMAC-SHA256 webhook signatures.',
+                benefits: [
+                    'Never miss warranty expiration (multi-channel)',
+                    'Personalized notification preferences',
+                    'Delivery status tracking (sent/failed/read)',
+                    'Template library (15+ event types)'
+                ],
+                demoValue: 'Show notification preferences → Warranty alert sent via WhatsApp + Email → Track delivery → Mark read → Retry failed SMS',
+                source: 'Session 4 API Specification (api-specification.yaml)'
+            },
+            {
+                section: 'advanced',
+                id: 'webhook-integrations',
+                title: 'Custom Webhook Integrations',
+                status: 'READY TO BUILD',
+                priority: 'P2 Enterprise',
+                buildTime: '60-75 minutes',
+                savings: 'Integration flexibility',
+                why: 'Connect NaviDocs to external systems (marina management, boatyard software, insurance portals). HMAC-SHA256 signature verification. Exponential backoff retry. Event subscription.',
+                description: 'Create custom webhooks for external integrations. Subscribe to event topics (WARRANTY_EXPIRING, DOCUMENT_UPLOADED, SALE_INITIATED). Signature verification. Retry logic. Delivery tracking.',
+                benefits: [
+                    'Integrate with marina management systems',
+                    'Send data to insurance portals',
+                    'Webhook security (HMAC signatures)',
+                    'Failure monitoring and auto-retry'
+                ],
+                demoValue: 'Create webhook → Subscribe to WARRANTY_EXPIRING → Test delivery → Show signature verification → Monitor delivery status',
+                source: 'Session 4 API Specification (api-specification.yaml)'
+            }
+        ];
+
+        function renderFeatures() {
+            const container = document.getElementById('features');
+            const sections = {
+                'deployed': 'Phase 1: Deployed Features (Live Now)',
+                'inventory': 'Phase 2: Core Inventory & Maintenance (P0 Priority)',
+                'compliance': 'Phase 2: Compliance & Documentation (P0-P1)',
+                'contacts': 'Phase 2: Contacts & Expenses (P1 Core)',
+                'engagement': 'Phase 3: Daily Engagement Features (P2 High Value)',
+                'sales': 'Phase 3: Sales & Broker Tools (P3)',
+                'advanced': 'Phase 3: Advanced Integrations (P2 Enterprise)'
+            };
+
+            let html = '';
+            let currentSection = '';
+
+            features.forEach(feature => {
+                if (feature.section !== currentSection) {
+                    currentSection = feature.section;
+                    html += `<div class="section-header">${sections[currentSection]}</div>`;
+                }
+
+                html += `
+                <div class="feature" id="feature-${feature.id}" data-id="${feature.id}">
+                    <div class="feature-header">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="check-${feature.id}" onchange="updateStats()">
+                        </div>
+                        <div class="feature-info">
+                            <div class="feature-title">
+                                ${feature.title}
+                                <span class="badge ${feature.status === 'DEPLOYED' ? 'deployed' : 'ready'}">
+                                    ${feature.status === 'DEPLOYED' ? '✓ Deployed' : 'Ready to Build'}
+                                </span>
+                            </div>
+                            <div class="feature-meta">
+                                <span class="badge priority">Priority: ${feature.priority}</span>
+                                <span class="badge time">Time: ${feature.buildTime}</span>
+                                <span class="badge savings">Value: ${feature.savings}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-why">
+                        <strong>Why This Matters:</strong>
+                        ${feature.why}
+                    </div>
+
+                    <div class="description-box">
+                        <strong>What It Does:</strong><br>
+                        ${feature.description}
+                    </div>
+
+                    <div class="benefits">
+                        <strong>Key Benefits:</strong>
+                        <ul>
+                            ${feature.benefits.map(b => `<li>${b}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="demo-value">
+                        <strong>Demo Value:</strong> ${feature.demoValue}
+                    </div>
+
+                    <div class="notes-section">
+                        <label for="notes-${feature.id}">Your Notes:</label>
+                        <textarea
+                            class="notes"
+                            id="notes-${feature.id}"
+                            placeholder="Add notes, questions, or requirements..."
+                            onchange="saveToLocalStorage()"
+                        ></textarea>
+                    </div>
+
+                    <div class="tech-spec">
+                        <strong>Source:</strong> <span class="source-cite">${feature.source}</span>
+                    </div>
+                </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            loadFromLocalStorage();
+            updateStats();
+        }
+
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+
+            document.getElementById('selectedCount').textContent = selected.length;
+            document.getElementById('totalCount').textContent = features.length;
+
+            const deployedCount = features.filter(f => f.status === 'DEPLOYED' || f.status.includes('DEPLOYED')).length;
+            const readyCount = features.filter(f => f.status === 'READY TO BUILD').length;
+
+            document.getElementById('deployedCount').textContent = deployedCount;
+            document.getElementById('readyCount').textContent = readyCount;
+
+            checkboxes.forEach(cb => {
+                const featureDiv = cb.closest('.feature');
+                if (cb.checked) {
+                    featureDiv.classList.add('selected');
+                } else {
+                    featureDiv.classList.remove('selected');
+                }
+            });
+
+            saveToLocalStorage();
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateStats();
+        }
+
+        function selectNone() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateStats();
+        }
+
+        function exportJSON() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                meeting: 'Riviera Plaisance Partnership - Complete Feature Portfolio',
+                totalFeatures: features.length,
+                selections: []
+            };
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+
+                if (checkbox.checked) {
+                    data.selections.push({
+                        id: f.id,
+                        title: f.title,
+                        section: f.section,
+                        status: f.status,
+                        priority: f.priority,
+                        buildTime: f.buildTime,
+                        savings: f.savings,
+                        notes: notes.value || '',
+                        why: f.why,
+                        benefits: f.benefits,
+                        source: f.source
+                    });
+                }
+            });
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-complete-features-riviera-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                selections: {},
+                notes: {}
+            };
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+
+                data.selections[f.id] = checkbox.checked;
+                data.notes[f.id] = notes.value;
+            });
+
+            localStorage.setItem('navidocs-riviera-complete', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('navidocs-riviera-complete');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+
+                features.forEach(f => {
+                    if (data.selections && data.selections[f.id] !== undefined) {
+                        document.getElementById(`check-${f.id}`).checked = data.selections[f.id];
+                    }
+
+                    if (data.notes && data.notes[f.id]) {
+                        document.getElementById(`notes-${f.id}`).value = data.notes[f.id];
+                    }
+                });
+
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load saved data:', e);
+            }
+        }
+
+        // Initialize
+        renderFeatures();
+    </script>
+</body>
+</html>
