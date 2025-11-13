@@ -44,6 +44,146 @@ Design technical architecture for **sticky daily-use features** (inventory track
 
 ---
 
+## PHASE 1: Helper Agents (START IMMEDIATELY - ASSIST SESSIONS 1 & 3)
+
+**Mission:** While waiting for Session 1 market research and Session 3 UX/sales work, provide active technical assistance to accelerate their completion.
+
+**NO DEPENDENCIES:** All Phase 1 agents can start immediately (no need to wait for other sessions).
+
+---
+
+### Agent 0A: Technical Validation Assistant (CRITICAL)
+**AGENT ID:** S2-H0A
+**START:** Immediately (no dependencies)
+
+**Assist Session 1 (Market Research):**
+- **Verify competitor tech stacks:** When Session 1 identifies competitors (YachtWorld, Boat Trader, etc.), validate their API documentation
+- **Check API availability:** Research if competitor APIs are public, require auth, or need partner agreements
+- **Document API contracts:** Create structured summaries of competitor API capabilities for Session 1 citations
+
+**Assist Session 3 (UX/Sales):**
+- **Technical feasibility checks:** When Session 3 proposes UI features, confirm if NaviDocs tech stack supports them
+- **Performance estimates:** Provide load time estimates for proposed features (based on NaviDocs current architecture)
+- **Mobile compatibility:** Validate if proposed UX patterns work on mobile (Vue 3 + PWA constraints)
+
+**Deliverable:** `intelligence/session-2/helper-technical-validations.md` (updated in real-time as Sessions 1 & 3 work)
+
+---
+
+### Agent 0B: Citation Automation (SHA-256 Hash Generation)
+**AGENT ID:** S2-H0B
+**START:** Immediately (no dependencies)
+
+**Assist Session 1 (Market Research):**
+- **Generate SHA-256 hashes:** When Session 1 cites web URLs, automatically fetch and hash content
+- **Verify URL accessibility:** Check if cited URLs return 200 OK (flag broken links immediately)
+- **Extract structured data:** Parse web pages for key data points (pricing, features, market stats)
+- **Create citation JSON:** Auto-generate IF.TTT-compliant citation entries with hashes
+
+**Example Workflow:**
+```bash
+# Session 1 Agent 3 cites: "YachtWorld pricing: €25/month"
+# Agent 0B immediately:
+1. Fetches https://yachtworld.com/pricing
+2. Generates SHA-256: a1b2c3d4e5f6...
+3. Extracts pricing table
+4. Creates citation JSON:
+{
+  "citation_id": "if://citation/yachtworld-pricing-nov2025",
+  "claim": "YachtWorld charges €25/month for yacht management",
+  "sources": [{
+    "type": "web",
+    "url": "https://yachtworld.com/pricing",
+    "sha256": "a1b2c3d4e5f6...",
+    "accessed": "2025-11-13",
+    "quality": "primary",
+    "credibility": 9
+  }],
+  "status": "verified",
+  "confidence_score": 0.95
+}
+```
+
+**Deliverable:** `intelligence/session-2/auto-citations.json` (append as Session 1 works)
+
+---
+
+### Agent 0C: Web Scraping Assistant (Structured Data Extraction)
+**AGENT ID:** S2-H0C
+**START:** Immediately (no dependencies)
+
+**Assist Session 1 (Market Research):**
+- **Extract competitor feature lists:** Scrape competitor websites for feature comparisons
+- **Pricing table extraction:** Parse pricing pages into structured JSON
+- **Market report parsing:** Extract key stats from industry reports (PDFs, web pages)
+- **Automated data validation:** Cross-check data across multiple sources (detect conflicts)
+
+**Example:**
+```yaml
+# Session 1 Agent 5 researching competitors
+# Agent 0C scrapes:
+- YachtWorld: Features (inventory, CRM, MLS integration)
+- Boat Trader: Pricing (€15/month basic, €45/month pro)
+- Dockwa: User counts (50K+ marinas, 250K+ boaters)
+
+# Output: intelligence/session-2/competitor-data.json
+{
+  "yachtworld": {
+    "features": ["inventory", "crm", "mls_integration"],
+    "pricing": {"basic": 25, "pro": 75},
+    "users": "unknown"
+  },
+  "boat_trader": {
+    "features": ["listings", "leads", "analytics"],
+    "pricing": {"basic": 15, "pro": 45},
+    "users": "unknown"
+  }
+}
+```
+
+**Deliverable:** `intelligence/session-2/competitor-data.json` (structured data for Session 1 & 3 use)
+
+---
+
+### Agent 0D: ROI Calculator Backend (Build Before Session 1 Data Arrives)
+**AGENT ID:** S2-H0D
+**START:** Immediately (no dependencies)
+
+**Build Generic ROI Calculator Framework:**
+- **Formula engine:** Create generic calculator that accepts variables (warranty_savings, time_saved, resale_value_increase)
+- **Input validation:** Define valid ranges for each variable (prevent unrealistic claims)
+- **Visualization logic:** Prepare chart generation code (bar charts, pie charts for ROI breakdown)
+- **Export functionality:** Generate PDF/Excel exports of ROI calculations
+
+**Example Structure:**
+```javascript
+// server/services/roi-calculator.service.js
+class ROICalculator {
+  calculate(inputs) {
+    // inputs: { warranty_savings, time_saved_hours, resale_value_increase }
+    const warranty_roi = inputs.warranty_savings * 12; // Annual savings
+    const time_roi = inputs.time_saved_hours * 50; // €50/hour labor cost
+    const resale_roi = inputs.resale_value_increase;
+
+    return {
+      total_annual_roi: warranty_roi + time_roi,
+      resale_value_lift: resale_roi,
+      payback_period_months: this.calculatePayback(inputs),
+      confidence: this.calculateConfidence(inputs)
+    };
+  }
+}
+```
+
+**When Session 1 Data Arrives:**
+- Agent 0D plugs in Session 1 findings (€8K-€33K warranty savings, etc.)
+- Generates final ROI report for Session 3 pitch deck
+- Creates interactive calculator UI for demos
+
+**Deliverable:** `intelligence/session-2/roi-calculator-framework.js` (ready for Session 1 data integration)
+
+---
+
 
 ## Agent Identity & Check-In Protocol
 

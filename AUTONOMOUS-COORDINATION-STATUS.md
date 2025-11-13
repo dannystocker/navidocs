@@ -10,14 +10,16 @@
 | Session | Agent ID Range | Status | Progress | Outputs |
 |---------|---------------|--------|----------|---------|
 | Session 1 | S1-H01 to S1-H10 | 🟡 READY | 0/10 agents | `intelligence/session-1/` |
-| Session 2 | S2-H01 to S2-H10 | 🟡 READY | 0/10 agents | `intelligence/session-2/` |
+| Session 2 | S2-H0A to S2-H10 | 🟢 ACTIVE (Helper) | 4/15 agents | `intelligence/session-2/` |
 | Session 3 | S3-H01 to S3-H10 | 🟡 READY | 0/10 agents | `intelligence/session-3/` |
-| Session 4 | S4-H01 to S4-H10 | 🟡 READY | 0/10 agents | `intelligence/session-4/` |
-| Session 5 | S5-H01 to S5-H10 | 🟡 READY | 0/20 guardians | `intelligence/session-5/` |
+| Session 4 | S4-H0A to S4-H10 | 🟢 ACTIVE (Helper) | 4/14 agents | `intelligence/session-4/` |
+| Session 5 | S5-H0A to S5-H10 | 🟢 ACTIVE (QA) | 3/13 agents | `intelligence/session-5/` |
 
 **Status Legend:**
 - 🟡 READY - Session initialized, waiting to start
 - 🟢 ACTIVE - Session running, agents working
+- 🟢 ACTIVE (Helper) - Session assisting other sessions while waiting
+- 🟢 ACTIVE (QA) - Session providing quality assurance support
 - 🔵 BLOCKED - Waiting for dependencies from other sessions
 - ✅ COMPLETE - All outputs delivered
 
@@ -49,20 +51,37 @@ Next: Session 2 unblocked
 
 ---
 
-### **Session 2: Technical Integration**
+### **Session 2: Technical Integration + Helper Agents**
 
-**Current Task:** Codebase analysis + sticky feature architecture
+**Current Task:** PHASE 1 - Helper agents assisting Sessions 1 & 3 (START NOW)
 
-**Instructions:**
-1. **First:** Agent 1 (S2-H01) analyzes NaviDocs codebase (NO dependency on Session 1)
-2. **Parallel:** Agents 2-9 research technical solutions (inventory, cameras, maintenance, etc.)
-3. **When Session 1 completes:** Poll for `intelligence/session-1/session-1-handoff.md`
-4. **Then:** Agent 10 synthesizes with Session 1 pain point priorities
-5. Output to `intelligence/session-2/` (architecture.md, integration-specs.md, handoff.md)
+**IMMEDIATE ACTIONS (Agents 0A, 0B, 0C, 0D):**
+1. **Agent 0A (CONTINUOUS):** Technical validation assistant
+   - Verify competitor tech stacks for Session 1
+   - Check API availability (YachtWorld, Boat Trader, etc.)
+   - Validate technical feasibility of Session 3 UX proposals
+2. **Agent 0B (CONTINUOUS):** Citation automation
+   - Generate SHA-256 hashes for Session 1 web URLs
+   - Verify URL accessibility (flag broken links)
+   - Auto-generate IF.TTT-compliant citation JSON
+3. **Agent 0C (CONTINUOUS):** Web scraping assistant
+   - Extract competitor feature lists, pricing tables
+   - Parse industry reports for Session 1
+   - Create structured competitor-data.json
+4. **Agent 0D (PREP WORK):** ROI calculator backend
+   - Build generic calculator framework NOW
+   - Ready to plug in Session 1 data when it arrives
+   - Prepare chart generation and export functionality
+
+**PHASE 2 - Technical Architecture (WAIT FOR SESSION 1):**
+5. **When Session 1 completes:** Poll for `intelligence/session-1/session-1-handoff.md`
+6. **Agents 1-9 + 3A + 7A:** Codebase analysis + feature design (11 agents)
+7. **Agent 10:** Synthesize with Session 1 pain point priorities
+8. Output to `intelligence/session-2/` (architecture.md, integration-specs.md, handoff.md)
 
 **Dependencies:**
-- **Agent 1 task:** NONE (start immediately)
-- **Agent 10 synthesis:** Session 1 complete
+- **Agents 0A-0D:** NONE (start immediately - assist Sessions 1 & 3)
+- **Agents 1-9 + 3A + 7A + Agent 10:** Session 1 complete
 
 **Polling Command:**
 ```bash
@@ -103,20 +122,41 @@ fi
 
 ---
 
-### **Session 4: Implementation Planning**
+### **Session 4: Implementation Planning + Helper Agents**
 
-**Current Task:** Generic sprint planning + roadmap templates
+**Current Task:** PHASE 1 - Helper agents providing project management support (START NOW)
 
-**Instructions:**
-1. **Parallel:** Week agents research sprint best practices, roadmap templates
-2. **When Sessions 1+2+3 complete:** Poll for handoff files
-3. **Then:** Week agents create detailed sprint plans with feature priorities from Session 1
-4. **Finally:** Agent 10 creates integrated 4-week roadmap
-5. Output to `intelligence/session-4/` (sprint-plan.md, roadmap.md, handoff.md)
+**IMMEDIATE ACTIONS (Agents 0A, 0B, 0C, 0D):**
+1. **Agent 0A (CONTINUOUS - Every 5 minutes):** Research coordination dashboard
+   - Track Session 1 agent progress (7/10 complete, etc.)
+   - Monitor deliverable status (market-analysis.md: COMPLETE, etc.)
+   - Predict completion times for all sessions
+   - Detect blockers early (agent stuck, over-budget, etc.)
+2. **Agent 0B (CONTINUOUS):** Citation quality checker
+   - Pre-validate Session 1, 2, 3 citations BEFORE Session 5
+   - Check IF.TTT compliance (citation_id, sources, confidence, SHA-256)
+   - Flag issues immediately (single-source claims, missing hashes, etc.)
+   - Faster feedback loop than waiting for Session 5 validation
+3. **Agent 0C (PREP WORK):** Demo script structure
+   - Research winning demo flows (problem → solution → demo → ROI → close)
+   - Create generic template with placeholders for Session 1 data
+   - Research yacht owner objections (cost, complexity, time)
+   - Ready to fill with Session 1 findings when available
+4. **Agent 0D (CONTINUOUS - Every 5 minutes):** Cross-session dependency tracker
+   - Visual dependency graph (Mermaid) of all sessions
+   - Critical path identification (slowest session = bottleneck)
+   - Real-time completion predictions
+   - Parallel work opportunity detection
+
+**PHASE 2 - Implementation Planning (WAIT FOR SESSIONS 1+2+3):**
+5. **When Sessions 1+2+3 complete:** Poll for handoff files
+6. **Agents 1-9:** Create detailed 4-week sprint plan with feature priorities
+7. **Agent 10:** Synthesize integrated roadmap
+8. Output to `intelligence/session-4/` (sprint-plan.md, roadmap.md, handoff.md)
 
 **Dependencies:**
-- **Week 1-4 generic planning:** NONE (start immediately)
-- **Detailed feature breakdown:** Sessions 1+2+3 complete
+- **Agents 0A-0D:** NONE (start immediately - assist all sessions)
+- **Agents 1-10:** Sessions 1+2+3 complete
 
 **Polling Command:**
 ```bash
@@ -131,22 +171,36 @@ fi
 
 ---
 
-### **Session 5: Guardian Validation**
+### **Session 5: Guardian Validation + Active Quality Assurance**
 
-**Current Task:** Guardian methodology review + evaluation criteria prep
+**Current Task:** PHASE 1 - Active QA Partner (NO DEPENDENCIES - START NOW)
 
-**Instructions:**
-1. **Parallel:** Guardians 1-12 + IF.sam facets review IF.TTT framework, prepare evaluation criteria
-2. **When Sessions 1+2+3+4 complete:** Poll for handoff files
-3. **Then:** Guardians review complete intelligence dossier
-4. **IF.sam Debate:** 8 facets debate findings (Light Side vs Dark Side)
-5. **Vote:** Agent 10 tallies consensus (need >80% approval)
-6. **ESCALATE:** If <80%, flag for human review
-7. Output to `intelligence/session-5/` (complete-intelligence-dossier.md, guardian-vote.md, consensus-report.md)
+**IMMEDIATE ACTIONS (Agents 0A, 0B, 0C):**
+1. **Agent 0A (CRITICAL - First 10 minutes):** Deploy `EVIDENCE_QUALITY_STANDARDS.md`
+   - Citation format templates (IF.TTT compliance)
+   - Evidence quality scoring rubric (primary/secondary/tertiary sources)
+   - Multi-source verification examples
+   - Commit to coordination branch → Sessions 1-4 read immediately
+2. **Agent 0B (CONTINUOUS - Every 5 minutes):** Real-time quality monitoring
+   - Poll `intelligence/session-*/` for new commits
+   - Review citations for IF.TTT compliance
+   - Create `QUALITY_FEEDBACK.md` (updated every 5 minutes)
+   - Sessions 1-4 read feedback → fix issues proactively
+3. **Agent 0C (PREP WORK):** Guardian briefing templates
+   - Create 20 guardian-specific briefing templates
+   - Consensus prediction formula
+   - Voting criteria checklists
+
+**PHASE 2 - Final Validation (WAIT FOR SESSIONS 1+2+3+4):**
+4. **When Sessions 1+2+3+4 complete:** Poll for handoff files
+5. **Agents 1-9:** Extract evidence, validate claims, compile citations
+6. **Agent 10:** Guardian Council vote (need >80% consensus)
+7. **ESCALATE:** If <80% approval, flag for human review
+8. Output to `intelligence/session-5/` (complete-intelligence-dossier.md, guardian-vote.md)
 
 **Dependencies:**
-- **Methodology review:** NONE (start immediately)
-- **Dossier validation:** Sessions 1+2+3+4 complete
+- **Agent 0A, 0B, 0C:** NONE (start immediately - assist Sessions 1-4)
+- **Agents 1-10:** Sessions 1+2+3+4 complete
 
 **Polling Command:**
 ```bash

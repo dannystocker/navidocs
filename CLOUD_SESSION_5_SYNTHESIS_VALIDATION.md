@@ -11,7 +11,9 @@
 
 ## Mission Statement
 
-Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, validate claims with medical-grade evidence standards, achieve Guardian Council consensus (>90% approval), and deliver final presentation materials.
+**Active Quality Assurance Partner (Immediate Start):** Deploy evidence quality standards, monitor Sessions 1-4 commits in real-time, provide continuous feedback to prevent rework.
+
+**Final Validation (When Sessions 1-4 Complete):** Synthesize all intelligence into comprehensive dossier, validate claims with medical-grade evidence standards, achieve Guardian Council consensus (>90% approval), and deliver final presentation materials.
 
 ---
 
@@ -66,7 +68,187 @@ Each agent MUST:
 
 ---
 
-## Your Tasks (Spawn 10 Haiku Agents in Parallel)
+## Your Tasks (Spawn 13 Haiku Agents)
+
+**PHASE 1: Active Quality Assurance (START IMMEDIATELY - NO DEPENDENCIES)**
+
+### Agent 0A: Evidence Quality Standards Deployment
+**AGENT ID:** S5-H0A
+**PRIORITY:** CRITICAL - Deploy within first 10 minutes
+**
+**Create:**
+- `EVIDENCE_QUALITY_STANDARDS.md` - Master reference for Sessions 1-4
+  - **Citation format templates:**
+    ```json
+    {
+      "citation_id": "if://citation/warranty-savings-8k-33k",
+      "claim": "NaviDocs prevents €8K-€33K warranty losses per yacht",
+      "sources": [
+        {
+          "type": "web",
+          "url": "https://yachtworld.com/research/yacht-ownership-costs-2024",
+          "sha256": "a1b2c3d4...",
+          "accessed": "2025-11-13",
+          "quality": "primary",
+          "credibility": 9
+        },
+        {
+          "type": "file",
+          "path": "intelligence/session-1/market-analysis.md",
+          "line_range": "45-67",
+          "quality": "primary"
+        }
+      ],
+      "status": "verified",
+      "confidence_score": 0.95
+    }
+    ```
+  - **IF.TTT compliance checklist:**
+    - [ ] ≥2 independent sources for high-confidence claims
+    - [ ] Web URLs include SHA-256 hash (tamper detection)
+    - [ ] File references include line numbers
+    - [ ] Citation ID follows if:// URI scheme
+    - [ ] Confidence score justified (0.0-1.0)
+    - [ ] Status tracked: unverified → verified → disputed → revoked
+  - **Evidence quality scoring:**
+    - Primary source (9-10 credibility): Original research, official statistics, codebase analysis
+    - Secondary source (7-8 credibility): Industry reports, competitor websites, expert interviews
+    - Tertiary source (5-6 credibility): Blog posts, forum discussions, anecdotal evidence
+    - Unverified (0-4 credibility): Claims without sources
+  - **Multi-source verification examples:**
+    - Market sizing claim: YachtWorld stats + Boat International report
+    - Technical claim: Codebase file:line + architecture doc
+    - Competitive claim: Competitor website + pricing screenshot
+
+**Commit to coordination branch:**
+```bash
+git add EVIDENCE_QUALITY_STANDARDS.md
+git commit -m "Session 5: Evidence quality standards for Sessions 1-4"
+git push origin navidocs-cloud-coordination
+```
+
+**Notify other sessions:**
+- Update `AUTONOMOUS-COORDINATION-STATUS.md`: "✅ Evidence standards deployed - Sessions 1-4 reference EVIDENCE_QUALITY_STANDARDS.md"
+
+**Deliverable:** `EVIDENCE_QUALITY_STANDARDS.md` (Sessions 1-4 read this immediately)
+
+---
+
+### Agent 0B: Real-Time Quality Monitor (CONTINUOUS)
+**AGENT ID:** S5-H0B
+**PRIORITY:** HIGH - Run every 5 minutes for entire session
+**
+**Monitor:**
+- Poll `intelligence/session-1/`, `session-2/`, `session-3/`, `session-4/` for new commits
+- Check git log every 5 minutes:
+  ```bash
+  git fetch origin navidocs-cloud-coordination
+  git log --since="5 minutes ago" --name-status -- intelligence/
+  ```
+
+**Review:**
+- New citations: Are they IF.TTT compliant? (SHA-256 hashes, ≥2 sources, line numbers)
+- Market claims: Do they cite credible sources? (not just "industry experts say...")
+- Technical claims: Do they reference codebase? (file:line required)
+- ROI calculations: Do they show work? (formulas + source data)
+
+**Feedback Loop:**
+- Create `QUALITY_FEEDBACK.md` (updated every 5 minutes):
+  ```markdown
+  # Real-Time Quality Feedback (Updated: 2025-11-13 14:35 UTC)
+
+  ## ✅ Session 1 (Good)
+  - Agent 2 citation: Excellent (2 primary sources, SHA-256 hashes included)
+  - Agent 3 market sizing: Good (YachtWorld + Boat International cited)
+
+  ## ⚠️ Session 2 (Needs Attention)
+  - Agent 3 maintenance log claim: Missing line number reference
+  - Agent 6 accounting module: Only 1 source (need ≥2 for high confidence)
+
+  ## 🔴 Session 3 (Action Required)
+  - Agent 5 ROI calculator: No source citations for €8K-€33K warranty claim
+  - Action: Review Session 1 market analysis, add citation links
+
+  ## ✅ Session 4 (Good)
+  - Sprint plan: All tasks reference Session 2 architecture (file:line included)
+  ```
+
+**Commit feedback every 5 minutes:**
+```bash
+git add QUALITY_FEEDBACK.md
+git commit -m "Session 5: Quality feedback ($(date -Iseconds))"
+git push origin navidocs-cloud-coordination
+```
+
+**Escalate if needed:**
+- >20% of citations lack IF.TTT compliance → ESCALATE to Sonnet coordinator
+- Sessions 1-4 read feedback, fix issues proactively (prevent rework at validation stage)
+
+**Deliverable:** `QUALITY_FEEDBACK.md` (updated every 5 minutes)
+
+---
+
+### Agent 0C: Guardian Briefing Templates (PREP WORK)
+**AGENT ID:** S5-H0C
+**
+**Create templates for final validation (ready when Sessions 1-4 complete):**
+
+1. **Guardian-Specific Briefing Template (20 guardians):**
+   ```markdown
+   # Guardian Briefing: [Guardian Name]
+   **Philosophy:** [Empiricism, Pragmatism, IF.sam Light/Dark, etc.]
+   **Focus Areas:** [What this guardian cares about most]
+
+   ## Executive Summary
+   [Tailored to guardian's philosophy]
+
+   ## Key Evidence
+   [Filtered to guardian's interests]
+   - Empiricism: Market research data, statistical evidence
+   - Pragmatism: ROI calculations, implementation feasibility
+   - IF.sam (Light): Ethical sales, transparency, user benefit
+   - IF.sam (Dark): Competitive advantage, revenue potential, market dominance
+
+   ## Questions for This Guardian
+   [Anticipated concerns based on philosophy]
+
+   ## Voting Criteria
+   - [ ] Evidence quality meets standards
+   - [ ] Claims aligned with guardian's values
+   - [ ] Implementation feasible
+   ```
+
+2. **Consensus Prediction Formula:**
+   ```javascript
+   function predictConsensus(dossier) {
+     let approvalScore = 0;
+     // Evidence quality (40% weight)
+     approvalScore += dossier.verifiedCitations / dossier.totalCitations * 0.4;
+     // Multi-source verification (30% weight)
+     approvalScore += dossier.multiSourceClaims / dossier.totalClaims * 0.3;
+     // Implementation feasibility (20% weight)
+     approvalScore += dossier.feasibilityScore * 0.2;
+     // Guardian alignment (10% weight)
+     approvalScore += dossier.philosophyAlignment * 0.1;
+
+     return approvalScore * 100; // Return as percentage
+   }
+   ```
+
+3. **Voting Criteria Checklist:**
+   - [ ] All high-confidence claims have ≥2 sources
+   - [ ] Technical claims reference codebase (file:line)
+   - [ ] Market sizing backed by credible sources
+   - [ ] ROI calculations show work (formulas + data)
+   - [ ] Implementation timeline realistic (based on codebase complexity)
+   - [ ] Acceptance criteria testable
+   - [ ] No unverified claims in executive summary
+
+**Deliverable:** `GUARDIAN_BRIEFING_TEMPLATES/` directory with 20 templates + consensus formula
+
+---
+
+**PHASE 2: Evidence Extraction & Validation (WAIT FOR SESSIONS 1-4)**
 
 ### Agent 1: Session 1 Evidence Extraction
 **AGENT ID:** S5-H01

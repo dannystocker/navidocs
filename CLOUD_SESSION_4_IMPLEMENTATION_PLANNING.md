@@ -35,6 +35,188 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 
 ---
 
+## PHASE 1: Helper Agents (START IMMEDIATELY - ASSIST SESSIONS 1 & 3)
+
+**Mission:** While waiting for Sessions 1+2+3 to complete, provide active project management assistance to accelerate overall coordination and quality.
+
+**NO DEPENDENCIES:** All Phase 1 agents can start immediately (no need to wait for other sessions).
+
+---
+
+### Agent 0A: Research Coordination Dashboard (Real-Time Progress Tracking)
+**AGENT ID:** S4-H0A
+**START:** Immediately (no dependencies)
+
+**Assist Session 1 (Market Research):**
+- **Agent progress tracker:** Monitor which of the 10 Session 1 agents have completed their tasks
+- **Completion status:** Track deliverables (market-analysis.md, citations.json, handoff.md)
+- **Blocker detection:** Identify if any Session 1 agent is stuck or over-budget
+- **Estimated completion:** Predict when Session 1 will finish based on current progress
+
+**Dashboard Format:**
+```yaml
+# intelligence/session-4/coordination-dashboard.md
+## Session 1 Progress (Updated Every 5 Minutes)
+
+Agents Complete: 7/10 (70%)
+Deliverables:
+  - market-analysis.md: ✅ COMPLETE (87KB)
+  - session-1-citations.json: 🟡 IN PROGRESS (43 citations so far)
+  - session-1-handoff.md: ⏳ PENDING (Agent 10 not started)
+
+Estimated Completion: 15 minutes
+
+Blockers: None
+
+Token Usage: $12.50 / $15.00 budget (83% consumed)
+```
+
+**Deliverable:** `intelligence/session-4/coordination-dashboard.md` (updated every 5 minutes)
+
+---
+
+### Agent 0B: Citation Quality Checker (Pre-Validate Before Session 5)
+**AGENT ID:** S4-H0B
+**START:** Immediately (no dependencies)
+
+**Assist Sessions 1, 2, 3 (Pre-Validation):**
+- **Citation format check:** Validate citations follow IF.TTT schema (citation_id, sources, confidence_score, etc.)
+- **Source quality scoring:** Verify primary sources have 9-10 credibility (not tertiary)
+- **Multi-source validation:** Check high-confidence claims (≥0.9) have ≥2 sources
+- **SHA-256 verification:** Confirm web URLs have SHA-256 hashes (tamper detection)
+- **Broken link detection:** Test cited URLs return 200 OK (flag dead links)
+
+**Example Feedback:**
+```yaml
+# intelligence/session-4/citation-quality-report.md
+
+## Session 1 Citation Quality (43 citations reviewed)
+
+✅ PASS (38 citations):
+  - All have if://citation/ IDs
+  - Primary sources properly cited
+  - ≥2 sources for high-confidence claims
+
+⚠️ NEEDS ATTENTION (5 citations):
+  1. Citation: if://citation/broker-count-med
+     - Issue: Single source (need 2nd corroboration)
+     - Recommendation: Add Boat International report as 2nd source
+
+  2. Citation: if://citation/warranty-costs
+     - Issue: Missing SHA-256 hash for YachtWorld URL
+     - Recommendation: Run `sha256sum` on fetched page
+
+  3. Citation: if://citation/competitor-pricing
+     - Issue: Confidence 0.95 but only secondary sources (credibility 7-8)
+     - Recommendation: Lower confidence to 0.85 or find primary source
+```
+
+**Value:** Catch citation issues BEFORE Session 5 validation (faster feedback loop, less rework)
+
+**Deliverable:** `intelligence/session-4/citation-quality-report.md` (updated as sessions work)
+
+---
+
+### Agent 0C: Demo Script Structure (Outline Before Session 1 Data)
+**AGENT ID:** S4-H0C
+**START:** Immediately (no dependencies)
+
+**Assist Session 3 (UX/Sales):**
+- **Demo flow research:** Study winning software demo structures (problem → solution → demo → ROI → close)
+- **Generic outline:** Create demo script template with placeholders for Session 1 data
+- **Objection handling:** Research common yacht owner objections (cost, complexity, time investment)
+- **Storytelling techniques:** Identify emotional hooks (peace of mind, warranty savings, resale value)
+
+**Generic Demo Outline (Before Session 1 Data):**
+```markdown
+# NaviDocs Demo Script (Template)
+
+## 1. Opening (2 min)
+- Pain point: "[INSERT: Top pain point from Session 1]"
+- Teaser: "What if you could [INSERT: Key benefit]?"
+
+## 2. Problem Deep Dive (3 min)
+- Story: "[INSERT: Yacht owner story from Session 1]"
+- Consequence: "Without NaviDocs, owners lose [INSERT: €X savings]"
+
+## 3. Solution Demo (10 min)
+- Feature 1: [INSERT: Sticky feature from Session 2]
+  - Show: [Screen recording placeholder]
+  - Benefit: [INSERT: Time/money saved]
+
+## 4. ROI Reveal (5 min)
+- Calculator: [INSERT: Session 1 warranty savings data]
+- Comparison: "That's [X] hours saved per year"
+
+## 5. Close (2 min)
+- Call to action: "Sign up for Riviera pilot"
+- Objection handling: [INSERT: Top 3 objections from Session 1]
+```
+
+**When Session 1 Completes:**
+- Agent 0C fills placeholders with real data
+- Creates final polished demo script for Session 3
+
+**Deliverable:** `intelligence/session-4/demo-script-template.md` (ready for Session 1 data integration)
+
+---
+
+### Agent 0D: Cross-Session Dependency Tracker (Visual Dependency Graph)
+**AGENT ID:** S4-H0D
+**START:** Immediately (no dependencies)
+
+**Monitor All Sessions:**
+- **Dependency mapping:** Track which sessions are blocking others
+- **Critical path visualization:** Identify slowest session (bottleneck)
+- **Parallel work opportunities:** Find tasks that can run concurrently
+- **Completion predictions:** Estimate when each session will finish
+
+**Dependency Graph (Mermaid):**
+```mermaid
+graph TD
+    S1[Session 1: Market Research] --> S2[Session 2: Technical Architecture]
+    S1 --> S3[Session 3: UX/Sales]
+    S2 --> S3
+    S1 --> S4[Session 4: Implementation Planning]
+    S2 --> S4
+    S3 --> S4
+    S1 --> S5[Session 5: Guardian Validation]
+    S2 --> S5
+    S3 --> S5
+    S4 --> S5
+
+    style S1 fill:#90EE90
+    style S2 fill:#FFD700
+    style S3 fill:#FFD700
+    style S4 fill:#FFD700
+    style S5 fill:#87CEEB
+```
+
+**Real-Time Status Updates:**
+```yaml
+# intelligence/session-4/dependency-status.md
+
+## Critical Path Analysis (Updated Every 5 Minutes)
+
+SLOWEST SESSION: Session 1 (30 min remaining)
+  - Blocks: Session 2 (Agent 10), Session 3 (Agents 8-10), Session 4 (All agents)
+
+PARALLEL WORK:
+  - Session 2 Phase 1 agents (0A-0D): ✅ RUNNING (assisting Session 1)
+  - Session 5 Phase 1 agents (0A-0C): ✅ RUNNING (deploying standards)
+
+ESTIMATED COMPLETION:
+  - Session 1: 13:30 UTC
+  - Session 2: 14:00 UTC (depends on Session 1)
+  - Session 3: 14:30 UTC (depends on Sessions 1+2)
+  - Session 4: 15:00 UTC (depends on Sessions 1+2+3)
+  - Session 5: 16:30 UTC (depends on all)
+```
+
+**Deliverable:** `intelligence/session-4/dependency-status.md` (updated every 5 minutes with Mermaid graph)
+
+---
+
 
 ## Agent Identity & Check-In Protocol
 
