@@ -18,9 +18,9 @@ Design technical architecture for **sticky daily-use features** (inventory track
 ## Context (Read First)
 
 **Prerequisites:**
-1. Read `intelligence/session-1/session-1-market-analysis.md`
-2. Read `intelligence/session-1/session-1-handoff.md`
-3. Read `/home/setup/navidocs/ARCHITECTURE_INTEGRATION_ANALYSIS.md` (if accessible)
+1. Read `intelligence/session-1/session-1-market-analysis.md` (once Session 1 completes)
+2. Read `intelligence/session-1/session-1-handoff.md` (once Session 1 completes)
+3. Read `ARCHITECTURE_INTEGRATION_ANALYSIS.md` (in repo root)
 
 **Current NaviDocs Tech Stack:**
 - Frontend: Vue 3 + Vite
@@ -133,7 +133,7 @@ Each agent MUST:
 **Research + Design:**
 
 **Open-Source Accounting Module Research:**
-- Review `/home/setup/navidocs/YACHT_ACCOUNTING_RESEARCH.md` (Haiku research completed)
+- Review `YACHT_ACCOUNTING_RESEARCH.md` (in repo root - Haiku research completed)
 - **Recommended:** Spliit (MIT, 2.3K stars) - receipt scanning, expense splitting, PWA mobile
 - **Alternative:** SplitPro (MIT, 916 stars) - BigInt precision, multi-currency
 - **Foundation:** Medici (MIT, 330 stars) - double-entry GL, hierarchical accounts
