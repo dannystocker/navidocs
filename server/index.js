@@ -94,6 +94,7 @@ import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
 import statsRoutes from './routes/stats.js';
 import tocRoutes from './routes/toc.js';
+import timelineRoutes from './routes/timeline.js';
 
 // Public API endpoint for app settings (no auth required)
 import * as settingsService from './services/settings.service.js';
@@ -129,6 +130,7 @@ app.use('/api/documents', documentsRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api', tocRoutes);  // Handles /api/documents/:id/toc paths
 app.use('/api', imagesRoutes);
+app.use('/api', timelineRoutes);
 
 // Client error logging endpoint (Tier 2)
 app.post('/api/client-log', express.json(), (req, res) => {
