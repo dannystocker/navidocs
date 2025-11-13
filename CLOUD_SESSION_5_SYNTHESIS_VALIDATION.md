@@ -41,7 +41,7 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 - All claims MUST have ≥2 independent sources
 - Citations include: file:line references, web URLs with SHA-256 hashes, git commits
 - Status tracking: unverified → verified → disputed → revoked
-- Citation schema: `/home/setup/infrafabric/schemas/citation/v1.0.schema.json`
+- Citation schema: `schemas/citation/v1.0.schema.json` (in repo)
 
 ---
 
@@ -922,14 +922,14 @@ Signature: ed25519:[signature_bytes]
       "sources": [
         {
           "type": "file",
-          "path": "/mnt/c/users/setup/downloads/NaviDocs-Medium-Articles.md",
+          "path": "intelligence/session-1/market-analysis.md",
           "line_range": "45-67",
           "quality": "primary",
           "credibility": 9
         },
         {
           "type": "file",
-          "path": "/home/setup/navidocs/docs/debates/02-yacht-management-features.md",
+          "path": "docs/debates/02-yacht-management-features.md",
           "line_range": "120-145",
           "quality": "primary",
           "credibility": 9
