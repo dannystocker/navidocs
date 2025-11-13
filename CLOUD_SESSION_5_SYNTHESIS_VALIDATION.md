@@ -45,9 +45,32 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 
 ---
 
+
+## Agent Identity & Check-In Protocol
+
+**YOU ARE:** Sonnet coordinator for Session 5 (Evidence Synthesis)
+
+**YOUR HAIKU SWARM:** You have 10 Haiku agents available. Use as many as needed (not required to use all 10).
+
+**AGENT IDENTITY SYSTEM:**
+When spawning a Haiku agent, assign it an identity: `S5-H01` through `S5-H10`
+Each agent MUST:
+1. **Check in** at start: "I am S5-H03, assigned to [task name]"
+2. **Reference their task** by searching this document for "Agent 3:" (matching their number)
+3. **Retain identity** throughout execution
+4. **Report completion** with identity: "S5-H03 complete: [deliverable summary]"
+
+**TASK DEPENDENCIES:**
+- Most agents can run in parallel
+- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+
+---
+
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
 ### Agent 1: Session 1 Evidence Extraction
+**AGENT ID:** S5-H01
+**
 **Read:**
 - `intelligence/session-1/session-1-market-analysis.md`
 - `intelligence/session-1/session-1-citations.json`
@@ -61,6 +84,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Evidence inventory with citation links
 
 ### Agent 2: Session 2 Technical Claims Validation
+**AGENT ID:** S5-H02
+**
 **Read:**
 - `intelligence/session-2/session-2-architecture.md`
 - NaviDocs codebase (`server/db/schema.sql`, `server/routes/*.js`)
@@ -74,6 +99,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Technical validation report (verified vs unverified claims)
 
 ### Agent 3: Session 3 Sales Material Review
+**AGENT ID:** S5-H03
+**
 **Read:**
 - `intelligence/session-3/session-3-pitch-deck.md`
 - `intelligence/session-3/session-3-demo-script.md`
@@ -88,6 +115,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Sales material validation report
 
 ### Agent 4: Session 4 Implementation Feasibility
+**AGENT ID:** S5-H04
+**
 **Read:**
 - `intelligence/session-4/session-4-sprint-plan.md`
 - NaviDocs codebase (all relevant files)
@@ -101,6 +130,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Feasibility assessment report
 
 ### Agent 5: Citation Database Compilation
+**AGENT ID:** S5-H05
+**
 **Gather:**
 - All citations from Sessions 1-4
 - Web sources (with SHA-256 hashes)
@@ -115,6 +146,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** `session-5-citations-master.json`
 
 ### Agent 6: Cross-Session Consistency Check
+**AGENT ID:** S5-H06
+**
 **Analyze:**
 - Market size claims (Session 1 vs Session 3 pitch deck)
 - Technical architecture (Session 2 vs Session 4 implementation)
@@ -129,6 +162,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Consistency audit report
 
 ### Agent 7: Guardian Council Vote Preparation
+**AGENT ID:** S5-H07
+**
 **Prepare:**
 - Dossier summary for each guardian (tailored to philosophy)
 - Empiricism: Focus on market research data, evidence quality
@@ -144,6 +179,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Guardian briefing package
 
 ### Agent 8: Evidence Quality Scoring
+**AGENT ID:** S5-H08
+**
 **Score Each Claim:**
 - **Primary Source (3 points):** Direct research, codebase analysis
 - **Secondary Source (2 points):** Industry reports, competitor websites
@@ -158,6 +195,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** Evidence quality scorecard
 
 ### Agent 9: Final Dossier Compiler
+**AGENT ID:** S5-H09
+**
 **Synthesize:**
 - Executive summary (2 pages max)
 - Market analysis (Session 1 findings)
@@ -174,6 +213,8 @@ Synthesize all intelligence from Sessions 1-4 into comprehensive dossier, valida
 **Deliverable:** `NAVIDOCS_INTELLIGENCE_DOSSIER.md`
 
 ### Agent 10: Guardian Council Vote Coordinator
+**AGENT ID:** S5-H10
+**
 **Execute:**
 - Submit dossier to Guardian Council
 - Collect votes from all 20 guardians

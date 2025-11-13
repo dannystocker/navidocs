@@ -40,9 +40,32 @@ Design technical architecture for **sticky daily-use features** (inventory track
 
 ---
 
+
+## Agent Identity & Check-In Protocol
+
+**YOU ARE:** Sonnet coordinator for Session 2 (Technical Architecture)
+
+**YOUR HAIKU SWARM:** You have 10 Haiku agents available. Use as many as needed (not required to use all 10).
+
+**AGENT IDENTITY SYSTEM:**
+When spawning a Haiku agent, assign it an identity: `S2-H01` through `S2-H10`
+Each agent MUST:
+1. **Check in** at start: "I am S2-H03, assigned to [task name]"
+2. **Reference their task** by searching this document for "Agent 3:" (matching their number)
+3. **Retain identity** throughout execution
+4. **Report completion** with identity: "S2-H03 complete: [deliverable summary]"
+
+**TASK DEPENDENCIES:**
+- Most agents can run in parallel
+- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+
+---
+
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
 ### Agent 1: NaviDocs Codebase Analysis
+**AGENT ID:** S2-H01
+**
 **Read Files:**
 - `server/db/schema.sql` - Database structure
 - `server/routes/*.js` - API endpoints
@@ -52,6 +75,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Architecture map with integration points
 
 ### Agent 2: Inventory Tracking System Design (CRITICAL)
+**AGENT ID:** S2-H02
+**
 **Design:**
 - Database schema: `boat_inventory` (item_name, category, zone, purchase_date, purchase_price, receipt_url, warranty_expiration, current_value)
 - Categories: tender/zodiac, electronics, engine, deck, interior, safety
@@ -63,6 +88,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Inventory tracking spec with impeccable search UX
 
 ### Agent 3: Maintenance Log & Reminder System
+**AGENT ID:** S2-H03
+**
 **Design:**
 - Database schema: `maintenance_log` (service_type, date, cost, provider, next_due_date, engine_hours)
 - Service types: engine, electronics, hull, deck, safety equipment
@@ -73,6 +100,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Maintenance tracking spec with smart reminders
 
 ### Agent 4: Camera & Remote Monitoring Integration (STICKY!)
+**AGENT ID:** S2-H04
+**
 **Research + Design:**
 - Home Assistant camera feed integration (Hikvision, Reolink, marine cameras)
 - Webhook architecture (NaviDocs ← HA events: motion detected, battery low, bilge alert)
@@ -83,6 +112,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Camera/HA integration architecture with peace-of-mind UX
 
 ### Agent 5: Contact Management System
+**AGENT ID:** S2-H05
+**
 **Design:**
 - Database schema: `boat_contacts` (name, role, phone, email, notes, last_used)
 - Roles: marina, mechanic, cleaner, charter crew, electrician, surveyor
@@ -93,6 +124,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Contact management spec with mobile-first UX
 
 ### Agent 6: Expense Tracking & Accounting
+**AGENT ID:** S2-H06
+**
 **Design:**
 - Database schema: expense tracking across inventory, maintenance, marina fees
 - Expense categories (maintenance, upgrades, insurance, marina, fuel, crew)
@@ -103,6 +136,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Expense tracking spec with budget management
 
 ### Agent 7: Impeccable Search UX Design (CRITICAL)
+**AGENT ID:** S2-H07
+**
 **Design:**
 - Search architecture (Meilisearch faceted search)
 - Structured results (NO long lists - Pinterest/Airbnb grid layout)
@@ -114,6 +149,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Search UX spec with visual mockups (avoid long lists!)
 
 ### Agent 8: Notification System Design
+**AGENT ID:** S2-H08
+**
 **Design:**
 - Email notification service
 - SMS alerts (warranty expiration, document missing)
@@ -123,6 +160,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** Notification architecture with templates
 
 ### Agent 9: Database Migration Plan
+**AGENT ID:** S2-H09
+**
 **Create:**
 - Migration scripts for warranty tracking
 - Charter mode fields (flag, crew, safety)
@@ -132,6 +171,8 @@ Design technical architecture for **sticky daily-use features** (inventory track
 **Deliverable:** SQL migrations + rollback scripts
 
 ### Agent 10: Sprint Planning
+**AGENT ID:** S2-H10
+**
 **Compile:**
 - Week 1-4 task breakdown
 - Dependencies mapped (e.g., DB migrations before API work)

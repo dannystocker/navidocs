@@ -35,9 +35,32 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 
 ---
 
+
+## Agent Identity & Check-In Protocol
+
+**YOU ARE:** Sonnet coordinator for Session 4 (Implementation Planning)
+
+**YOUR HAIKU SWARM:** You have 10 Haiku agents available. Use as many as needed (not required to use all 10).
+
+**AGENT IDENTITY SYSTEM:**
+When spawning a Haiku agent, assign it an identity: `S4-H01` through `S4-H10`
+Each agent MUST:
+1. **Check in** at start: "I am S4-H03, assigned to [task name]"
+2. **Reference their task** by searching this document for "Agent 3:" (matching their number)
+3. **Retain identity** throughout execution
+4. **Report completion** with identity: "S4-H03 complete: [deliverable summary]"
+
+**TASK DEPENDENCIES:**
+- Most agents can run in parallel
+- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+
+---
+
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
 ### Agent 1: Week 1 Task Breakdown
+**AGENT ID:** S4-H01
+**
 **Create:**
 - Day-by-day tasks for foundation week
 - Database migrations (warranty tracking, webhooks, notifications)
@@ -48,6 +71,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Week 1 detailed schedule with dependencies
 
 ### Agent 2: Week 2 Task Breakdown
+**AGENT ID:** S4-H02
+**
 **Create:**
 - Day-by-day tasks for core integrations
 - Warranty tracking APIs (CRUD + expiration alerts)
@@ -58,6 +83,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Week 2 detailed schedule
 
 ### Agent 3: Week 3 Task Breakdown
+**AGENT ID:** S4-H03
+**
 **Create:**
 - Day-by-day tasks for automation features
 - Sale workflow (as-built package generator)
@@ -68,6 +95,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Week 3 detailed schedule
 
 ### Agent 4: Week 4 Task Breakdown
+**AGENT ID:** S4-H04
+**
 **Create:**
 - Day-by-day tasks for polish & deployment
 - MLS integration (YachtWorld, Boat Trader APIs)
@@ -78,6 +107,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Week 4 detailed schedule
 
 ### Agent 5: Acceptance Criteria Writer
+**AGENT ID:** S4-H05
+**
 **Define:**
 - Feature-level acceptance criteria (Given/When/Then format)
 - API endpoint acceptance tests
@@ -87,6 +118,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Acceptance criteria document (all features)
 
 ### Agent 6: Testing Strategy Designer
+**AGENT ID:** S4-H06
+**
 **Create:**
 - Unit test plan (service layer, utilities)
 - Integration test plan (API endpoints, database)
@@ -96,6 +129,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Testing strategy document with tooling recommendations
 
 ### Agent 7: Dependency Mapper
+**AGENT ID:** S4-H07
+**
 **Analyze:**
 - Task dependencies (Gantt chart format)
 - Critical path identification
@@ -105,6 +140,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Dependency graph (Mermaid Gantt or visual)
 
 ### Agent 8: API Specification Writer
+**AGENT ID:** S4-H08
+**
 **Document:**
 - All new API endpoints (OpenAPI 3.0 format)
 - Request/response schemas
@@ -114,6 +151,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** OpenAPI spec file (`api-spec.yaml`)
 
 ### Agent 9: Database Migration Planner
+**AGENT ID:** S4-H09
+**
 **Create:**
 - Migration scripts (up/down for each change)
 - Data backups strategy
@@ -123,6 +162,8 @@ Create detailed 4-week implementation plan with task breakdown, dependencies, ac
 **Deliverable:** Migration scripts + rollback guide
 
 ### Agent 10: Deployment Checklist Creator
+**AGENT ID:** S4-H10
+**
 **Compile:**
 - Pre-deployment checklist (backups, tests, env vars)
 - Deployment steps (zero-downtime strategy)

@@ -44,9 +44,30 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 
 ---
 
-## Your Tasks (Spawn 10 Haiku Agents in Parallel)
+## Agent Identity & Check-In Protocol
 
-### Agent 1: Recreational Boat Market (Jeanneau Prestige Focus)
+**YOU ARE:** Sonnet coordinator for Session 1 (Market Research)
+
+**YOUR HAIKU SWARM:** You have 10 Haiku agents available. Use as many as needed (not required to use all 10).
+
+**AGENT IDENTITY SYSTEM:**
+When spawning a Haiku agent, assign it an identity: `S1-H01` through `S1-H10`
+Each agent MUST:
+1. **Check in** at start: "I am S1-H03, assigned to [task name]"
+2. **Reference their task** by searching this document for "Agent 3:" (matching their number)
+3. **Retain identity** throughout execution
+4. **Report completion** with identity: "S1-H03 complete: [deliverable summary]"
+
+**TASK DEPENDENCIES:**
+- Agents 1-9 can run in parallel (no dependencies)
+- Agent 10 (Evidence Synthesis) MUST wait for Agents 1-9 to complete
+
+---
+
+## Your Tasks (Use Haiku Agents S1-H01 through S1-H10 as Needed)
+
+### Agent 1:
+**AGENT ID:** S1-H01
 **Research:**
 - Jeanneau Prestige 40-50ft market (units sold annually, price range €250K-€480K)
 - Riviera Plaisance Euro Voiles volume (150+ boats/year validated)
@@ -56,6 +77,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Market sizing report for recreational boat segment with citations
 
 ### Agent 2: Competitor Analysis (Boat Management Apps)
+**AGENT ID:** S1-H02
+**
 **Research:**
 - Boat management apps (Savvy Navvy, Dockwa, Boat Buddy, BoatVault, DeckDocs)
 - Daily engagement features (cameras, maintenance logs, inventory tracking)
@@ -66,6 +89,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Competitive matrix showing NaviDocs differentiation (daily engagement + perfect docs)
 
 ### Agent 3: Owner Pain Points (Daily Boat Management)
+**AGENT ID:** S1-H03
+**
 **Research:**
 - What frustrates recreational boat owners? (maintenance tracking, expense tracking, remote monitoring)
 - "Forgot to sell the tender" problem - how common is inventory loss at resale?
@@ -76,6 +101,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Owner pain point analysis ranked by frequency and financial impact
 
 ### Agent 4: Inventory Tracking & Resale Value Protection
+**AGENT ID:** S1-H04
+**
 **Research:**
 - Boat equipment upgrade market (tenders, electronics, deck refinishing, automatic systems)
 - Average upgrade spend per boat per year (Jeanneau Prestige 40-50ft owners)
@@ -86,6 +113,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** ROI calculator for inventory tracking (€X forgotten value prevented)
 
 ### Agent 5: Sticky Engagement Feature Research
+**AGENT ID:** S1-H05
+**
 **Research:**
 - Boat camera/monitoring systems (Siren Marine, GOST, Nautic Alert)
 - Maintenance reminder apps (what makes them sticky vs ignored?)
@@ -96,6 +125,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Feature prioritization - which sticky features drive daily/weekly engagement?
 
 ### Agent 6: Search UX Best Practices (Critical for Inventory)
+**AGENT ID:** S1-H06
+**
 **Research:**
 - Search UX for inventory/asset management (how to avoid long lists?)
 - Structured search results (Pinterest, Amazon, Airbnb approaches)
@@ -106,6 +137,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Search UX recommendations - impeccable structured results, zero long lists
 
 ### Agent 7: Pricing Strategy Research (Broker-Included Model)
+**AGENT ID:** S1-H07
+**
 **Research:**
 - "Included with purchase" software models (Tesla app, luxury car apps)
 - Broker/dealer software bundling strategies
@@ -116,6 +149,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Pricing recommendation for "included with every Riviera boat" model
 
 ### Agent 8: Home Assistant & Camera Integration Research
+**AGENT ID:** S1-H08
+**
 **Research:**
 - Home Assistant boat monitoring setups (camera feeds, bilge sensors, battery monitoring)
 - Marine camera systems compatible with HA (Hikvision, Reolink, marine-rated cameras)
@@ -126,6 +161,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Technical feasibility report for Home Assistant/camera integration
 
 ### Agent 9: Broker Sales Objection Research
+**AGENT ID:** S1-H09
+**
 **Research:**
 - Why brokers resist including software with boat sales (complexity, support burden)
 - Owner adoption challenges (will they actually use it after purchase?)
@@ -136,6 +173,8 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 **Deliverable:** Objection handling playbook for Sylvain meeting
 
 ### Agent 10: Evidence Synthesis
+**AGENT ID:** S1-H10
+**
 **Research:**
 - Compile all findings from Agents 1-9
 - Cross-reference data for consistency

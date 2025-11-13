@@ -37,9 +37,32 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 
 ---
 
+
+## Agent Identity & Check-In Protocol
+
+**YOU ARE:** Sonnet coordinator for Session 3 (UX/Sales)
+
+**YOUR HAIKU SWARM:** You have 10 Haiku agents available. Use as many as needed (not required to use all 10).
+
+**AGENT IDENTITY SYSTEM:**
+When spawning a Haiku agent, assign it an identity: `S3-H01` through `S3-H10`
+Each agent MUST:
+1. **Check in** at start: "I am S3-H03, assigned to [task name]"
+2. **Reference their task** by searching this document for "Agent 3:" (matching their number)
+3. **Retain identity** throughout execution
+4. **Report completion** with identity: "S3-H03 complete: [deliverable summary]"
+
+**TASK DEPENDENCIES:**
+- Most agents can run in parallel
+- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+
+---
+
 ## Your Tasks (Spawn 10 Haiku Agents in Parallel)
 
 ### Agent 1: Pitch Deck Structure (Sticky Engagement Focus)
+**AGENT ID:** S3-H01
+**
 **Design:**
 - Slide 1: Problem - "Owners ignore passive doc vaults" (show app abandonment stats)
 - Slide 2: Solution - "Daily-use app they actually open" (camera, maintenance, inventory)
@@ -52,6 +75,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Pitch deck emphasizing daily engagement, NOT passive documentation
 
 ### Agent 2: Demo Script Writer (Daily Use Scenarios)
+**AGENT ID:** S3-H02
+**
 **Create:**
 - 5-minute demo showing DAILY engagement (not just sale-time docs)
 - Screen 1: Camera check - "Is my boat OK?" (2 mins)
@@ -63,6 +88,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Demo script showing sticky engagement, NOT passive vault
 
 ### Agent 3: ROI Calculator Designer (Inventory Focus)
+**AGENT ID:** S3-H03
+**
 **Build:**
 - Input fields: boat purchase price, annual upgrades (€5K-€20K typical)
 - Inventory forgotten at resale: tender €15K, electronics €8K, blinds €3K
@@ -74,6 +101,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** ROI calculator showing inventory tracking value (primary) + maintenance reminders (secondary)
 
 ### Agent 4: Objection Handling Playbook
+**AGENT ID:** S3-H04
+**
 **Research:**
 - Common broker objections (from Session 1 research)
 - Responses with data backing
@@ -83,6 +112,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Objection handling guide (Q&A format)
 
 ### Agent 5: Pricing Strategy Presentation
+**AGENT ID:** S3-H05
+**
 **Design:**
 - Per-yacht pricing model (€50-€200/yacht)
 - Brokerage bulk pricing (10+ yachts)
@@ -92,6 +123,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Pricing slide with 3 tiers
 
 ### Agent 6: Competitive Differentiation
+**AGENT ID:** S3-H06
+**
 **Compile:**
 - NaviDocs vs 5 top competitors (from Session 1)
 - Feature comparison table
@@ -101,6 +134,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Competitive matrix slide
 
 ### Agent 7: Technical Architecture Visualization
+**AGENT ID:** S3-H07
+**
 **Create:**
 - System architecture diagram (non-technical)
 - Integration points (Home Assistant, cameras, offline)
@@ -110,6 +145,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Architecture diagram (Mermaid or visual)
 
 ### Agent 8: Case Study Writer
+**AGENT ID:** S3-H08
+**
 **Draft:**
 - Hypothetical yacht sale scenario
 - Before NaviDocs: 6 hours documentation prep, €8K warranty miss
@@ -119,6 +156,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** One-page case study
 
 ### Agent 9: Visual Design System
+**AGENT ID:** S3-H09
+**
 **Define:**
 - Color palette (nautical theme: blues, whites)
 - Typography (readable, professional)
@@ -128,6 +167,8 @@ Create sales pitch demonstrating **NaviDocs as sticky daily-use app** (not passi
 **Deliverable:** Design system guide
 
 ### Agent 10: Sales Collateral Package
+**AGENT ID:** S3-H10
+**
 **Compile:**
 - One-pager (leave-behind document)
 - Email follow-up template
