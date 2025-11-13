@@ -226,6 +226,145 @@ Each agent MUST:
 
 ---
 
+## Intra-Agent Communication Protocol (IF.bus)
+
+**Based on:** InfraFabric S² multi-swarm coordination (3,563x faster than git polling)
+
+### IFMessage Schema
+
+Every agent-to-agent message follows this structure:
+
+```json
+{
+  "performative": "inform",  // FIPA-ACL: inform, request, query-if, confirm, disconfirm, ESCALATE
+  "sender": "if://agent/session-5/haiku-Y",
+  "receiver": ["if://agent/session-5/haiku-Z"],
+  "conversation_id": "if://conversation/navidocs-session-5-2025-11-13",
+  "content": {
+    "claim": "[Guardian critique, consensus findings]",
+    "evidence": ["[Citation links, validation reports]"],
+    "confidence": 0.85,  // 0.0-1.0
+    "cost_tokens": 1247
+  },
+  "citation_ids": ["if://citation/uuid"],
+  "timestamp": "2025-11-13T10:00:00Z",
+  "sequence_num": 1
+}
+```
+
+### Speech Acts (Performatives)
+
+**inform:** Share evidence extraction findings
+- Example: "S5-H01 informs S5-H10: Market claims extracted, 47 citations identified"
+
+**query-if:** Ask for validation of cross-session consistency
+- Example: "S5-H06 queries: Does Session 1 market size match Session 3 pitch deck?"
+
+**confirm:** Validate claim with multiple sources
+- Example: "S5-H02 confirms: Architecture claims verified against NaviDocs codebase (file:line refs)"
+
+**disconfirm:** Flag inconsistencies between sessions
+- Example: "S5-H06 disconfirms: Timeline contradiction (Session 2 says 4 weeks, Session 4 says 5 weeks)"
+
+**ESCALATE:** Flag evidence quality issues for Guardian review
+- Example: "S5-H08 ESCALATES: 5 unverified claims (warranty savings, MLS integration time)"
+
+### Communication Flow (This Session)
+
+```
+Guardians (1-12) ──→ IF.sam Debate ──→ S5-H10 (Consensus)
+     ↓                    ↓
+Individual Reviews   8-Way Dialogue
+(Haiku agents)      (Light vs Dark)
+     ↓                    ↓
+Citation Validation  Dissent Recording
+(Agents 1-9)        (IF.TTT traceability)
+     ↓                    ↓
+ESCALATE (if <80% consensus)
+```
+
+**Key Patterns:**
+1. **Evidence Extraction:** Agents 1-4 extract claims from Sessions 1-4
+2. **Citation Compilation:** Agent 5 builds master citation database
+3. **Cross-Session Validation:** Agent 6 checks for contradictions
+4. **Guardian Briefing:** Agent 7 prepares tailored documents for each guardian
+5. **Evidence Scoring:** Agent 8 rates credibility (0-10 scale)
+6. **Dossier Compilation:** Agent 9 synthesizes all findings
+7. **Consensus Tallying:** Agent 10 collects Guardian votes, detects <80% threshold
+
+### Contradiction Detection Example
+
+```yaml
+# Agent 6 (Cross-Session Consistency) detects timeline conflict
+S5-H06: "disconfirm" → content:
+  conflict_type: "Timeline variance"
+  session_2_claim: "4-week sprint foundation → deploy"
+  session_4_claim: "Week 1: Foundation, Week 4: Polish & Deploy (full 4 weeks)"
+  discrepancy: "Session 2 says 4 weeks total, Session 4 says Week 4 is final polish"
+  resolution_needed: true
+  confidence: 0.65
+
+# Agent 10 flags for Guardian review
+S5-H10: "ESCALATE" → content:
+  issue: "Timeline ambiguity affects feasibility judgement"
+  impact_on_consensus: "Fallibilism guardian will rate implementation risky if timeline unclear"
+  recommendation: "Clarify: Is 4 weeks INCLUDING final polish or BEFORE final polish?"
+
+# Sonnet coordinator clarifies
+Coordinator: "request" → S5-H04: "Timeline review: Week 4 is polish + deploy, all within 4 weeks?"
+
+# Agent 4 confirms
+S5-H04: "confirm" → content:
+  clarification: "4-week timeline includes deployment to production (Dec 8-10)"
+  status: "VERIFIED - no timeline contradiction"
+```
+
+### Guardian Consensus Building Example
+
+```yaml
+# Agents report evidence quality to Guardians
+S5-H08: "inform" → content:
+  claim_count: 47
+  verified: 42
+  provisional: 3
+  unverified: 2
+  average_credibility: 8.2
+  primary_sources: 32
+
+# IF.sam Light Side (Ethical Idealist) reviews
+S5-H07: "inform" → IF.sam_debate: content:
+  light_side_position: "Dossier is transparent and well-sourced. Unverified claims flagged clearly."
+  confidence: 0.95
+  vote_recommendation: "APPROVE"
+
+# IF.sam Dark Side (Pragmatic Survivor) debates
+IF.sam_dark: "disconfirm" → IF.sam_debate: content:
+  dark_side_concern: "4-week timeline is ambitious. Risk = missed delivery deadline."
+  mitigation: "Is minimum viable product defined if timeline slips?"
+  vote_recommendation: "ABSTAIN - needs contingency plan"
+
+# Agent 10 tallies initial results
+S5-H10: "inform" → content:
+  early_tally: {
+    approve: 14,
+    abstain: 4,
+    reject: 2
+  }
+  approval_percentage: 77.8  # Below 80% threshold
+  escalation_needed: true
+  recommendation: "Fallibilism and Nagarjuna abstaining. Address uncertainty concerns."
+```
+
+### IF.TTT Compliance
+
+Every message MUST include:
+- **citation_ids:** Links to Sessions 1-4 findings
+- **confidence:** Explicit score (0.0-1.0) on claim verification
+- **evidence:** Citation database references, source credibility
+- **cost_tokens:** Token consumption (IF.optimise tracking)
+
+---
+
 ## Guardian Council Voting Process
 
 ### Step 1: Dossier Distribution (Agent 7)

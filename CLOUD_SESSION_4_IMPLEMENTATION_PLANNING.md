@@ -174,6 +174,148 @@ Each agent MUST:
 
 ---
 
+## Intra-Agent Communication Protocol (IF.bus)
+
+**Based on:** InfraFabric S² multi-swarm coordination (3,563x faster than git polling)
+
+### IFMessage Schema
+
+Every agent-to-agent message follows this structure:
+
+```json
+{
+  "performative": "inform",  // FIPA-ACL: inform, request, query-if, confirm, disconfirm, ESCALATE
+  "sender": "if://agent/session-4/haiku-Y",
+  "receiver": ["if://agent/session-4/haiku-Z"],
+  "conversation_id": "if://conversation/navidocs-session-4-2025-11-13",
+  "content": {
+    "claim": "[Week N deliverables/blockers]",
+    "evidence": ["[Task completion status, test results]"],
+    "confidence": 0.85,  // 0.0-1.0
+    "cost_tokens": 1247
+  },
+  "citation_ids": ["if://citation/uuid"],
+  "timestamp": "2025-11-13T10:00:00Z",
+  "sequence_num": 1
+}
+```
+
+### Speech Acts (Performatives)
+
+**inform:** Share week deliverables with next week's agent
+- Example: "S4-H01 informs S4-H02: Week 1 foundation complete (DB migrations, Event Bus tested)"
+
+**request:** Ask about dependencies before proceeding
+- Example: "S4-H02 requests S4-H01: Confirm DB migrations deployed and tested"
+
+**confirm:** Validate previous week's work
+- Example: "S4-H02 confirms S4-H01: Database migrations executed successfully on dev"
+
+**disconfirm:** Flag blockers from previous week
+- Example: "S4-H02 disconfirms: Event Bus tests failing - need S4-H01 to investigate"
+
+**ESCALATE:** Flag critical timeline risk
+- Example: "S4-H03 ESCALATES: Week 2 not complete, blocks Week 3 sale workflow"
+
+### Communication Flow (This Session)
+
+```
+S4-H01 (Week 1) ──→ S4-H02 (Week 2) ──→ S4-H03 (Week 3) ──→ S4-H04 (Week 4) ──→ S4-H10
+   ↓ handoff         ↓ handoff         ↓ handoff         ↓ handoff
+```
+
+**Key Patterns:**
+1. **Sequential Handoffs:** Week N agent sends deliverables + blockers to Week N+1
+2. **Dependency Validation:** Week N checks if Week N-1 unblocks their tasks
+3. **Progress Tracking:** Each agent tracks token cost + time spent
+4. **Agent 10 Synthesis:** Ensures 4-week roadmap is coherent and on-track
+
+### Week Handoff Example
+
+```yaml
+# End of Week 1 (S4-H01)
+S4-H01: "inform" → content:
+  week: 1
+  status: "COMPLETE"
+  deliverables: [
+    "DB migrations: warranty_tracking, webhooks, notification_templates",
+    "Event bus service: IF.bus messaging system",
+    "Security fixes: DELETE endpoint protection, auth enforcement",
+    "Background jobs: warranty expiration worker"
+  ]
+  tests_passed: 23/23
+  blockers: []
+  ready_for_week_2: true
+
+# S4-H02 validates Week 1 and confirms readiness
+S4-H02: "confirm" → content:
+  week: 1
+  validation: "All migrations tested on dev. Event bus ready for Week 2 warranty APIs."
+  week_2_dependencies: [
+    "DB migrations (ready)",
+    "Event bus service (ready)",
+    "Security fixes (ready)"
+  ]
+  can_start_week_2: true
+
+# S4-H02 executes Week 2 and reports progress
+S4-H02: "inform" → content:
+  week: 2
+  status: "IN_PROGRESS"
+  progress: "Warranty APIs 60% complete (CRUD done, expiring endpoint 80%)"
+  blockers: ["Home Assistant integration needs webhook URL format validation"]
+```
+
+### Critical Path Conflict Example
+
+```yaml
+# S4-H03 (Week 3) reports blocker
+S4-H03: "disconfirm" → content:
+  week: 3
+  blocker: "Sale workflow requires DB schema from Week 2, but S4-H02 incomplete"
+  missing: "webhooks table not migrated yet"
+  impact: "Cannot implement sale_workflows table migration"
+  estimated_delay: "1-2 days"
+
+# S4-H10 escalates to coordinator
+S4-H10: "ESCALATE" → content:
+  critical_blocker: "Week 2 delays cascading to Week 3"
+  chain_affected: ["Week 3", "Week 4"]
+  recommendation: "Prioritize webhooks table migration immediately (2-hour task)"
+
+# Sonnet coordinator responds
+Coordinator: "request" → S4-H02: "Prioritize webhooks migration today (deadline noon)"
+
+# S4-H02 confirms
+S4-H02: "confirm" → content:
+  priority_shift: "Moved webhooks migration to top of queue"
+  eta: "9am completion"
+  unblocks: "S4-H03 can start sale workflow design by noon"
+```
+
+### Token Cost Tracking (IF.optimise)
+
+Every handoff message includes cost tracking:
+
+```yaml
+S4-H01: "inform" → content:
+  tokens_used: 8750
+  tokens_budgeted: 12500
+  efficiency: 70%
+  cost_usd: 0.14
+  remaining_budget: 3750
+```
+
+### IF.TTT Compliance
+
+Every message MUST include:
+- **citation_ids:** Links to task specs, test results
+- **confidence:** Explicit score on deliverable completeness (0.0-1.0)
+- **evidence:** Test counts, git commits, code reviews
+- **cost_tokens:** Token consumption (IF.optimise tracking)
+
+---
+
 ## Week 1: Foundation (Nov 13-19)
 
 ### Day 1 (Nov 13): Database Migrations

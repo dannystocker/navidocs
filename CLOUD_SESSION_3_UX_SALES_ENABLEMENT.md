@@ -179,6 +179,147 @@ Each agent MUST:
 
 ---
 
+## Intra-Agent Communication Protocol (IF.bus)
+
+**Based on:** InfraFabric S² multi-swarm coordination (3,563x faster than git polling)
+
+### IFMessage Schema
+
+Every agent-to-agent message follows this structure:
+
+```json
+{
+  "performative": "inform",  // FIPA-ACL: inform, request, query-if, confirm, disconfirm, ESCALATE
+  "sender": "if://agent/session-3/haiku-Y",
+  "receiver": ["if://agent/session-3/haiku-Z"],
+  "conversation_id": "if://conversation/navidocs-session-3-2025-11-13",
+  "content": {
+    "claim": "[Your pitch/objection finding]",
+    "evidence": ["[Market data, competitor analysis, customer research]"],
+    "confidence": 0.85,  // 0.0-1.0
+    "cost_tokens": 1247
+  },
+  "citation_ids": ["if://citation/uuid"],
+  "timestamp": "2025-11-13T10:00:00Z",
+  "sequence_num": 1
+}
+```
+
+### Speech Acts (Performatives)
+
+**inform:** Share pitch content or objection research
+- Example: "S3-H01 informs S3-H05: Pitch emphasizes €8K-€33K warranty savings"
+
+**request:** Ask another agent for market validation
+- Example: "S3-H03 requests S3-H05: Validate ROI assumptions with competitor pricing"
+
+**disconfirm:** Challenge pitch claim with evidence
+- Example: "S3-H05 disconfirms S3-H01: Warranty savings claim needs 2nd source (only €8K cited)"
+
+**confirm:** Validate pitch claim with external evidence
+- Example: "S3-H06 confirms S3-H03: ROI calculator inputs match Session 1 research"
+
+**ESCALATE:** Flag critical objection that requires resolution
+- Example: "S3-H05 ESCALATES: Broker pricing objection not addressed in pitch"
+
+### Communication Flow (This Session)
+
+```
+S3-H01 (Pitch) ──→ S3-H05 (Objections) ──→ S3-H10 (adversarial testing)
+S3-H03 (ROI) ────→ S3-H05 (Validate) ────→ S3-H10
+S3-H04 (Demo) ───→ S3-H06 (Case Study) ──→ S3-H10
+```
+
+**Key Patterns:**
+1. **Pitch → Objection:** Agent 5 challenges every pitch claim with real objections
+2. **ROI → Validation:** Agent 5 verifies ROI assumptions with Session 1 market data
+3. **Demo → Testing:** Agent 6 checks if demo matches real-world success stories
+4. **Agent 10 Synthesis:** Ensures pitch is airtight before presentation
+
+### Adversarial Testing Example
+
+```yaml
+# Agent 1 (Pitch Deck) proposes value proposition
+S3-H01: "inform" → content:
+  claim: "NaviDocs enables €8K-€33K warranty savings per yacht"
+  evidence: ["Session 1 market analysis"]
+  confidence: 0.85
+
+# Agent 5 (Objections) challenges claim completeness
+S3-H05: "disconfirm" → content:
+  original_claim: "€8K-€33K warranty savings"
+  objection: "Which brokers actually claim this? Need real testimonials, not estimates"
+  requested_change: "Find 2 brokers who missed €8K+ warranties. Use as proof point."
+  evidence: ["Broker interviews required"]
+
+# Agent 1 strengthens claim
+S3-H01: "confirm" → content:
+  revised_claim: "NaviDocs prevents warranty losses (case study: Broker X missed €15K tender)"
+  evidence: [
+    "Broker interview transcript",
+    "YachtWorld resale comparison (boat with/without tender)",
+    "Session 1 pain point research"
+  ]
+  confidence: 0.95
+```
+
+### ROI Calculator Validation Example
+
+```yaml
+# Agent 3 (ROI Calculator) proposes model
+S3-H03: "propose" → content:
+  calculation: "ROI = (Warranty Savings + Time Savings) - NaviDocs Cost"
+  inputs: {
+    warranty_savings: "€8K-€33K per yacht",
+    time_savings: "6 hours manual → 20 minutes automated",
+    navidocs_cost: "€15/month × 120 months"
+  }
+
+# Agent 5 (Objections) validates assumptions
+S3-H05: "query-if" → content:
+  question: "Are time savings (6→20 mins) validated with actual brokers?"
+  reasoning: "If brokers claim 8 hours, our 20-min estimate is unrealistic"
+  request: "Get time commitment estimate from Sylvain or 2 other Riviera brokers"
+
+# Agent 3 confirms with validation
+S3-H03: "confirm" → content:
+  validated_inputs: {
+    time_savings: "Confirmed: Riviera broker spends 5.5 hours on doc prep (conservatively estimate 4 hours savings)"
+  }
+  revised_roi: "(Warranty €8K-€33K) + (Time €200-€600/sale) - €1800/year"
+  confidence: 0.92
+```
+
+### Demo Script Credibility Example
+
+```yaml
+# Agent 4 (Demo Script) proposes key screens
+S3-H04: "propose" → content:
+  screens: ["Dashboard", "Warranty Detail", "Claim Package", "Home Assistant"]
+  timing: "5 minutes total"
+
+# Agent 6 (Case Study) challenges realism
+S3-H06: "disconfirm" → content:
+  concern: "Demo shows perfect claim package generation (15 mins), but real workflow?"
+  challenge: "What if boat has missing docs? Demo assumes complete warranty archive."
+  recommendation: "Add realistic scenario: Missing engine receipt, still generates partial claim"
+
+# Agent 4 revises demo
+S3-H04: "agree" → content:
+  revised_demo: "Screen 1: Complete case (Azimut 55S) - best case, Screen 2: Sunseeker 40 with missing docs - realistic case"
+  messaging: "NaviDocs works even with incomplete records, fills gaps intelligently"
+```
+
+### IF.TTT Compliance
+
+Every message MUST include:
+- **citation_ids:** Links to Session 1 research, competitor analysis
+- **confidence:** Explicit score (0.0-1.0)
+- **evidence:** Market data, broker interviews, case studies
+- **cost_tokens:** Token consumption (IF.optimise tracking)
+
+---
+
 ## Presentation Flow (15 Minutes)
 
 ### Opening (2 minutes)

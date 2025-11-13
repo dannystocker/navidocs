@@ -183,6 +183,115 @@ Each agent MUST:
 
 ---
 
+## Intra-Agent Communication Protocol (IF.bus)
+
+**Based on:** InfraFabric S² multi-swarm coordination (3,563x faster than git polling)
+
+### IFMessage Schema
+
+Every agent-to-agent message follows this structure:
+
+```json
+{
+  "performative": "inform",  // FIPA-ACL: inform, request, query-if, confirm, disconfirm, propose, agree, ESCALATE
+  "sender": "if://agent/session-2/haiku-Y",
+  "receiver": ["if://agent/session-2/haiku-Z"],
+  "conversation_id": "if://conversation/navidocs-session-2-2025-11-13",
+  "content": {
+    "claim": "[Your design proposal]",
+    "evidence": ["[File references or codebase analysis]"],
+    "confidence": 0.85,  // 0.0-1.0
+    "cost_tokens": 1247
+  },
+  "citation_ids": ["if://citation/uuid"],
+  "timestamp": "2025-11-13T10:00:00Z",
+  "sequence_num": 1
+}
+```
+
+### Speech Acts (Performatives)
+
+**propose:** Agent suggests a design or approach
+- Example: "S2-H02 proposes: Inventory tracking via manual entry forms"
+
+**agree:** Agent validates another agent's proposal
+- Example: "S2-H04 agrees with S2-H02: Manual entry compatible with camera feeds"
+
+**disconfirm:** Agent challenges another agent's design
+- Example: "S2-H04 challenges S2-H02: Camera feeds can auto-detect equipment (CV models available)"
+
+**request:** Ask another agent for design input
+- Example: "S2-H02 requests S2-H04: How do cameras integrate with inventory schema?"
+
+**confirm:** Validate another agent's technical claim
+- Example: "S2-H01 confirms S2-H03: Express.js patterns match existing routes"
+
+**ESCALATE:** Flag critical integration conflicts
+- Example: "S2-H10 ESCALATES: Inventory + cameras overlap, needs integration design"
+
+### Communication Flow (This Session)
+
+```
+S2-H01 (Codebase) ──→ S2-H10
+S2-H02 (Inventory) ──→ S2-H04 (Cameras) ─→ S2-H10 (peer review)
+S2-H03 (Maintenance) → S2-H05 (Contacts) → S2-H10 (integration check)
+S2-H06 (Expense) ────→ S2-H07 (Search UX)→ S2-H10
+```
+
+**Key Patterns:**
+1. **Design Proposals:** Agents 2-7 propose features independently
+2. **Peer Review:** Adjacent agents challenge/validate designs
+3. **Integration Checks:** Agent 10 ensures no conflicts between subsystems
+4. **Sonnet Approval:** Final architecture review & synthesis
+
+### Cross-Domain Validation Example
+
+```yaml
+# Agent 2 (Inventory Tracking) proposes design
+S2-H02: "propose" → content:
+  feature: "Inventory tracking via manual entry forms"
+  rationale: "Simple, no OCR complexity"
+
+# Agent 4 (Cameras) challenges with technical capability
+S2-H04: "disconfirm" → content:
+  original_proposal: "Manual entry only"
+  challenge: "Camera feeds can auto-detect equipment (tender, electronics) via CV"
+  evidence: ["OpenCV boat equipment detection models"]
+  alternative: "Hybrid: Manual + camera-assisted auto-detection"
+
+# Agent 2 revises proposal
+S2-H02: "agree" → content:
+  revised_proposal: "Inventory tracking: Manual entry + camera-assisted CV detection"
+  integration_point: "Use S2-H04's camera feed for equipment detection"
+```
+
+### API Integration Conflict Example
+
+```yaml
+# Agent 3 (Maintenance) proposes maintenance log API
+S2-H03: "propose" → POST /api/maintenance/{boat_id}/logs
+
+# Agent 7 (Search UX) challenges completeness
+S2-H07: "query-if" → content:
+  question: "Does maintenance API support date-range queries for yearly reporting?"
+  reasoning: "Search UI needs to filter by date for expense rollups"
+
+# Agent 3 confirms and extends API
+S2-H03: "confirm" → content:
+  api_extended: "GET /api/maintenance/{boat_id}/logs?start_date=&end_date=&category="
+  integration: "Supports S2-H06 expense rollup queries"
+```
+
+### IF.TTT Compliance
+
+Every message MUST include:
+- **citation_ids:** Links to design docs, codebase references
+- **confidence:** Explicit score (0.0-1.0)
+- **evidence:** File:line references from NaviDocs codebase
+- **cost_tokens:** Token consumption (IF.optimise tracking)
+
+---
+
 ## IF.bus Integration Pattern
 
 ### Event Bus Design

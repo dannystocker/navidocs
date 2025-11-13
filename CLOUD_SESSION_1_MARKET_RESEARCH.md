@@ -188,6 +188,108 @@ Each agent MUST:
 
 ---
 
+## Intra-Agent Communication Protocol (IF.bus)
+
+**Based on:** InfraFabric S² multi-swarm coordination (3,563x faster than git polling)
+
+### IFMessage Schema
+
+Every agent-to-agent message follows this structure:
+
+```json
+{
+  "performative": "inform",  // FIPA-ACL: inform, request, query-if, confirm, disconfirm, ESCALATE
+  "sender": "if://agent/session-1/haiku-Y",
+  "receiver": ["if://agent/session-1/haiku-Z"],
+  "conversation_id": "if://conversation/navidocs-session-1-2025-11-13",
+  "content": {
+    "claim": "[Your finding]",
+    "evidence": ["[URL or file:line]"],
+    "confidence": 0.85,  // 0.0-1.0
+    "cost_tokens": 1247
+  },
+  "citation_ids": ["if://citation/uuid"],
+  "timestamp": "2025-11-13T10:00:00Z",
+  "sequence_num": 1
+}
+```
+
+### Speech Acts (Performatives)
+
+**inform:** Share findings with synthesis agent (Agent 10)
+- Example: "I am S1-H03. Inventory tracking prevents €15K-€50K loss (confidence 0.85)"
+
+**request:** Ask another agent for verification/data
+- Example: "S1-H10 requests S1-H02: Verify market size with 2nd source (IF.TTT requirement)"
+
+**confirm:** Validate another agent's claim
+- Example: "S1-H02 confirms S1-H01: Market size €2.3B verified (2 sources now)"
+
+**disconfirm:** Challenge another agent's claim
+- Example: "S1-H03 challenges S1-H01: Price range conflict (€250K vs €1.5M = 500% variance)"
+
+**ESCALATE:** Flag critical conflict for Sonnet coordinator
+- Example: "S1-H10 ESCALATES: Price variance >20%, requires human resolution"
+
+### Communication Flow (This Session)
+
+```
+S1-H01 through S1-H09 → S1-H10 (Evidence Synthesis)
+                           ↓
+                      ESCALATE (if conflicts)
+                           ↓
+                      Sonnet Resolves
+```
+
+**Key Patterns:**
+1. **Agents 1-9 → Agent 10:** Send findings with confidence scores
+2. **Agent 10 → Agents 1-9:** Request verification if confidence <0.75
+3. **Agent 10 → Sonnet:** ESCALATE conflicts (>20% variance)
+4. **Sonnet → Agent X:** Request re-investigation with specific instructions
+
+### Multi-Source Verification Example
+
+```yaml
+# Agent 1 finds data (1 source, low confidence)
+S1-H01: "inform" → claim: "Market size €2.3B", confidence: 0.70
+
+# Agent 10 detects low confidence, requests verification
+S1-H10: "request" → S1-H02: "Verify market size (IF.TTT: need 2+ sources)"
+
+# Agent 2 searches, finds 2nd source
+S1-H02: "confirm" → S1-H10: "Market size €2.3B verified", confidence: 0.90
+
+# Agent 10 synthesizes
+S1-H10: "inform" → Coordinator: "Market size €2.3B (VERIFIED, 2 sources)"
+```
+
+### Conflict Detection Example
+
+```yaml
+# Agents report conflicting data
+S1-H01: "inform" → "Prestige 50 price €250K"
+S1-H03: "inform" → "Owner has €1.5M Prestige 50"
+
+# Agent 10 detects 500% variance
+S1-H10: "ESCALATE" → Coordinator: "Price conflict requires resolution"
+
+# Sonnet resolves
+Coordinator: "request" → S1-H01: "Re-search YachtWorld for Prestige 50 SOLD prices"
+
+# Agent 1 corrects
+S1-H01: "inform" → "Prestige 50 price €800K-€1.5M (CORRECTED)"
+```
+
+### IF.TTT Compliance
+
+Every message MUST include:
+- **citation_ids:** Links to evidence
+- **confidence:** Explicit score (0.0-1.0)
+- **evidence:** Observable artifacts (URLs, file:line)
+- **cost_tokens:** Token consumption (IF.optimise tracking)
+
+---
+
 ## IF.optimise Protocol
 
 **Token Efficiency Targets:**
