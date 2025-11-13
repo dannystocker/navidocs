@@ -335,6 +335,6 @@ await runSynthesisTasks(); // S2-H10 final integration
 ---
 
 **Questions? Check:**
-- `/home/setup/infrafabric/NAVIDOCS_SESSION_SUMMARY.md` - Quick reference
-- `/home/setup/navidocs/SESSION_DEBUG_BLOCKERS.md` - Debug analysis
-- `/home/setup/infrafabric/agents.md` - Comprehensive project docs
+- `SESSION_DEBUG_BLOCKERS.md` - Debug analysis (in repo)
+- `AUTONOMOUS-COORDINATION-STATUS.md` - Current session status
+- (Optional: InfraFabric docs at https://github.com/dannystocker/infrafabric.git for methodology details)

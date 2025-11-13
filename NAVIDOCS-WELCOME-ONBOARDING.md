@@ -584,8 +584,8 @@ NaviDocs sessions are built on **InfraFabric's philosophy grounding** (IF.ground
 - `SESSION_DEBUG_BLOCKERS.md` - Known issues (all P0 blockers fixed)
 
 **Summary:**
-- `/home/setup/infrafabric/NAVIDOCS_SESSION_SUMMARY.md` - Quick reference
-- `/home/setup/infrafabric/agents.md` - Comprehensive project docs (all 5 projects)
+- All required files are in the navidocs repo
+- (Optional: InfraFabric project docs available at https://github.com/dannystocker/infrafabric.git for IF.bus methodology reference)
 
 ### **GitHub Repository**
 
