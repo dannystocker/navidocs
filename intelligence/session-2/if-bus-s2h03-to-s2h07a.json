@@ -1,0 +1,280 @@
+{
+  "performative": "request",
+  "sender": "if://agent/session-2/haiku-03A",
+  "receiver": ["if://agent/session-2/haiku-07A"],
+  "message_id": "vat-compliance-calendar-integration-001",
+  "timestamp": "2025-11-13T00:00:00Z",
+  "content_type": "calendar_integration_request",
+  "priority": "CRITICAL",
+  "expires_at": "2025-12-31T23:59:59Z",
+
+  "content": {
+    "integration_name": "VAT Compliance Deadline Tracking",
+    "integration_purpose": "Feed exit deadlines and compliance alerts from VAT tracking system to calendar for synchronized deadline management",
+    "integration_type": "recurring_deadline_feed_with_alerts",
+
+    "source_system": {
+      "name": "VAT Tax Jurisdiction Tracking & Compliance Reminders",
+      "agent_id": "if://agent/session-2/haiku-03A",
+      "system_id": "vat-tax-tracking-v1",
+      "data_tables": [
+        "boat_tax_status",
+        "compliance_alerts",
+        "jurisdiction_rules",
+        "exit_history"
+      ]
+    },
+
+    "target_system": {
+      "name": "Calendar Management System",
+      "agent_id": "if://agent/session-2/haiku-07A",
+      "expected_calendar_backends": [
+        "Google Calendar",
+        "Microsoft Outlook 365",
+        "Apple Calendar",
+        "iCalendar (iCal)",
+        "Caldav",
+        "Exchange"
+      ]
+    },
+
+    "data_mapping": {
+      "primary_key": "boat_id",
+      "source_fields": {
+        "boat_name": "boat_tax_status.boat_name",
+        "flag_jurisdiction": "boat_tax_status.flag_jurisdiction",
+        "home_jurisdiction": "boat_tax_status.home_jurisdiction",
+        "ta_entry_date": "boat_tax_status.ta_entry_date",
+        "ta_expiry_date": "boat_tax_status.ta_expiry_date",
+        "next_required_exit_date": "boat_tax_status.next_required_exit_date",
+        "days_until_exit": "boat_tax_status.days_until_exit",
+        "compliance_status": "boat_tax_status.compliance_status",
+        "alert_level": "boat_tax_status.alert_level",
+        "vat_paid": "boat_tax_status.vat_paid"
+      }
+    },
+
+    "event_specifications": {
+      "primary_event": {
+        "event_type": "tax_exit_required",
+        "event_name": "VAT Compliance - EU Exit Required",
+        "trigger_condition": "boat_tax_status.ta_status == 'ACTIVE' AND boat_tax_status.vat_paid == FALSE",
+        "calendar_date_field": "boat_tax_status.next_required_exit_date",
+        "calendar_date_type": "hard_deadline",
+
+        "title_template": "🚢 EU Exit Required - {{boat_name}} ({{home_jurisdiction}}) - VAT Compliance Deadline",
+        "description_template": "CRITICAL DEADLINE: Your non-VAT paid yacht {{boat_name}} must exit {{home_jurisdiction}} EU waters by {{ta_expiry_date}} to comply with EU VAT regulations.\n\nViolation Consequences:\n- VAT Assessment: {{jurisdiction_vat_rate}}% of yacht value\n- Customs Duties: 5-10% additional\n- Administrative Penalties: 50-100% of VAT amount\n- Criminal Liability: Possible prosecution for customs violations\n- Asset Risk: Potential yacht seizure and impound\n\nRequired Actions:\n1. Book non-EU marina (Gibraltar recommended: 0% VAT)\n2. Arrange crew and logistics\n3. Prepare exit documentation (marina invoice + customs stamp)\n4. Notify customs authorities\n5. Confirm vessel insurance for transit\n\nJurisdiction Specific Notes:\n{{jurisdiction_specific_notes}}\n\nRecommended Contacts:\nCustoms Authority: {{customs_authority_name}}\nEmail: {{customs_authority_email}}\nPhone: {{customs_authority_phone}}",
+
+        "color": "red",
+        "priority": "CRITICAL",
+        "visibility": "public",
+        "all_day_event": true,
+
+        "notification_rules": [
+          {
+            "days_before_deadline": 60,
+            "notification_type": "reminder",
+            "channels": ["email"],
+            "message": "Planning Alert: EU Exit Required in 60 Days"
+          },
+          {
+            "days_before_deadline": 30,
+            "notification_type": "warning",
+            "channels": ["email", "sms"],
+            "message": "Warning: EU Exit Required in 30 Days - Start Logistics Planning"
+          },
+          {
+            "days_before_deadline": 14,
+            "notification_type": "warning",
+            "channels": ["email", "sms", "in_app"],
+            "message": "Warning: EU Exit Required in 14 Days - Confirm Destination & Departure"
+          },
+          {
+            "days_before_deadline": 7,
+            "notification_type": "critical",
+            "channels": ["email", "sms", "in_app_popup", "phone_call"],
+            "message": "URGENT: EU Exit Required in 7 Days - Final Preparation Required"
+          },
+          {
+            "days_before_deadline": 0,
+            "notification_type": "critical",
+            "channels": ["email", "sms", "in_app_popup", "phone_call"],
+            "message": "CRITICAL: EU Exit Deadline Today - Immediate Departure Required"
+          },
+          {
+            "days_before_deadline": -1,
+            "notification_type": "escalation",
+            "channels": ["email", "sms", "in_app_popup", "phone_call", "legal_escalation"],
+            "message": "OVERDUE: EU Exit Deadline Passed - Legal Risk - Contact Compliance Officer"
+          }
+        ],
+
+        "related_tasks": [
+          {
+            "task_type": "booking",
+            "description": "Book non-EU marina (Gibraltar/Melilla/Ceuta/etc)",
+            "days_before_deadline": 30,
+            "owner": "boat_owner"
+          },
+          {
+            "task_type": "logistics",
+            "description": "Arrange crew, fuel, provisions, insurance",
+            "days_before_deadline": 21,
+            "owner": "boat_owner"
+          },
+          {
+            "task_type": "documentation",
+            "description": "Prepare exit documentation checklist (marina invoice, customs stamp, insurance)",
+            "days_before_deadline": 14,
+            "owner": "boat_owner"
+          },
+          {
+            "task_type": "notification",
+            "description": "Notify customs authorities of planned departure",
+            "days_before_deadline": 7,
+            "owner": "boat_owner"
+          },
+          {
+            "task_type": "confirmation",
+            "description": "Final verification: destination marina, crew, weather forecast, transit route",
+            "days_before_deadline": 3,
+            "owner": "boat_owner"
+          }
+        ],
+
+        "attachments": [
+          {
+            "name": "Exit-Requirements-Checklist.pdf",
+            "type": "reference",
+            "source": "vat-tax-tracking-spec.md"
+          },
+          {
+            "name": "Customs-Contact-Information.pdf",
+            "type": "reference",
+            "jurisdiction_specific": true
+          },
+          {
+            "name": "Marina-Documentation-Template.docx",
+            "type": "template"
+          },
+          {
+            "name": "Insurance-Transit-Verification-Form.pdf",
+            "type": "checklist"
+          }
+        ]
+      },
+
+      "reminder_events": [
+        {
+          "event_type": "vat_compliance_reminder",
+          "trigger": "days_until_exit == 60",
+          "title": "💡 [60 Days] EU Exit Deadline Planning - {{boat_name}}",
+          "color": "yellow",
+          "priority": "MEDIUM"
+        },
+        {
+          "event_type": "vat_compliance_reminder",
+          "trigger": "days_until_exit == 30",
+          "title": "⚠️ [30 Days] EU Exit Deadline Approaching - {{boat_name}}",
+          "color": "orange",
+          "priority": "HIGH"
+        },
+        {
+          "event_type": "vat_compliance_reminder",
+          "trigger": "days_until_exit == 14",
+          "title": "⚠️ [14 Days] EU Exit URGENT - {{boat_name}} - Confirm Logistics",
+          "color": "orange",
+          "priority": "HIGH"
+        },
+        {
+          "event_type": "vat_compliance_reminder",
+          "trigger": "days_until_exit == 7",
+          "title": "🚨 [7 Days] EU Exit CRITICAL - {{boat_name}} - Final Preparation",
+          "color": "red",
+          "priority": "CRITICAL"
+        }
+      ],
+
+      "secondary_event": {
+        "event_type": "tax_lifetime_limit_warning",
+        "trigger_condition": "boat_tax_status.ta_years_remaining < 1.5",
+        "title_template": "⚠️ VAT Lifetime Limit Warning - {{boat_name}} - {{ta_years_remaining}} Years Remaining",
+        "description_template": "Your yacht {{boat_name}} has spent {{ta_cumulative_months}} months in EU waters under Temporary Admission. After 10 years total (120 months), you must pay full VAT or register permanently. {{ta_years_remaining}} years remaining.",
+        "color": "orange",
+        "priority": "HIGH"
+      }
+    },
+
+    "sync_configuration": {
+      "sync_frequency": "daily_at_02:00_UTC",
+      "sync_method": "incremental_delta_with_full_refresh_weekly",
+      "conflict_resolution_policy": "calendar_event_is_authoritative_if_manually_modified",
+      "duplicate_prevention": "check_boat_id_and_date_combination",
+      "timezone_awareness": "yacht_operating_timezone_plus_UTC",
+      "historical_event_retention": "24_months",
+      "past_deadline_handling": "escalate_to_compliance_officer"
+    },
+
+    "notification_configuration": {
+      "default_notification_channels": [
+        "email",
+        "sms",
+        "in_app_notification",
+        "calendar_alert"
+      ],
+      "notification_recipient_types": [
+        "boat_owner",
+        "boat_captain",
+        "compliance_officer",
+        "insurance_broker"
+      ],
+      "timezone_for_notifications": "yacht_operating_timezone",
+      "quiet_hours": "22:00_to_06:00_local_time (except CRITICAL severity)",
+      "language_support": "jurisdictions_language_plus_english"
+    },
+
+    "feature_requests": {
+      "required_features": [
+        "color_coding: red=critical, orange=high, yellow=medium",
+        "recurring_reminder_notifications: 60/30/14/7 days before deadline",
+        "task_subtasks_integration: create action items linked to calendar event",
+        "document_attachments: checklist PDFs, templates, contact information",
+        "timezone_support: local yacht timezone + UTC for global coordination",
+        "mobile_notifications: push notifications for iOS/Android",
+        "email_templates: customizable jurisdiction-specific templates",
+        "sms_alerts: critical alerts (7 days, overdue)",
+        "icalendar_export: allow sharing deadline calendars with crew/brokers"
+      ],
+
+      "optional_enhancements": [
+        "multi_device_sync: sync across phone/tablet/desktop",
+        "siri_shortcuts_integration: voice control for checking deadline status",
+        "crew_calendar_sharing: share specific boat deadlines with captain/crew",
+        "recurring_event_patterns: auto-generate calendar events for annual resets",
+        "weather_integration: show weather forecast at exit destination",
+        "voyage_planning: integrate with navigation/weather routing systems"
+      ]
+    },
+
+    "integration_status": {
+      "requested_status": "ACTIVE",
+      "requested_activation_date": "2025-11-13",
+      "expected_event_count_per_month": "15-25 events",
+      "data_volume": "low_to_moderate"
+    },
+
+    "success_metrics": {
+      "all_boats_have_calendar_events": true,
+      "compliance_alerts_reach_owners": "100%",
+      "notification_delivery_rate": ">95%",
+      "calendar_event_accuracy": "100%",
+      "owner_action_on_alerts": "tracked_via_follow_up"
+    },
+
+    "contingency": {
+      "if_calendar_integration_fails": "fall_back_to_email_only_alerts",
+      "if_sync_delays": "allow_up_to_6_hours_for_calendar_propagation",
+      "if_notification_fails": "escalate_to_direct_phone_call"
+    }
+  }
+}

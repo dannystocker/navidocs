@@ -1,0 +1,293 @@
+{
+  "message_id": "if_bus_20251113_s2h05_s2h08_001",
+  "timestamp": "2025-11-13T11:00:00Z",
+  "performative": "confirm",
+  "sender": "if://agent/session-2/haiku-05",
+  "receiver": [
+    "if://agent/session-2/haiku-08"
+  ],
+  "subject": "Contact Management System Ready for WhatsApp Integration",
+  "content": {
+    "agent_identity": "S2-H05",
+    "domain": "Contact Management System",
+    "status": "operational",
+    "integration": "Contact recommendations and sharing via WhatsApp",
+    "capability_summary": "Contact Management System ready to provide intelligent contact recommendations for voice commands, share contacts via WhatsApp, and support bulk messaging.",
+
+    "integration_points": [
+      {
+        "name": "contact_recommendation",
+        "description": "S2-H08 requests contact recommendation based on role",
+        "trigger": "Voice command: '@NaviDocs call mechanic'",
+        "api_endpoint": {
+          "method": "GET",
+          "path": "/api/contacts/recommend",
+          "parameters": {
+            "boat_id": "number (BIGINT, required)",
+            "role": "enum (required) - marina|mechanic|cleaner|charter_crew|electrician|surveyor|rigger|canvas_maker|detailer",
+            "context": "string (optional) - recent|favorite|most_used (default: recent)"
+          }
+        },
+        "if_bus_request": {
+          "performative": "request",
+          "sender": "if://agent/session-2/haiku-08",
+          "receiver": ["if://agent/session-2/haiku-05"],
+          "content": {
+            "action": "recommend_contact",
+            "boat_id": 123,
+            "role": "mechanic",
+            "context": "whatsapp_voice_command",
+            "trigger_text": "@NaviDocs call mechanic"
+          }
+        },
+        "if_bus_response": {
+          "performative": "inform",
+          "sender": "if://agent/session-2/haiku-05",
+          "receiver": ["if://agent/session-2/haiku-08"],
+          "content": {
+            "recommended_contact": {
+              "id": 1,
+              "name": "John's Marine Service",
+              "phone": "+1-555-0100",
+              "role": "mechanic",
+              "whatsapp_enabled": true,
+              "last_used": "2025-11-10T14:30:00Z"
+            },
+            "alternatives": [
+              {
+                "id": 2,
+                "name": "Jane's Marine Repair",
+                "phone": "+1-555-0102",
+                "role": "mechanic"
+              }
+            ],
+            "action": "initiate_whatsapp_call",
+            "reason": "Recently used (2 days ago)"
+          }
+        }
+      },
+
+      {
+        "name": "contact_sharing",
+        "description": "S2-H08 shares contact details to WhatsApp group",
+        "trigger": "User action: 'Share' button in Contact Detail view",
+        "api_endpoint": {
+          "method": "POST",
+          "path": "/api/contacts/{contact_id}/share",
+          "body": {
+            "platform": "enum - whatsapp|email|sms",
+            "action": "share_to_group|share_to_contact",
+            "group_id": "string (if sharing to group)",
+            "recipient": "string (if sharing to individual)"
+          }
+        },
+        "if_bus_request": {
+          "performative": "request",
+          "sender": "if://agent/session-2/haiku-05",
+          "receiver": ["if://agent/session-2/haiku-08"],
+          "content": {
+            "action": "share_contact",
+            "contact": {
+              "id": 1,
+              "name": "John's Marine Service",
+              "phone": "+1-555-0100",
+              "email": "john@marine.com",
+              "role": "mechanic",
+              "company": "John's Marine"
+            },
+            "target": {
+              "type": "group|contact",
+              "id": "s2_h08_crew_group"
+            },
+            "format": "vcard|text|link",
+            "include_fields": ["name", "phone", "email", "role"]
+          }
+        },
+        "if_bus_response": {
+          "performative": "inform",
+          "sender": "if://agent/session-2/haiku-08",
+          "receiver": ["if://agent/session-2/haiku-05"],
+          "content": {
+            "status": "shared",
+            "platform": "whatsapp",
+            "group_id": "s2_h08_crew_group",
+            "timestamp": "2025-11-13T11:05:00Z"
+          }
+        }
+      },
+
+      {
+        "name": "bulk_messaging",
+        "description": "S2-H08 sends bulk messages to contacts with specific role",
+        "trigger": "Voice command: '@NaviDocs message crew' or '@NaviDocs email crew'",
+        "api_endpoint": {
+          "method": "POST",
+          "path": "/api/contacts/bulk-action",
+          "body": {
+            "action": "whatsapp_bulk_message|email_bulk|sms_bulk",
+            "role": "enum",
+            "boat_id": "number",
+            "message": "string",
+            "subject": "string (for email)",
+            "platform": "whatsapp|email|sms"
+          }
+        },
+        "if_bus_request": {
+          "performative": "request",
+          "sender": "if://agent/session-2/haiku-05",
+          "receiver": ["if://agent/session-2/haiku-08"],
+          "content": {
+            "action": "bulk_send_whatsapp",
+            "contacts": [
+              {
+                "id": 10,
+                "phone": "+1-555-0200",
+                "name": "Captain John",
+                "role": "charter_crew"
+              },
+              {
+                "id": 11,
+                "phone": "+1-555-0201",
+                "name": "Crew Member Sarah",
+                "role": "charter_crew"
+              }
+            ],
+            "message": "Charter scheduled for next weekend. Please confirm availability.",
+            "boat_id": 123
+          }
+        },
+        "if_bus_response": {
+          "performative": "inform",
+          "sender": "if://agent/session-2/haiku-08",
+          "receiver": ["if://agent/session-2/haiku-05"],
+          "content": {
+            "status": "sent",
+            "platform": "whatsapp",
+            "recipients_count": 2,
+            "sent_timestamp": "2025-11-13T11:05:00Z",
+            "delivery_tracking": [
+              {
+                "contact_id": 10,
+                "status": "sent",
+                "timestamp": "2025-11-13T11:05:01Z"
+              },
+              {
+                "contact_id": 11,
+                "status": "sent",
+                "timestamp": "2025-11-13T11:05:02Z"
+              }
+            ]
+          }
+        }
+      }
+    ],
+
+    "voice_command_examples": {
+      "call_mechanics": {
+        "command": "@NaviDocs call mechanic",
+        "response": "Calling John's Marine Service..."
+      },
+      "call_electrician": {
+        "command": "@NaviDocs call electrician",
+        "response": "Calling Jane Electrical..."
+      },
+      "email_crew": {
+        "command": "@NaviDocs email charter crew",
+        "response": "Which crew members? (shows list)"
+      },
+      "message_crew": {
+        "command": "@NaviDocs message crew",
+        "response": "What message would you like to send?"
+      },
+      "find_provider": {
+        "command": "@NaviDocs find surveyor",
+        "response": "Found 2 surveyors. Most recent: Smith Marine Surveys (used 3 weeks ago)"
+      }
+    },
+
+    "whatsapp_integration_details": {
+      "phone_link_format": "whatsapp://send?phone=+1-555-0100&text=Hello",
+      "supported_actions": [
+        "whatsapp_call",
+        "whatsapp_message",
+        "whatsapp_share_contact",
+        "whatsapp_group_message"
+      ],
+      "contact_vcard_support": true,
+      "bulk_message_limit": "100 messages per batch",
+      "rate_limits": {
+        "per_minute": 10,
+        "per_hour": 500
+      }
+    },
+
+    "recommendation_algorithm": {
+      "priority_order": [
+        {
+          "rank": 1,
+          "criteria": "Favorite contact + used within 7 days",
+          "weight": 1.0
+        },
+        {
+          "rank": 2,
+          "criteria": "Used within 14 days",
+          "weight": 0.9
+        },
+        {
+          "rank": 3,
+          "criteria": "Most frequently used (by usage_count)",
+          "weight": 0.8
+        },
+        {
+          "rank": 4,
+          "criteria": "Favorite contact (any recency)",
+          "weight": 0.7
+        },
+        {
+          "rank": 5,
+          "criteria": "First available contact of role",
+          "weight": 0.5
+        }
+      ],
+      "timeliness": "Fresh data (< 5 seconds from request)",
+      "fallback": "Return top 3 alternatives if primary recommendation unavailable"
+    },
+
+    "interaction_logging": {
+      "track": "All contact interactions via WhatsApp",
+      "record_fields": [
+        "contact_id",
+        "boat_id",
+        "interaction_type (whatsapp_call|whatsapp_message)",
+        "interaction_date",
+        "source_type (whatsapp_voice_command|user_action)"
+      ],
+      "update_contact": "Set last_used timestamp, increment usage_count"
+    },
+
+    "next_steps": {
+      "s2_h08_action_1": "Parse voice commands for contact recommendations",
+      "s2_h08_action_2": "Implement WhatsApp group contact retrieval",
+      "s2_h08_action_3": "Handle incoming WhatsApp messages for '@NaviDocs' mentions",
+      "s2_h05_action_1": "Implement recommendation endpoint with smart algorithms",
+      "s2_h05_action_2": "Create bulk messaging endpoint with delivery tracking",
+      "s2_h05_action_3": "Add WhatsApp integration hooks to contact sharing"
+    },
+
+    "success_criteria": {
+      "voice_command_recognition": "90% accuracy in identifying requested role from voice",
+      "recommendation_speed": "< 200ms API response time",
+      "user_satisfaction": "85% of recommendations match user intent",
+      "sharing_reliability": "99.9% successful contact sharing to groups",
+      "bulk_messaging": "99% delivery success rate"
+    },
+
+    "security_considerations": {
+      "phone_number_encryption": "All phone numbers encrypted at rest",
+      "whatsapp_compliance": "Comply with WhatsApp Business API Terms of Service",
+      "message_logging": "Log all bulk messages for audit",
+      "user_consent": "Verify user consent before sending bulk messages",
+      "data_retention": "Maintain interaction logs for 1 year, then archive"
+    }
+  }
+}
