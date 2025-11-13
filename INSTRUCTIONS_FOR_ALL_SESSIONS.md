@@ -31,18 +31,38 @@ git branch --show-current
 
 | Your Branch Contains | Your Task |
 |---------------------|-----------|
-| `feature-smart-ocr` | ✅ DONE! Pick Session 6 work or QC/Testing |
-| `feature-timeline` | ✅ DONE! Pick Session 6 work or QC/Testing |
-| `multiformat` | ✅ DONE! Pick Session 6 work or QC/Testing |
-| `feature-polish-testing` | ✅ DONE! Pick Session 6 work or QC/Testing |
-| `deployment-prep` | ✅ DONE! Pick Session 6 work or QC/Testing |
-| **ANY OTHER BRANCH** | 🚀 **DO SESSION 6: Build Inventory/Warranty** |
+| `feature-smart-ocr` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
+| `feature-timeline` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
+| `multiformat` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
+| `feature-polish-testing` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
+| `deployment-prep` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
+| `feature/inventory-warranty` | ✅ Session 6 DONE! Pick Sessions 7-10 or QC/Testing |
+| `feature/maintenance-scheduler` | ✅ Session 7 DONE! Pick Sessions 8-10 or QC/Testing |
+| `feature/crew-contacts` | ✅ Session 8 DONE! Pick Sessions 9-10 or QC/Testing |
+| `feature/compliance-certification` | ✅ Session 9 DONE! Pick Session 10 or QC/Testing |
+| `feature/fuel-expense-tracker` | ✅ Session 10 DONE! Do QC/Testing |
+| **ANY OTHER BRANCH** | 🚀 **Pick next available session (6-10)** |
+
+**Available Features to Build:**
+
+| Session | Feature | Time | Status |
+|---------|---------|------|--------|
+| Session 6 | Inventory & Warranty Tracking | 90-120 min | Check if feature/inventory-warranty branch exists |
+| Session 7 | Maintenance Scheduler | 90-120 min | Check if feature/maintenance-scheduler branch exists |
+| Session 8 | Crew & Contact Management | 60-90 min | Check if feature/crew-contacts branch exists |
+| Session 9 | Compliance & Certification Tracker | 75-90 min | Check if feature/compliance-certification branch exists |
+| Session 10 | Fuel Log & Expense Tracker | 90-120 min | Check if feature/fuel-expense-tracker branch exists |
+
+**To check what's available:**
+```bash
+git fetch origin && git branch -r | grep feature/
+```
 
 ---
 
 ## 🚀 SESSION 6: Build Inventory & Warranty Tracking (90-120 min)
 
-**If you're the first session to see this, YOU build this feature!**
+**Check if this is already done before starting!**
 
 ### Quick Start
 
@@ -92,6 +112,180 @@ git push origin feature/inventory-warranty
 ```
 
 Create `SESSION-6-COMPLETE.md` with summary of what you built.
+
+---
+
+## 🚀 SESSION 7: Build Maintenance Scheduler (90-120 min)
+
+**Check if this is already done before starting!**
+
+### Quick Start
+
+```bash
+cd /home/setup/navidocs
+git fetch origin
+git checkout navidocs-cloud-coordination
+git pull origin navidocs-cloud-coordination
+git checkout -b feature/maintenance-scheduler
+```
+
+### Read the Prompt
+
+**Complete instructions:** `/home/setup/navidocs/builder/prompts/current/session-7-maintenance-scheduler.md`
+**Feature spec:** `/home/setup/navidocs/FEATURE_SPEC_MAINTENANCE_SCHEDULER.md`
+
+### What You're Building
+
+**Recurring maintenance scheduling and task management:**
+- Maintenance task list with status indicators (pending, due, overdue)
+- Recurring task scheduling (days, hours, miles-based)
+- Task completion workflow with auto-calculated next due dates
+- Dashboard alerts for due/overdue tasks
+- Maintenance history per task
+- Integration with equipment inventory
+- Demo data: 10-15 sample tasks
+
+### When Done
+
+```bash
+git add .
+git commit -m "[SESSION-7] Add maintenance scheduler"
+git push origin feature/maintenance-scheduler
+```
+
+Create `SESSION-7-COMPLETE.md`
+
+---
+
+## 🚀 SESSION 8: Build Crew & Contact Management (60-90 min)
+
+**Check if this is already done before starting!**
+
+### Quick Start
+
+```bash
+cd /home/setup/navidocs
+git fetch origin
+git checkout navidocs-cloud-coordination
+git pull origin navidocs-cloud-coordination
+git checkout -b feature/crew-contacts
+```
+
+### Read the Prompt
+
+**Complete instructions:** `/home/setup/navidocs/builder/prompts/current/session-8-crew-contacts.md`
+**Feature spec:** `/home/setup/navidocs/FEATURE_SPEC_CREW_CONTACTS.md`
+
+### What You're Building
+
+**Contact directory for marine operations:**
+- Contact directory with type categorization (Crew, Service Provider, Marina, Emergency, Broker)
+- Crew certification and availability tracking
+- Service provider ratings and service history
+- Marina details with amenities
+- Emergency contact quick access widget
+- Contact search and filtering
+- Integration with maintenance tasks
+- Demo data: 20-25 sample contacts
+
+### When Done
+
+```bash
+git add .
+git commit -m "[SESSION-8] Add crew & contact management"
+git push origin feature/crew-contacts
+```
+
+Create `SESSION-8-COMPLETE.md`
+
+---
+
+## 🚀 SESSION 9: Build Compliance & Certification Tracker (75-90 min)
+
+**Check if this is already done before starting!**
+
+### Quick Start
+
+```bash
+cd /home/setup/navidocs
+git fetch origin
+git checkout navidocs-cloud-coordination
+git pull origin navidocs-cloud-coordination
+git checkout -b feature/compliance-certification
+```
+
+### Read the Prompt
+
+**Complete instructions:** `/home/setup/navidocs/builder/prompts/current/session-9-compliance-certification.md`
+**Feature spec:** `/home/setup/navidocs/FEATURE_SPEC_COMPLIANCE_CERTIFICATION.md`
+
+### What You're Building
+
+**Regulatory compliance and certification tracking:**
+- Compliance item tracking with expiration dates
+- Automated renewal alerts (especially for mandatory items)
+- Compliance dashboard with status overview (valid, expiring soon, expired)
+- Document attachment for certificates
+- Renewal history tracking
+- Visual status indicators and critical alerts
+- Categories: Vessel registration, safety inspections, crew certifications, insurance, equipment certifications, environmental compliance
+- Demo data: 12-15 compliance items
+
+### When Done
+
+```bash
+git add .
+git commit -m "[SESSION-9] Add compliance & certification tracker"
+git push origin feature/compliance-certification
+```
+
+Create `SESSION-9-COMPLETE.md`
+
+---
+
+## 🚀 SESSION 10: Build Fuel Log & Expense Tracker (90-120 min)
+
+**Check if this is already done before starting!**
+
+### Quick Start
+
+```bash
+cd /home/setup/navidocs
+git fetch origin
+git checkout navidocs-cloud-coordination
+git pull origin navidocs-cloud-coordination
+git checkout -b feature/fuel-expense-tracker
+```
+
+### Read the Prompt
+
+**Complete instructions:** `/home/setup/navidocs/builder/prompts/current/session-10-fuel-expense-tracker.md`
+**Feature spec:** `/home/setup/navidocs/FEATURE_SPEC_FUEL_EXPENSE_TRACKER.md`
+
+### What You're Building
+
+**Fuel consumption tracking and complete expense management:**
+- Fuel log with consumption tracking and efficiency calculations (MPG/GPH)
+- Expense management by category (15+ categories)
+- Budget vs actual comparison
+- Expense reports with charts (pie, line, bar)
+- Receipt attachment
+- Tax-deductible expense tracking
+- CSV export for accounting
+- Integration with maintenance costs and service providers
+- Demo data: 20+ fuel logs, 40+ expenses
+
+**Note:** This is the most complex feature! Take your time.
+
+### When Done
+
+```bash
+git add .
+git commit -m "[SESSION-10] Add fuel log & expense tracker"
+git push origin feature/fuel-expense-tracker
+```
+
+Create `SESSION-10-COMPLETE.md`
 
 ---
 
@@ -250,29 +444,54 @@ git push origin [your-branch-name]
 
 ## 📊 Feature Summary
 
-**Total Features:** 4
+**Total Features:** 8 (3 deployed + 5 new features)
 
-| Feature | Status | Lines Added | Time Spent |
-|---------|--------|-------------|------------|
-| Smart OCR | ✅ DEPLOYED | 300+ | 60 min |
-| Multi-format | ✅ DEPLOYED | 400+ | 90 min |
-| Timeline | ✅ DEPLOYED | 600+ | 90 min |
-| Inventory/Warranty | 🔄 BUILDING | TBD | 90-120 min |
+| Feature | Session | Status | Time Est. |
+|---------|---------|--------|-----------|
+| Smart OCR | 1-2 | ✅ DEPLOYED | 60 min |
+| Multi-format | 3 | ✅ DEPLOYED | 90 min |
+| Timeline | 4 | ✅ DEPLOYED | 90 min |
+| Inventory/Warranty | 6 | 🔄 TO BUILD | 90-120 min |
+| Maintenance Scheduler | 7 | 🔄 TO BUILD | 90-120 min |
+| Crew & Contacts | 8 | 🔄 TO BUILD | 60-90 min |
+| Compliance & Certification | 9 | 🔄 TO BUILD | 75-90 min |
+| Fuel Log & Expense Tracker | 10 | 🔄 TO BUILD | 90-120 min |
+
+**Total Build Time:** ~450-600 minutes across 5 sessions
 
 ---
 
 ## 🎯 Success Criteria
 
 **When all done, NaviDocs will have:**
+
+**Phase 1: Core Features (Deployed)**
 - ✅ 36x faster OCR for text PDFs
 - ✅ Support for 7 file types (PDF, JPG, PNG, DOCX, XLSX, TXT, MD)
 - ✅ Activity timeline tracking all events
-- ✅ Equipment inventory with warranty tracking
-- ✅ Warranty expiration alerts
-- ✅ Complete documentation
-- ✅ Fully tested by 5 sessions
 
-**Deployment:** All features live on https://digital-lab.ca/navidocs/
+**Phase 2: Equipment & Operations (Sessions 6-8)**
+- 🔄 Equipment inventory with warranty tracking
+- 🔄 Recurring maintenance scheduler with alerts
+- 🔄 Crew, service provider, and marina contacts
+- 🔄 Service provider ratings and history
+- 🔄 Emergency contact quick access
+
+**Phase 3: Compliance & Financial (Sessions 9-10)**
+- 🔄 Regulatory compliance tracking (certifications, licenses, inspections)
+- 🔄 Fuel consumption tracking with efficiency calculations
+- 🔄 Complete expense management system
+- 🔄 Budget tracking and financial reports
+- 🔄 Tax-deductible expense tracking
+
+**Demo Value:**
+- Professional marine document management platform
+- Complete boat ownership cost tracking
+- Regulatory compliance automation
+- Maintenance prevention system
+- Financial insights and reporting
+
+**Deployment:** All features will be live on https://digital-lab.ca/navidocs/
 
 ---
 
@@ -280,13 +499,14 @@ git push origin [your-branch-name]
 
 **Read these docs:**
 - This file (you are here): INSTRUCTIONS_FOR_ALL_SESSIONS.md
-- Session 6 prompt: builder/prompts/current/session-6-inventory-warranty.md
-- Feature spec: FEATURE_SPEC_INVENTORY_WARRANTY.md
+- Session prompts: builder/prompts/current/session-[6-10]-*.md
+- Feature specs: FEATURE_SPEC_*.md
 
 **Check your status:**
 ```bash
 git branch --show-current
 git log --oneline -10
+git fetch origin && git branch -r | grep feature/
 ```
 
 **No bottlenecks:** Sessions self-coordinate. No need to ask user!
@@ -295,4 +515,4 @@ git log --oneline -10
 
 **Let's finish this! 🚀**
 
-**Next session to read this: Start Session 6 work immediately if feature/inventory-warranty branch doesn't exist yet!**
+**Next session to read this: Pick the first available session (6-10) that doesn't have a completed branch!**
