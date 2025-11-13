@@ -1,0 +1,136 @@
+{
+  "performative": "inform",
+  "sender": "if://agent/session-4/S4-H07",
+  "receiver": ["if://agent/session-4/S4-H10"],
+  "conversation_id": "if://conversation/navidocs-session-4-critical-path-2025-11-13",
+  "content": {
+    "claim": "Critical path identified: 27 calendar days (18-19 work days) with 3-5 day slack buffer for blockers. Sequential execution required for solo developer. Foundation tasks (DB Migrations → Event Bus → Background Jobs) are hard blockers for all Week 2+ work.",
+    "evidence": [
+      "Detailed dependency analysis from CLOUD_SESSION_4_IMPLEMENTATION_PLANNING.md",
+      "576-line dependency graph document with 4 Mermaid Gantt charts",
+      "5 risk areas identified with mitigation strategies",
+      "4 weekly go/no-go gates defined",
+      "Parallel work opportunities quantified (6 days deferrable)"
+    ],
+    "critical_path": "DB Migrations (Day 1) → Event Bus (Day 2) → Background Jobs (Day 5) → Warranty APIs (Days 7-9) → E2E Testing (Day 23) → Security Audit (Day 24) → Deployment (Days 25-27)",
+    "critical_path_duration_calendar_days": 27,
+    "critical_path_duration_work_days": "18-19",
+    "slack_time_available_days": 3.5,
+    "slack_percentage": "18%",
+    "risk_areas": [
+      {
+        "rank": 1,
+        "name": "Home Assistant Webhook Validation Unknown",
+        "impact": "1-2 day delay",
+        "probability": "medium",
+        "mitigation": "Spike on HA API requirements Day 9 PM (2-4 hours). Have fallback if unreachable."
+      },
+      {
+        "rank": 2,
+        "name": "OWASP Dependency Scan Failures",
+        "impact": "1-2 days delay",
+        "probability": "medium",
+        "mitigation": "Run audit baseline Day 1. Update dependencies early Week 1. Schedule audit Day 24 (not Day 27)."
+      },
+      {
+        "rank": 3,
+        "name": "Database Migration Edge Cases",
+        "impact": "0.5-1 day delay",
+        "probability": "medium",
+        "mitigation": "Test rollback immediately after Day 1. Validate SQLite foreign key behavior."
+      },
+      {
+        "rank": 4,
+        "name": "Playwright E2E Setup Complexity",
+        "impact": "0.5 day delay",
+        "probability": "low",
+        "mitigation": "Start E2E Day 22 (not Day 23). Use templates. Pre-build test cases."
+      },
+      {
+        "rank": 5,
+        "name": "Production Deployment Issues",
+        "impact": "2-4 hours + rollback",
+        "probability": "low",
+        "mitigation": "Full rehearsal Day 25 on staging. Automated smoke tests. Rollback drill."
+      }
+    ],
+    "parallel_opportunities": [
+      {
+        "name": "Week 2: Warranty APIs + Home Assistant (Days 7-14)",
+        "sequential_time": "5d",
+        "parallel_time": "3d",
+        "days_saved": 1.5,
+        "requires": "2 developers"
+      },
+      {
+        "name": "Week 3: Sale Workflow + Notifications (Days 15-22)",
+        "sequential_time": "5d",
+        "parallel_time": "3d",
+        "days_saved": 1.5,
+        "requires": "2 developers"
+      },
+      {
+        "name": "Week 4: MLS Integration (Optional Deferral)",
+        "sequential_time": "3d",
+        "parallel_time": "defer",
+        "days_saved": 3,
+        "requires": "schedule slip handling"
+      }
+    ],
+    "optional_features_deferral_order": [
+      "MQTT Integration (Day 10 afternoon) = +1 day slack",
+      "Camera Integration (Day 11 afternoon) = +1 day slack",
+      "MLS Integration (Days 23-26) = +3 days slack",
+      "Riviera Pilot Training (Days 27-29) = +1 day slack"
+    ],
+    "weekly_gates": [
+      {
+        "week": 1,
+        "deadline": "2025-11-16T17:00:00Z",
+        "go_criteria": "DB migrations + Event Bus tested, Background Jobs registered, Week 1 acceptance 90%+ passing",
+        "no_go_criteria": "DB migrations unstable OR Event Bus failing tests"
+      },
+      {
+        "week": 2,
+        "deadline": "2025-11-23T17:00:00Z",
+        "go_criteria": "Warranty APIs stable, HA integration working, Integration tests 80%+ passing",
+        "no_go_criteria": "Warranty APIs failing tests OR HA webhook unreachable"
+      },
+      {
+        "week": 3,
+        "deadline": "2025-11-30T17:00:00Z",
+        "go_criteria": "Sale workflow complete, Notifications 90%+ done, Offline mode working, E2E skeleton ready",
+        "no_go_criteria": "Sale workflow failing OR notification system unreliable"
+      },
+      {
+        "week": 4,
+        "deadline": "2025-12-10T17:00:00Z",
+        "go_criteria": "All features deployed, E2E tests passing, Security audit passed, Post-deploy validation OK",
+        "no_go_criteria": "Post-deploy validation failing OR critical security issues found"
+      }
+    ],
+    "key_bottlenecks": [
+      "DB Migrations Day 1 (zero slack - blocks everything)",
+      "Event Bus Day 2 (zero slack - blocks jobs + async)",
+      "Background Jobs Day 5 (zero slack - blocks notification flows)",
+      "Warranty APIs Days 7-9 (critical - foundation for Week 2+)",
+      "Security Audit Day 24 (gate for deployment)"
+    ],
+    "recommendations_for_S4H10": [
+      "Deployment checklist should include pre-deployment 'dress rehearsal' on staging (Day 25)",
+      "Post-deployment validation (Day 27) is NOT optional - builds in 1-day contingency",
+      "Rollback procedure must be tested before production deploy",
+      "Monitor first 24 hours of production deployment actively (have developer on-call Dec 9)",
+      "Riviera pilot setup is optional - defer if deployment takes longer than expected"
+    ],
+    "confidence": 0.92,
+    "confidence_rationale": "High confidence based on detailed task specifications in planning document. Medium confidence in HA integration (unknown requirements). Risk areas quantified and mitigated.",
+    "cost_tokens": 3847,
+    "timestamp": "2025-11-13T10:00:00Z",
+    "sequence_num": 1
+  },
+  "citation_ids": [
+    "file:///home/user/navidocs/CLOUD_SESSION_4_IMPLEMENTATION_PLANNING.md#dependency-graph-gantt-chart",
+    "file:///home/user/navidocs/intelligence/session-4/dependency-graph.md"
+  ]
+}

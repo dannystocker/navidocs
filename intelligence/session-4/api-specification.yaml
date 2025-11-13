@@ -1,0 +1,2010 @@
+openapi: 3.0.0
+info:
+  title: NaviDocs Yacht Sales API
+  description: Comprehensive API specification for warranty tracking, sale workflow management, Home Assistant integration, and notification system
+  version: 1.0.0
+  contact:
+    name: NaviDocs Team
+    email: api@navidocs.app
+  license:
+    name: MIT
+
+servers:
+  - url: https://api.navidocs.app/api
+    description: Production API
+  - url: http://localhost:3000/api
+    description: Development API
+
+# ============================================================================
+# GLOBAL SECURITY SCHEMES
+# ============================================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token for authentication. Include in Authorization header as "Bearer {token}"
+
+  # ============================================================================
+  # REUSABLE SCHEMAS
+  # ============================================================================
+  schemas:
+    # Error schemas
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error code or message
+          example: "Unauthorized"
+        message:
+          type: string
+          description: Detailed error description
+          example: "Invalid or expired JWT token"
+      required:
+        - success
+        - error
+
+    ValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Validation failed"
+        message:
+          type: string
+          example: "Invalid input parameters"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "warranty_period_months"
+              message:
+                type: string
+                example: "Must be between 1 and 360"
+      required:
+        - success
+        - error
+        - details
+
+    # ============================================================================
+    # WARRANTY SCHEMAS
+    # ============================================================================
+    Warranty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique warranty identifier
+          example: "w-55a8d4e2-1a3f-4b2e-9c1d-6f7e8a9b0c1d"
+        boat_id:
+          type: string
+          format: uuid
+          description: Associated boat/entity ID
+          example: "boat-123abc"
+        item_name:
+          type: string
+          description: Name of warranted item
+          example: "Caterpillar C32 Engine"
+        provider:
+          type: string
+          description: Warranty provider name
+          example: "Caterpillar"
+        purchase_date:
+          type: string
+          format: date
+          description: Date of purchase (YYYY-MM-DD)
+          example: "2023-01-15"
+        warranty_period_months:
+          type: integer
+          minimum: 1
+          maximum: 360
+          description: Warranty period in months
+          example: 24
+        expiration_date:
+          type: string
+          format: date
+          description: Calculated expiration date (auto-calculated)
+          example: "2025-01-15"
+        coverage_amount:
+          type: number
+          format: float
+          minimum: 0
+          description: Coverage amount in USD
+          example: 50000
+        claim_instructions:
+          type: string
+          nullable: true
+          description: Instructions for filing a claim
+          example: "Contact Caterpillar customer service with serial number"
+        status:
+          type: string
+          enum: ["active", "expired", "claimed"]
+          description: Current warranty status
+          example: "active"
+        days_until_expiration:
+          type: integer
+          nullable: true
+          description: Days remaining until expiration (nullable if expired)
+          example: 157
+        created_at:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp
+          example: "2025-11-13T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T10:30:00Z"
+      required:
+        - id
+        - boat_id
+        - item_name
+        - purchase_date
+        - warranty_period_months
+        - expiration_date
+        - status
+        - created_at
+
+    WarrantyCreateRequest:
+      type: object
+      properties:
+        boat_id:
+          type: string
+          format: uuid
+          description: Associated boat/entity ID
+          example: "boat-123abc"
+        item_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Name of warranted item
+          example: "Engine"
+        provider:
+          type: string
+          maxLength: 255
+          nullable: true
+          description: Warranty provider name (optional)
+          example: "Caterpillar"
+        purchase_date:
+          type: string
+          format: date
+          description: Date of purchase (YYYY-MM-DD)
+          example: "2023-01-15"
+        warranty_period_months:
+          type: integer
+          minimum: 1
+          maximum: 360
+          description: Warranty period in months
+          example: 24
+        coverage_amount:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+          description: Coverage amount in USD (optional)
+          example: 50000
+        claim_instructions:
+          type: string
+          maxLength: 1000
+          nullable: true
+          description: Instructions for filing a claim (optional)
+      required:
+        - boat_id
+        - item_name
+        - purchase_date
+        - warranty_period_months
+
+    WarrantyUpdateRequest:
+      type: object
+      properties:
+        item_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        provider:
+          type: string
+          maxLength: 255
+          nullable: true
+        purchase_date:
+          type: string
+          format: date
+        warranty_period_months:
+          type: integer
+          minimum: 1
+          maximum: 360
+        coverage_amount:
+          type: number
+          format: float
+          minimum: 0
+          nullable: true
+        claim_instructions:
+          type: string
+          maxLength: 1000
+          nullable: true
+        status:
+          type: string
+          enum: ["active", "expired", "claimed"]
+
+    # ============================================================================
+    # SALE WORKFLOW SCHEMAS
+    # ============================================================================
+    Sale:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique sale identifier
+          example: "sale-9a8b7c6d-5e4f-4a3b-2c1d-0e9f8a7b6c5d"
+        boat_id:
+          type: string
+          format: uuid
+          description: Associated boat/entity ID
+          example: "boat-123abc"
+        buyer_email:
+          type: string
+          format: email
+          description: Buyer email address
+          example: "buyer@example.com"
+        initiated_by:
+          type: string
+          format: uuid
+          description: User ID who initiated the sale
+          example: "user-456def"
+        status:
+          type: string
+          enum: ["initiated", "package_generated", "transferred", "completed"]
+          description: Current sale workflow status
+          example: "package_generated"
+        package_generated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when as-built package was generated
+          example: "2025-11-13T11:45:00Z"
+        documents_transferred_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when documents were transferred to buyer
+          example: "2025-11-13T12:00:00Z"
+        transfer_date:
+          type: string
+          format: date
+          nullable: true
+          description: Planned transfer date
+          example: "2025-12-15"
+        documents_generated:
+          type: boolean
+          description: Whether as-built package has been generated
+          example: true
+        package_download_link:
+          type: string
+          nullable: true
+          description: Temporary download link for as-built package (expires in 30 days)
+          example: "https://api.navidocs.app/api/sales/sale-9a8b7c6d/download-package?token=xyz123"
+        package_expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When download link expires
+          example: "2025-12-13T12:00:00Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T12:00:00Z"
+      required:
+        - id
+        - boat_id
+        - buyer_email
+        - status
+        - created_at
+
+    SaleCreateRequest:
+      type: object
+      properties:
+        boat_id:
+          type: string
+          format: uuid
+          description: Associated boat/entity ID
+          example: "boat-123abc"
+        buyer_email:
+          type: string
+          format: email
+          description: Buyer email address
+          example: "buyer@example.com"
+        transfer_date:
+          type: string
+          format: date
+          nullable: true
+          description: Planned transfer date (optional)
+          example: "2025-12-15"
+      required:
+        - boat_id
+        - buyer_email
+
+    # ============================================================================
+    # INTEGRATION SCHEMAS
+    # ============================================================================
+    HomeAssistantIntegration:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Integration record ID
+          example: "integration-1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+        organization_id:
+          type: string
+          format: uuid
+          description: Organization that configured this integration
+          example: "org-xyz789"
+        url:
+          type: string
+          format: uri
+          description: Home Assistant webhook URL
+          example: "https://ha.example.com/api/webhook/navidocs"
+        topics:
+          type: array
+          items:
+            type: string
+            enum:
+              - "WARRANTY_EXPIRING"
+              - "WARRANTY_CLAIMED"
+              - "DOCUMENT_UPLOADED"
+              - "SALE_INITIATED"
+              - "SALE_PACKAGE_GENERATED"
+              - "SALE_TRANSFERRED"
+          description: Event topics to forward
+          example: ["WARRANTY_EXPIRING", "DOCUMENT_UPLOADED"]
+        secret:
+          type: string
+          description: HMAC-SHA256 secret for webhook signature verification
+          example: "sk_test_abc123def456"
+        status:
+          type: string
+          enum: ["active", "inactive", "failed"]
+          description: Integration status
+          example: "active"
+        reachability_checked_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Last successful reachability check
+          example: "2025-11-13T10:30:00Z"
+        last_delivery_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Last successful webhook delivery
+          example: "2025-11-13T11:00:00Z"
+        last_delivery_status:
+          type: string
+          nullable: true
+          description: HTTP status code from last delivery attempt
+          example: "200"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T09:00:00Z"
+      required:
+        - id
+        - organization_id
+        - url
+        - topics
+        - status
+        - created_at
+
+    HomeAssistantIntegrationCreateRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          minLength: 10
+          description: Home Assistant webhook URL (will be verified for reachability)
+          example: "https://ha.example.com/api/webhook/navidocs"
+        topics:
+          type: array
+          items:
+            type: string
+            enum:
+              - "WARRANTY_EXPIRING"
+              - "WARRANTY_CLAIMED"
+              - "DOCUMENT_UPLOADED"
+              - "SALE_INITIATED"
+              - "SALE_PACKAGE_GENERATED"
+              - "SALE_TRANSFERRED"
+          minItems: 1
+          description: Event topics to forward
+          example: ["WARRANTY_EXPIRING", "DOCUMENT_UPLOADED"]
+      required:
+        - url
+        - topics
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Webhook configuration ID
+          example: "webhook-4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"
+        organization_id:
+          type: string
+          format: uuid
+          description: Organization that owns this webhook
+          example: "org-xyz789"
+        url:
+          type: string
+          format: uri
+          description: External webhook URL
+          example: "https://example.com/webhooks/navidocs"
+        topics:
+          type: array
+          items:
+            type: string
+          description: Event topics this webhook subscribes to (JSON array stored in DB)
+          example: ["WARRANTY_EXPIRING", "SALE_TRANSFERRED"]
+        secret:
+          type: string
+          description: HMAC-SHA256 secret for request signing
+          example: "whsec_test_abc123"
+        status:
+          type: string
+          enum: ["active", "inactive"]
+          description: Webhook status
+          example: "active"
+        last_delivery_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp of last delivery attempt
+          example: "2025-11-13T11:30:00Z"
+        last_delivery_status:
+          type: string
+          nullable: true
+          description: HTTP status code from last delivery
+          example: "200"
+        failure_count:
+          type: integer
+          minimum: 0
+          description: Consecutive failure count (resets on success)
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T09:00:00Z"
+      required:
+        - id
+        - organization_id
+        - url
+        - topics
+        - status
+        - created_at
+
+    WebhookCreateRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          minLength: 10
+          description: External webhook URL
+          example: "https://example.com/webhooks/navidocs"
+        topics:
+          type: array
+          items:
+            type: string
+            enum:
+              - "WARRANTY_EXPIRING"
+              - "WARRANTY_CLAIMED"
+              - "WARRANTY_STATUS_CHANGED"
+              - "DOCUMENT_UPLOADED"
+              - "DOCUMENT_DELETED"
+              - "SALE_INITIATED"
+              - "SALE_PACKAGE_GENERATED"
+              - "SALE_TRANSFERRED"
+              - "SALE_COMPLETED"
+          minItems: 1
+          description: Topics to subscribe to
+          example: ["WARRANTY_EXPIRING", "SALE_TRANSFERRED"]
+      required:
+        - url
+        - topics
+
+    # ============================================================================
+    # NOTIFICATION SCHEMAS
+    # ============================================================================
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Notification record ID
+          example: "notif-7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b"
+        user_id:
+          type: string
+          format: uuid
+          description: User who receives the notification
+          example: "user-456def"
+        type:
+          type: string
+          enum: ["email", "sms", "in_app", "push"]
+          description: Notification channel type
+          example: "email"
+        event_type:
+          type: string
+          description: Type of event triggering notification
+          example: "WARRANTY_EXPIRING"
+        subject:
+          type: string
+          description: Notification subject (for email)
+          example: "Warranty Expiring Soon"
+        message:
+          type: string
+          description: Notification message body
+          example: "Your Caterpillar Engine warranty expires in 30 days"
+        recipient:
+          type: string
+          description: Recipient address (email, phone, or user ID for in-app)
+          example: "owner@example.com"
+        status:
+          type: string
+          enum: ["pending", "sent", "failed", "read"]
+          description: Delivery status
+          example: "sent"
+        read:
+          type: boolean
+          description: Whether user has read (for in-app notifications)
+          example: false
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When notification was sent
+          example: "2025-11-13T10:30:00Z"
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When user read the notification
+          example: "2025-11-13T10:35:00Z"
+        metadata:
+          type: object
+          nullable: true
+          description: Additional context (warranty ID, sale ID, etc)
+          example:
+            warranty_id: "w-55a8d4e2-1a3f-4b2e-9c1d-6f7e8a9b0c1d"
+            boat_id: "boat-123abc"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-11-13T10:25:00Z"
+      required:
+        - id
+        - user_id
+        - type
+        - event_type
+        - message
+        - status
+        - created_at
+
+    NotificationTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Template ID
+          example: "tmpl-2c3d4e5f-6a7b-8c9d-0e1f-2a3b4c5d6e7f"
+        type:
+          type: string
+          enum: ["email", "sms", "push"]
+          description: Template channel type
+          example: "email"
+        event_type:
+          type: string
+          description: Event this template applies to
+          example: "WARRANTY_EXPIRING"
+        variant:
+          type: string
+          nullable: true
+          description: Variant (e.g., "90_days", "30_days", "14_days")
+          example: "30_days"
+        subject:
+          type: string
+          description: Subject line (for email)
+          example: "Warranty Expiring in 30 Days"
+        body:
+          type: string
+          description: Template body with variable placeholders
+          example: "Your {{item_name}} warranty on {{boat_name}} expires on {{expiration_date}}"
+        variables:
+          type: array
+          items:
+            type: string
+          description: Available variables for substitution
+          example: ["item_name", "boat_name", "expiration_date", "provider", "coverage_amount"]
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - event_type
+        - body
+        - variables
+
+    # ============================================================================
+    # PAGINATION SCHEMAS
+    # ============================================================================
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items matching query
+          example: 42
+        limit:
+          type: integer
+          description: Maximum items per page
+          example: 20
+        offset:
+          type: integer
+          description: Number of items skipped
+          example: 20
+        hasMore:
+          type: boolean
+          description: Whether more items exist beyond current page
+          example: true
+
+# ============================================================================
+# API PATHS
+# ============================================================================
+paths:
+
+  # ============================================================================
+  # WARRANTY ENDPOINTS
+  # ============================================================================
+
+  /warranties:
+    post:
+      summary: Create warranty
+      description: Create a new warranty record for a boat component. Expiration date is automatically calculated.
+      operationId: createWarranty
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarrantyCreateRequest'
+      responses:
+        '201':
+          description: Warranty created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  warranty:
+                    $ref: '#/components/schemas/Warranty'
+        '400':
+          description: Invalid input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized (missing or invalid JWT)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden (no access to boat)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Boat not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List warranties
+      description: Get paginated list of warranties for accessible boats. Supports filtering and sorting.
+      operationId: listWarranties
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: boat_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by specific boat
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: ["active", "expired", "claimed"]
+          description: Filter by warranty status
+        - name: expiring_in_days
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+          description: Filter to warranties expiring within N days
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: ["expiration_date", "created_at", "item_name"]
+            default: "expiration_date"
+          description: Sort field
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: ["asc", "desc"]
+            default: "asc"
+          description: Sort order
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of items to skip
+      responses:
+        '200':
+          description: Warranty list retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  warranties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Warranty'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /warranties/{id}:
+    get:
+      summary: Get warranty details
+      description: Retrieve full details of a specific warranty
+      operationId: getWarranty
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Warranty ID
+      responses:
+        '200':
+          description: Warranty details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  warranty:
+                    $ref: '#/components/schemas/Warranty'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Warranty not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update warranty
+      description: Update warranty details. Expiration date will be recalculated if purchase_date or warranty_period_months changes.
+      operationId: updateWarranty
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Warranty ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WarrantyUpdateRequest'
+      responses:
+        '200':
+          description: Warranty updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  warranty:
+                    $ref: '#/components/schemas/Warranty'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Warranty not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete warranty
+      description: Soft-delete a warranty record (marked as deleted, not permanently removed)
+      operationId: deleteWarranty
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Warranty ID
+      responses:
+        '200':
+          description: Warranty deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Warranty deleted successfully"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Warranty not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /warranties/expiring:
+    get:
+      summary: Get expiring warranties
+      description: Get warranties expiring within specified day threshold across all accessible boats
+      operationId: getExpiringWarranties
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            enum: [14, 30, 90]
+            default: 30
+          description: Look-ahead window in days
+        - name: boat_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Optional filter to specific boat
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Expiring warranties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  warranties:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Warranty'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  summary:
+                    type: object
+                    properties:
+                      total_expiring:
+                        type: integer
+                        example: 5
+                      days_window:
+                        type: integer
+                        example: 30
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /warranties/{id}/claim-package:
+    post:
+      summary: Generate claim package
+      description: Generate a ZIP file containing warranty document, purchase invoice, and jurisdiction-specific claim form
+      operationId: generateClaimPackage
+      security:
+        - bearerAuth: []
+      tags:
+        - Warranties
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Warranty ID
+      responses:
+        '200':
+          description: Claim package generated (ZIP file)
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: "attachment; filename=\"warranty-claim-w-55a8d4e2.zip\""
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Warranty not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Package generation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================================
+  # SALE WORKFLOW ENDPOINTS
+  # ============================================================================
+
+  /sales:
+    post:
+      summary: Initiate yacht sale
+      description: Start a new yacht sale workflow. Creates a sale record linked to a boat and buyer email.
+      operationId: initiateSale
+      security:
+        - bearerAuth: []
+      tags:
+        - Sales
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaleCreateRequest'
+      responses:
+        '201':
+          description: Sale initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sale:
+                    $ref: '#/components/schemas/Sale'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Boat not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List sales
+      description: Get paginated list of sales for user's boats
+      operationId: listSales
+      security:
+        - bearerAuth: []
+      tags:
+        - Sales
+      parameters:
+        - name: boat_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by boat
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: ["initiated", "package_generated", "transferred", "completed"]
+          description: Filter by status
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Sales list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sales:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sale'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sales/{id}:
+    get:
+      summary: Get sale details
+      description: Retrieve full sale record with current status and package information
+      operationId: getSale
+      security:
+        - bearerAuth: []
+      tags:
+        - Sales
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Sale ID
+      responses:
+        '200':
+          description: Sale details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sale:
+                    $ref: '#/components/schemas/Sale'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sale not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sales/{id}/generate-package:
+    post:
+      summary: Generate as-built package
+      description: Generate a ZIP file containing all boat documentation organized by category (Registration, Surveys, Warranties, Manuals, Service Records)
+      operationId: generateSalePackage
+      security:
+        - bearerAuth: []
+      tags:
+        - Sales
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Sale ID
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                include_warranty_summary:
+                  type: boolean
+                  default: true
+                  description: Include generated warranty summary document
+                include_manuals:
+                  type: boolean
+                  default: true
+                  description: Include equipment manuals
+      responses:
+        '200':
+          description: Package generated and ready for download
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sale:
+                    $ref: '#/components/schemas/Sale'
+                  package_info:
+                    type: object
+                    properties:
+                      download_url:
+                        type: string
+                        format: uri
+                        example: "https://api.navidocs.app/api/sales/sale-9a8b7c6d/download-package?token=xyz123"
+                      expires_at:
+                        type: string
+                        format: date-time
+                        example: "2025-12-13T12:00:00Z"
+                      file_count:
+                        type: integer
+                        example: 23
+                      total_size_bytes:
+                        type: integer
+                        example: 156789234
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sale not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Package generation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sales/{id}/transfer:
+    post:
+      summary: Transfer documents to buyer
+      description: Mark sale as transferred and send buyer notification with download link. Generates expiring download token valid for 30 days.
+      operationId: transferSaleDocuments
+      security:
+        - bearerAuth: []
+      tags:
+        - Sales
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Sale ID
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                send_email:
+                  type: boolean
+                  default: true
+                  description: Send notification email to buyer
+                buyer_email:
+                  type: string
+                  format: email
+                  nullable: true
+                  description: Override buyer email (if different from initial)
+      responses:
+        '200':
+          description: Documents transferred
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sale:
+                    $ref: '#/components/schemas/Sale'
+                  notification:
+                    type: object
+                    properties:
+                      email_sent:
+                        type: boolean
+                        example: true
+                      recipient:
+                        type: string
+                        example: "buyer@example.com"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sale not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================================
+  # INTEGRATION ENDPOINTS
+  # ============================================================================
+
+  /integrations/home-assistant:
+    post:
+      summary: Register Home Assistant webhook
+      description: Register a Home Assistant instance for receiving NaviDocs events. URL is verified for reachability before activation.
+      operationId: registerHomeAssistant
+      security:
+        - bearerAuth: []
+      tags:
+        - Integrations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HomeAssistantIntegrationCreateRequest'
+      responses:
+        '201':
+          description: Home Assistant integration registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  integration:
+                    $ref: '#/components/schemas/HomeAssistantIntegration'
+        '400':
+          description: Invalid URL or unreachable endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Get Home Assistant configuration
+      description: Retrieve current Home Assistant webhook configuration for the organization
+      operationId: getHomeAssistantConfig
+      security:
+        - bearerAuth: []
+      tags:
+        - Integrations
+      responses:
+        '200':
+          description: Home Assistant configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  integration:
+                    $ref: '#/components/schemas/HomeAssistantIntegration'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No Home Assistant integration configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Remove Home Assistant integration
+      description: Deactivate Home Assistant webhook integration
+      operationId: deleteHomeAssistant
+      security:
+        - bearerAuth: []
+      tags:
+        - Integrations
+      responses:
+        '200':
+          description: Integration removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Home Assistant integration removed"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No integration configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /webhooks:
+    post:
+      summary: Create custom webhook
+      description: Register a custom webhook to receive NaviDocs events. Each webhook gets a unique secret for HMAC signature verification.
+      operationId: createWebhook
+      security:
+        - bearerAuth: []
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookCreateRequest'
+      responses:
+        '201':
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  webhook:
+                    $ref: '#/components/schemas/Webhook'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List webhooks
+      description: Get all webhooks configured for the organization
+      operationId: listWebhooks
+      security:
+        - bearerAuth: []
+      tags:
+        - Webhooks
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Webhooks list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  webhooks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Webhook'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /webhooks/{id}:
+    get:
+      summary: Get webhook details
+      description: Retrieve a specific webhook configuration
+      operationId: getWebhook
+      security:
+        - bearerAuth: []
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Webhook ID
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  webhook:
+                    $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update webhook
+      description: Update webhook configuration (topics, status, etc)
+      operationId: updateWebhook
+      security:
+        - bearerAuth: []
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Webhook ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                topics:
+                  type: array
+                  items:
+                    type: string
+                status:
+                  type: string
+                  enum: ["active", "inactive"]
+      responses:
+        '200':
+          description: Webhook updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  webhook:
+                    $ref: '#/components/schemas/Webhook'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete webhook
+      description: Remove a webhook configuration
+      operationId: deleteWebhook
+      security:
+        - bearerAuth: []
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Webhook ID
+      responses:
+        '200':
+          description: Webhook deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Webhook deleted"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Webhook not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ============================================================================
+  # NOTIFICATION ENDPOINTS
+  # ============================================================================
+
+  /notifications:
+    get:
+      summary: Get user notifications
+      description: Get paginated list of in-app notifications for current user
+      operationId: listNotifications
+      security:
+        - bearerAuth: []
+      tags:
+        - Notifications
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: ["email", "sms", "in_app", "push"]
+          description: Filter by notification type
+        - name: event_type
+          in: query
+          schema:
+            type: string
+          description: Filter by event type
+        - name: read
+          in: query
+          schema:
+            type: boolean
+          description: Filter read/unread (true for read, false for unread)
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  notifications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  pagination:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  summary:
+                    type: object
+                    properties:
+                      unread_count:
+                        type: integer
+                        example: 3
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /notifications/{id}/read:
+    put:
+      summary: Mark notification as read
+      description: Mark a single in-app notification as read by user
+      operationId: markNotificationRead
+      security:
+        - bearerAuth: []
+      tags:
+        - Notifications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Notification ID
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  notification:
+                    $ref: '#/components/schemas/Notification'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /notifications/read-all:
+    put:
+      summary: Mark all notifications as read
+      description: Mark all unread in-app notifications for current user as read
+      operationId: markAllNotificationsRead
+      security:
+        - bearerAuth: []
+      tags:
+        - Notifications
+      responses:
+        '200':
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  updated_count:
+                    type: integer
+                    example: 3
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /notification-templates:
+    get:
+      summary: List notification templates
+      description: Get available notification templates for reference (primarily for integration docs)
+      operationId: listNotificationTemplates
+      security:
+        - bearerAuth: []
+      tags:
+        - Notifications
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: ["email", "sms", "push"]
+          description: Filter by template type
+        - name: event_type
+          in: query
+          schema:
+            type: string
+          description: Filter by event type
+      responses:
+        '200':
+          description: Templates list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  templates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NotificationTemplate'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# ============================================================================
+# GLOBAL SECURITY
+# ============================================================================
+security:
+  - bearerAuth: []
+
+# ============================================================================
+# TAGS
+# ============================================================================
+tags:
+  - name: Warranties
+    description: Warranty tracking and expiration management
+  - name: Sales
+    description: Yacht sale workflow and document transfer
+  - name: Integrations
+    description: Home Assistant and custom webhook integrations
+  - name: Webhooks
+    description: Custom webhook configuration and management
+  - name: Notifications
+    description: In-app, email, SMS, and push notifications
+
+# ============================================================================
+# X-EXTENSIONS: IF.bus Protocol Metadata
+# ============================================================================
+x-if-bus-enabled: true
+x-if-bus-topics:
+  - WARRANTY_EXPIRING
+  - WARRANTY_CLAIMED
+  - WARRANTY_STATUS_CHANGED
+  - DOCUMENT_UPLOADED
+  - DOCUMENT_DELETED
+  - SALE_INITIATED
+  - SALE_PACKAGE_GENERATED
+  - SALE_TRANSFERRED
+  - SALE_COMPLETED
+  - NOTIFICATION_SENT
+  - WEBHOOK_DELIVERY_FAILED
+  - INTEGRATION_STATUS_CHANGED
+
+x-if-bus-description: "All endpoints emit events to IF.bus for intra-agent coordination. Webhooks and Home Assistant integrations receive real-time events through this messaging system."
+
+x-rate-limit-enabled: true
+x-rate-limit-default: "100 requests per 15 minutes per authenticated user"
+x-rate-limit-description: "Rate limiting is applied per user. Contact support for higher limits."
+
+x-authentication-scheme: "JWT Bearer"
+x-authentication-note: "All endpoints require valid JWT token in Authorization header. Token obtained from /api/auth/login endpoint."
