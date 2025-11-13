@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaviDocs Feature Selector - Riviera Plaisance Meeting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #003D5C 0%, #0066CC 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #003D5C;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            padding: 1.5rem 2rem;
+            background: #F5F1E8;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls button {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .controls .secondary {
+            background: #6c757d;
+        }
+
+        .controls .secondary:hover {
+            background: #5a6268;
+        }
+
+        .controls .export-btn {
+            background: #10b981;
+        }
+
+        .controls .export-btn:hover {
+            background: #059669;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.95rem;
+            color: #003D5C;
+            flex-wrap: wrap;
+        }
+
+        .stats strong {
+            font-size: 1.2rem;
+            color: #0066CC;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .feature {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature.selected {
+            border-color: #0066CC;
+            background: #F0F8FF;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-wrapper {
+            padding-top: 0.25rem;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .feature-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge.deployed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge.ready {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge.priority {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.time {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .feature-why {
+            background: #F5F1E8;
+            padding: 1rem;
+            border-left: 4px solid #0066CC;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .feature-why strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .description-box {
+            background: #F9F7F4;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .benefits {
+            margin-bottom: 1rem;
+        }
+
+        .benefits strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .benefits ul {
+            list-style: none;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefits li {
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: #555;
+            position: relative;
+        }
+
+        .benefits li:before {
+            content: "✓";
+            position: absolute;
+            left: -1.2rem;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .demo-value {
+            background: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #0c4a6e;
+            font-style: italic;
+        }
+
+        .notes-section {
+            margin: 1rem 0;
+        }
+
+        .notes-section label {
+            font-weight: 600;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .notes {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s;
+        }
+
+        .notes:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .response-options {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #F9F7F4;
+            border-radius: 8px;
+        }
+
+        .response-options label {
+            font-weight: 600;
+            color: #003D5C;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .radio-group input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .tech-spec {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .tech-spec strong {
+            color: #003D5C;
+        }
+
+        .source-cite {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .feature {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚤 NaviDocs Feature Selector</h1>
+            <p>Riviera Plaisance Partnership - Define Your Perfect Solution</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats">
+                <div>
+                    Selected: <strong id="selectedCount">0</strong> / 8
+                </div>
+                <div>
+                    Deployed: <strong id="deployedCount">0</strong>
+                </div>
+                <div>
+                    Ready to Build: <strong id="readyCount">0</strong>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="selectNone()" class="secondary">Clear All</button>
+                <button onclick="exportJSON()" class="export-btn">Export JSON</button>
+                <button onclick="exportEmail()" class="export-btn">Export Email</button>
+                <button onclick="window.print()" class="secondary">Print</button>
+            </div>
+        </div>
+
+        <div class="content" id="features"></div>
+
+        <div style="padding: 2rem; text-align: center; background: #F5F1E8; border-top: 2px solid #ddd;">
+            <p style="font-size: 0.9rem; color: #666;">
+                NaviDocs Feature Selector | Generated for Riviera Plaisance Meeting |
+                <span id="generatedDate"></span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const features = [
+            {
+                id: 'smart-ocr',
+                title: 'Smart OCR (36x Speedup)',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 19, 2025',
+                why: 'Extract text from 100+ page technical manuals in milliseconds. Tesseract OCR + PDF.js integration for instant searchability.',
+                description: 'Lightning-fast OCR extraction from PDF pages with text highlighting, typo tolerance, and full-text indexing. Search results show context with matching terms highlighted. Thumbnail previews for diagram-heavy documents.',
+                benefits: [
+                    '36x faster than manual document search',
+                    'Instant search across all documents (<50ms)',
+                    'Full-text indexing of 8+ entries per 100-page document',
+                    'Image extraction from PDFs with OCR on extracted images'
+                ],
+                demoValue: 'Show search for "network" → 8 results instantly. Click result → Navigate to diagram in PDF. Highlight functionality + typo tolerance.',
+                source: 'FEATURE_SPEC_TIMELINE.md'
+            },
+            {
+                id: 'multi-format',
+                title: 'Multi-Format Uploads',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 20, 2025',
+                why: 'Auto-fill metadata from any document type (manuals, specifications, diagrams, warranties, certificates) using smart OCR and filename parsing.',
+                description: 'Drag-and-drop upload with automatic metadata extraction. Intelligent fallback to filename parsing if OCR fails. Duplicate detection warns before uploading similar documents. Progress tracking with real-time visual feedback.',
+                benefits: [
+                    'Upload and metadata fills itself in real-time',
+                    'Supports multiple document types flexibly',
+                    'Duplicate detection prevents redundant uploads',
+                    'Real-time progress tracking with visual feedback'
+                ],
+                demoValue: 'Drag PDF onto upload zone → Watch metadata auto-fill → Show OCR confidence scores → Verify metadata is correct.',
+                source: 'FEATURE_SPEC_TIMELINE.md'
+            },
+            {
+                id: 'timeline',
+                title: 'Activity Timeline',
+                status: 'DEPLOYED',
+                priority: 'CRITICAL',
+                buildTime: 'DEPLOYED - Oct 20, 2025',
+                why: 'Chronological activity feed showing all boat-related events (document uploads, maintenance, warranty alerts, settings changes) with infinite scroll and filtering.',
+                description: 'All events in reverse chronological order, automatically grouped by date (Today, Yesterday, This Week, This Month, Older). Click events to navigate to related resources. Rich metadata display showing file sizes, costs, completion rates.',
+                benefits: [
+                    'Never lose track of what\'s been done',
+                    'Event filtering by type, date range, and entity',
+                    'User attribution for each action',
+                    'Direct navigation from events to resources'
+                ],
+                demoValue: 'Show timeline with 20+ historical events → Filter by "Document Upload" → Click event → Navigate to document → Show metadata.',
+                source: 'FEATURE_SPEC_TIMELINE.md'
+            },
+            {
+                id: 'inventory-warranty',
+                title: 'Inventory & Warranty Tracking',
+                status: 'READY TO BUILD',
+                priority: 'P0 Demo',
+                buildTime: '90-120 minutes',
+                why: 'Centralized equipment inventory with warranty tracking, service history, and document attachment. Status visualization (Green/Yellow/Red/Gray) for warranty status.',
+                description: 'Comprehensive equipment list with 11 predefined categories (Engine, Electronics, Electrical, Plumbing, HVAC, Safety, Hardware, Galley, Entertainment, Communication, Other). Link manuals, warranties, invoices to specific equipment. Track maintenance history per item.',
+                benefits: [
+                    'Never miss a warranty expiration',
+                    'Quick stats dashboard of warranty status across fleet',
+                    'Search & filter by name, manufacturer, model, status',
+                    'Service history linked to each equipment item'
+                ],
+                demoValue: 'Show equipment list (10+ items) → Highlight expiring warranties (3 within 30 days) → Click item → Show attached docs + service history → Filter by "Expiring Soon".',
+                source: 'FEATURE_SPEC_INVENTORY_WARRANTY.md'
+            },
+            {
+                id: 'maintenance-scheduler',
+                title: 'Maintenance Scheduler',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '90-120 minutes',
+                why: 'Prevents €5K-€100K in warranty penalties. Smart reminders ensure service deadlines never missed. Recurring tasks with equipment linking.',
+                description: 'One-time or recurring maintenance tasks with flexible recurrence patterns (days, hours, miles). Link tasks to specific equipment. Automated alerts X days before due date. Status tracking (Pending/Due/Overdue/Completed). Cost tracking (estimated vs. actual).',
+                benefits: [
+                    'Never miss critical maintenance deadlines',
+                    'Automated reminders (personalized, <2/week)',
+                    'Monthly maintenance calendar view color-coded by priority',
+                    'Service provider tracking and cost history'
+                ],
+                demoValue: 'Show dashboard (5 pending, 3 due soon, 2 overdue) → Click overdue task → Add completion notes → Show calendar with color-coded priorities.',
+                source: 'FEATURE_SPEC_MAINTENANCE_SCHEDULER.md'
+            },
+            {
+                id: 'compliance-certification',
+                title: 'Compliance & Certification Tracker',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '75-90 minutes',
+                why: '30% of EU yachts face €20K-€100K VAT penalties. NaviDocs tracks EU entry/exit, sends reminders, prevents catastrophic fines. Track 7 compliance types with renewal history.',
+                description: '7 compliance item types (vessel registration, safety inspection, crew certification, insurance, equipment certification, environmental, other) with expiration management. Mandatory compliance flagging. Renewal history tracking. Certificate attachment. Status visualization (Valid/Expiring Soon/Expired/Pending).',
+                benefits: [
+                    'Stay legal and insured - never miss a deadline',
+                    'Prevents €20K-€100K VAT penalties',
+                    'Compliance dashboard with statistics overview',
+                    'Complete audit trail of all renewals'
+                ],
+                demoValue: 'Show compliance dashboard (12 valid, 4 expiring, 2 expired) → Highlight mandatory expired item (red banner) → Show renewal form → Upload certificate → Update expiration.',
+                source: 'FEATURE_SPEC_COMPLIANCE_CERTIFICATION.md'
+            },
+            {
+                id: 'crew-contacts',
+                title: 'Crew & Contact Management',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '60-90 minutes',
+                why: 'Finding qualified service providers costs €500-€5K per repair in delays. Contact directory with service history, ratings, and one-tap access.',
+                description: '6 contact types (Crew, Service Provider, Marina, Emergency, Broker, Other) with type-specific details. Service history with ratings. Emergency contacts widget. Star contacts as favorites. Search & filter by name, company, role, type.',
+                benefits: [
+                    'One-tap access to the right person, every time',
+                    'Service provider ratings and past work history',
+                    'Emergency contacts widget for quick access',
+                    'Saves €500-€5K per repair in provider search delays'
+                ],
+                demoValue: 'Show 20+ contacts → Click provider → Show past work (12 jobs, 4.8 rating) → Star favorite → Show emergency widget (Coast Guard, TowBoatUS, Marina, Providers).',
+                source: 'FEATURE_SPEC_CREW_CONTACTS.md'
+            },
+            {
+                id: 'fuel-expense',
+                title: 'Fuel Log & Expense Tracker',
+                status: 'READY TO BUILD',
+                priority: 'P1 Core',
+                buildTime: '90-120 minutes',
+                why: 'Uncovers €60K-€100K per year in hidden costs. OCR receipt processing + multi-user approval + VAT visibility. Track 17 expense categories.',
+                description: 'Fuel logging with quantity, price, location. Auto-calculate fuel efficiency (MPG/gal per hour). 17 expense categories (fuel, maintenance, insurance, dockage, storage, equipment, supplies, crew, food, cleaning, upgrades, registration, survey, electronics, safety, entertainment, other).',
+                benefits: [
+                    'Control your costs - see where every dollar goes',
+                    'Uncovers €60K-€100K/year in hidden costs',
+                    'OCR receipt processing + approval workflow',
+                    'VAT/tax tracking and budget vs. actual analysis'
+                ],
+                demoValue: 'Show fuel log (12 entries, 2.8 MPG avg, $2,450 total) → Show expense dashboard ($23.4K YTD) → Show monthly trend → Budget vs actual (112% over maintenance) → Export as CSV.',
+                source: 'FEATURE_SPEC_FUEL_EXPENSE_TRACKER.md'
+            }
+        ];
+
+        function renderFeatures() {
+            const container = document.getElementById('features');
+            container.innerHTML = features.map(feature => `
+                <div class="feature" id="feature-${feature.id}" data-id="${feature.id}">
+                    <div class="feature-header">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="check-${feature.id}" onchange="updateStats()">
+                        </div>
+                        <div class="feature-info">
+                            <div class="feature-title">
+                                ${feature.title}
+                                <span class="badge ${feature.status === 'DEPLOYED' ? 'deployed' : 'ready'}">
+                                    ${feature.status === 'DEPLOYED' ? '✓ Deployed' : 'Ready to Build'}
+                                </span>
+                            </div>
+                            <div class="feature-meta">
+                                <span class="badge priority">Priority: ${feature.priority}</span>
+                                <span class="badge time">Time: ${feature.buildTime}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-why">
+                        <strong>Why This Matters:</strong>
+                        ${feature.why}
+                    </div>
+
+                    <div class="description-box">
+                        <strong>What It Does:</strong><br>
+                        ${feature.description}
+                    </div>
+
+                    <div class="benefits">
+                        <strong>Key Benefits:</strong>
+                        <ul>
+                            ${feature.benefits.map(b => `<li>${b}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="demo-value">
+                        <strong>Demo Value:</strong> ${feature.demoValue}
+                    </div>
+
+                    <div class="notes-section">
+                        <label for="notes-${feature.id}">Your Feedback & Notes:</label>
+                        <textarea
+                            class="notes"
+                            id="notes-${feature.id}"
+                            placeholder="Add your notes, requirements, customization requests, or feedback here..."
+                            onchange="saveToLocalStorage()"
+                        ></textarea>
+                    </div>
+
+                    <div class="response-options">
+                        <label>Your Interest Level:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="response-${feature.id}" value="yes" onchange="saveToLocalStorage()">
+                                <strong style="color: #10b981;">YES</strong> - Include in demo
+                            </label>
+                            <label>
+                                <input type="radio" name="response-${feature.id}" value="maybe" onchange="saveToLocalStorage()">
+                                <strong style="color: #f59e0b;">MAYBE</strong> - Discuss more
+                            </label>
+                            <label>
+                                <input type="radio" name="response-${feature.id}" value="no" onchange="saveToLocalStorage()">
+                                <strong style="color: #ef4444;">LATER</strong> - Not now
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tech-spec">
+                        <strong>Source:</strong> <span class="source-cite">${feature.source}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            loadFromLocalStorage();
+            updateStats();
+            document.getElementById('generatedDate').textContent = new Date().toLocaleString();
+        }
+
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+
+            document.getElementById('selectedCount').textContent = selected.length;
+
+            const deployedCount = features.filter(f => f.status === 'DEPLOYED').length;
+            const readyCount = features.filter(f => f.status === 'READY TO BUILD').length;
+
+            document.getElementById('deployedCount').textContent = deployedCount;
+            document.getElementById('readyCount').textContent = readyCount;
+
+            // Toggle feature highlight
+            checkboxes.forEach(cb => {
+                const featureDiv = cb.closest('.feature');
+                if (cb.checked) {
+                    featureDiv.classList.add('selected');
+                } else {
+                    featureDiv.classList.remove('selected');
+                }
+            });
+
+            saveToLocalStorage();
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateStats();
+        }
+
+        function selectNone() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateStats();
+        }
+
+        function exportJSON() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                meeting: 'Riviera Plaisance Partnership',
+                selections: []
+            };
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+                const response = document.querySelector(`input[name="response-${f.id}"]:checked`);
+
+                if (checkbox.checked) {
+                    data.selections.push({
+                        id: f.id,
+                        title: f.title,
+                        status: f.status,
+                        priority: f.priority,
+                        buildTime: f.buildTime,
+                        interestLevel: response ? response.value : null,
+                        notes: notes.value || '',
+                        why: f.why,
+                        benefits: f.benefits
+                    });
+                }
+            });
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-feature-selection-riviera-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportEmail() {
+            const selected = [];
+            const allResponses = {};
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+                const response = document.querySelector(`input[name="response-${f.id}"]:checked`);
+
+                if (checkbox.checked) {
+                    selected.push({
+                        title: f.title,
+                        status: f.status,
+                        interest: response ? response.value : 'Not specified',
+                        notes: notes.value
+                    });
+                }
+
+                allResponses[f.title] = {
+                    interest: response ? response.value : 'Not specified',
+                    notes: notes.value || '(no notes)'
+                };
+            });
+
+            const emailBody = `
+Riviera Plaisance - NaviDocs Feature Selection
+===============================================
+
+Meeting Date: ${new Date().toLocaleDateString()}
+Time: ${new Date().toLocaleTimeString()}
+
+SELECTED FEATURES (${selected.length}/8):
+${'─'.repeat(50)}
+
+${selected.map((s, i) => `
+${i+1}. ${s.title}
+   Status: ${s.status}
+   Interest: ${s.interest.toUpperCase()}
+   ${s.notes ? `Notes: ${s.notes}` : '(no feedback provided)'}
+`).join('\n')}
+
+COMPLETE RESPONSES:
+${'─'.repeat(50)}
+
+${Object.entries(allResponses).map(([title, resp]) => `
+${title}
+  Interest: ${resp.interest.toUpperCase()}
+  Feedback: ${resp.notes}
+`).join('\n')}
+
+---
+Generated: ${new Date().toLocaleString()}
+Platform: NaviDocs Feature Selector
+Meeting: Riviera Plaisance Partnership
+            `.trim();
+
+            const mailtoLink = `mailto:?subject=NaviDocs Feature Selection - Riviera Plaisance&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                selections: {},
+                responses: {},
+                notes: {}
+            };
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+                const response = document.querySelector(`input[name="response-${f.id}"]:checked`);
+
+                data.selections[f.id] = checkbox.checked;
+                data.notes[f.id] = notes.value;
+                data.responses[f.id] = response ? response.value : null;
+            });
+
+            localStorage.setItem('navidocs-riviera-features', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('navidocs-riviera-features');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+
+                features.forEach(f => {
+                    if (data.selections && data.selections[f.id] !== undefined) {
+                        document.getElementById(`check-${f.id}`).checked = data.selections[f.id];
+                    }
+
+                    if (data.notes && data.notes[f.id]) {
+                        document.getElementById(`notes-${f.id}`).value = data.notes[f.id];
+                    }
+
+                    if (data.responses && data.responses[f.id]) {
+                        const radioBtn = document.querySelector(`input[name="response-${f.id}"][value="${data.responses[f.id]}"]`);
+                        if (radioBtn) radioBtn.checked = true;
+                    }
+                });
+
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load saved data:', e);
+            }
+        }
+
+        // Initialize
+        renderFeatures();
+    </script>
+</body>
+</html>

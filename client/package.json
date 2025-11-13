@@ -11,6 +11,7 @@
     "test": "npm run i18n:lint"
   },
   "dependencies": {
+    "axios": "^1.13.2",
     "meilisearch": "^0.41.0",
     "pdfjs-dist": "^4.0.0",
     "pinia": "^2.2.0",
