@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from '../config/db.js';
-import { extractTextFromPDF } from '../services/ocr-hybrid.js';
+import { processDocument } from '../services/document-processor.js';
 import { cleanOCRText, extractTextFromImage } from '../services/ocr.js';
 import { indexDocumentPage } from '../services/search.js';
 import { extractImagesFromPage } from './image-extractor.js';
@@ -92,10 +92,10 @@ async function processOCRJob(job) {
       console.log(`[OCR Worker] Progress: ${currentProgress}% (page ${pageNum}/${total})`);
     };
 
-    // Extract text from PDF using OCR service
-    console.log(`[OCR Worker] Extracting text from ${filePath}`);
+    // Process document using multi-format processor
+    console.log(`[OCR Worker] Processing document from ${filePath}`);
 
-    const ocrResults = await extractTextFromPDF(filePath, {
+    const ocrResults = await processDocument(filePath, {
       language: document.language || 'eng',
       onProgress: updateProgress
     });
