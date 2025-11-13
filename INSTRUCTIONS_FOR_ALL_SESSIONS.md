@@ -17,46 +17,58 @@
 
 ---
 
-## 📋 What You Need To Do
+## 📋 HOW TO IDENTIFY YOUR TASK (3 Commands, No Confusion)
 
-### Step 1: Identify Yourself
+**IGNORE what branch you're on.** Instead, check what's already been claimed:
 
-Run this command to see your branch:
+### Step 1: Check What Sessions Are Claimed
+
 ```bash
 cd /home/setup/navidocs
-git branch --show-current
+git fetch origin
+git branch -r | grep -E "feature/(inventory|maintenance|crew|compliance|fuel)"
 ```
 
-### Step 2: Find Your Assignment
+You'll see which sessions are already claimed as remote branches.
 
-| Your Branch Contains | Your Task |
-|---------------------|-----------|
-| `feature-smart-ocr` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
-| `feature-timeline` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
-| `multiformat` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
-| `feature-polish-testing` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
-| `deployment-prep` | ✅ DONE! Pick Sessions 6-10 or QC/Testing |
-| `feature/inventory-warranty` | ✅ Session 6 DONE! Pick Sessions 7-10 or QC/Testing |
-| `feature/maintenance-scheduler` | ✅ Session 7 DONE! Pick Sessions 8-10 or QC/Testing |
-| `feature/crew-contacts` | ✅ Session 8 DONE! Pick Sessions 9-10 or QC/Testing |
-| `feature/compliance-certification` | ✅ Session 9 DONE! Pick Session 10 or QC/Testing |
-| `feature/fuel-expense-tracker` | ✅ Session 10 DONE! Do QC/Testing |
-| **ANY OTHER BRANCH** | 🚀 **Pick next available session (6-10)** |
+### Step 2: Claim the First Available Session
 
-**Available Features to Build:**
+**Match the output to this table:**
 
-| Session | Feature | Time | Status |
-|---------|---------|------|--------|
-| Session 6 | Inventory & Warranty Tracking | 90-120 min | Check if feature/inventory-warranty branch exists |
-| Session 7 | Maintenance Scheduler | 90-120 min | Check if feature/maintenance-scheduler branch exists |
-| Session 8 | Crew & Contact Management | 60-90 min | Check if feature/crew-contacts branch exists |
-| Session 9 | Compliance & Certification Tracker | 75-90 min | Check if feature/compliance-certification branch exists |
-| Session 10 | Fuel Log & Expense Tracker | 90-120 min | Check if feature/fuel-expense-tracker branch exists |
+| If you see this branch | That session is claimed | You should do |
+|------------------------|-------------------------|---------------|
+| `origin/feature/inventory-warranty` | Session 6 claimed | Try Session 7 |
+| `origin/feature/maintenance-scheduler` | Session 7 claimed | Try Session 8 |
+| `origin/feature/crew-contacts` | Session 8 claimed | Try Session 9 |
+| `origin/feature/compliance-certification` | Session 9 claimed | Try Session 10 |
+| `origin/feature/fuel-expense-tracker` | Session 10 claimed | All done - do QC/Testing |
 
-**To check what's available:**
+**If you see NO branches** → Claim Session 6 (Inventory & Warranty)
+**If you see ONLY Session 6** → Claim Session 7 (Maintenance Scheduler)
+**And so on...**
+
+### Step 3: Create Your Branch and Start
+
+Once you've identified the first unclaimed session, create the branch:
+
 ```bash
-git fetch origin && git branch -r | grep feature/
+# Example: If Session 6 is unclaimed
+git checkout navidocs-cloud-coordination
+git pull origin navidocs-cloud-coordination
+git checkout -b feature/inventory-warranty
+
+# Now read the instructions below for Session 6
 ```
+
+**Available Sessions (Claim First Unclaimed):**
+
+| Session | Feature | Branch Name | Time | Prompt File |
+|---------|---------|-------------|------|-------------|
+| **Session 6** | Inventory & Warranty | `feature/inventory-warranty` | 90-120 min | session-6-inventory-warranty.md |
+| **Session 7** | Maintenance Scheduler | `feature/maintenance-scheduler` | 90-120 min | session-7-maintenance-scheduler.md |
+| **Session 8** | Crew & Contacts | `feature/crew-contacts` | 60-90 min | session-8-crew-contacts.md |
+| **Session 9** | Compliance & Certification | `feature/compliance-certification` | 75-90 min | session-9-compliance-certification.md |
+| **Session 10** | Fuel & Expense Tracker | `feature/fuel-expense-tracker` | 90-120 min | session-10-fuel-expense-tracker.md |
 
 ---
 
