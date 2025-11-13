@@ -4,7 +4,7 @@
  */
 
 import crypto from 'crypto';
-import { getDb } from '../config/database.js';
+import { getDb } from '../config/db.js';
 import { logAuditEvent } from './audit.service.js';
 
 // Encryption configuration

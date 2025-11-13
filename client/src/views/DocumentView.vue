@@ -1,9 +1,16 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-dark-800 to-dark-900">
     <!-- Header -->
-    <header class="bg-dark-900/90 backdrop-blur-lg border-b border-dark-700 sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
+    <header
+      class="bg-dark-900/90 backdrop-blur-lg border-b border-dark-700 sticky top-0 z-50 relative"
+      :class="[
+        isHeaderCollapsed ? 'py-2' : 'py-4',
+        scrollInitialized ? 'header-transitions' : ''
+      ]"
+    >
+      <div class="max-w-7xl mx-auto px-6">
+        <!-- Top row: Back button, Title, Language (hidden when collapsed) -->
+        <div v-show="!isHeaderCollapsed" class="flex items-center justify-between mb-4">
           <button @click="$router.push('/')" class="text-white/70 hover:text-pink-400 flex items-center gap-2 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -17,16 +24,101 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <span class="text-white/70 text-sm">{{ $t('document.page') }} {{ currentPage }} {{ $t('document.of') }} {{ totalPages }}</span>
-            <span v-if="pageImages.length > 0" class="text-white/70 text-sm">
-              ({{ pageImages.length }} {{ $t('document.images', pageImages.length) }})
-            </span>
             <LanguageSwitcher />
           </div>
         </div>
 
-        <!-- Find Bar -->
-        <div v-if="searchQuery" class="mt-4 bg-white/5 border border-white/10 rounded-lg p-3">
+        <!-- Collapsed header: Compact back icon + search + nav -->
+        <div class="flex items-center gap-3">
+          <!-- Compact back button (only visible when collapsed) -->
+          <button
+            v-show="isHeaderCollapsed"
+            @click="$router.push('/')"
+            class="text-white/70 hover:text-pink-400 transition-colors p-2 hover:bg-white/10 rounded-lg"
+            title="Back to library"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </button>
+
+          <!-- Search Bar - Always Visible but changes size -->
+          <div class="flex-1" :class="isHeaderCollapsed ? 'max-w-2xl' : 'max-w-3xl mx-auto'">
+            <div class="relative group">
+              <input
+                v-model="searchInput"
+                @keydown.enter="performSearch"
+                @input="handleSearchInput"
+                type="text"
+                class="w-full px-6 pr-28 rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-lg text-white placeholder-white/50 shadow-lg focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20"
+                :class="isHeaderCollapsed ? 'h-10 text-sm' : 'h-16 text-lg'"
+                placeholder="Search in document..."
+              />
+              <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                <button
+                  v-if="searchInput"
+                  @click="clearSearch"
+                  class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  title="Clear search"
+                >
+                  <svg :class="isHeaderCollapsed ? 'w-4 h-4' : 'w-5 h-5'" class="text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <button
+                  @click="performSearch"
+                  class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center text-white shadow-md hover:shadow-lg hover:scale-105"
+                  :class="isHeaderCollapsed ? 'w-8 h-8' : 'w-10 h-10'"
+                  title="Search"
+                >
+                  <svg :class="isHeaderCollapsed ? 'w-4 h-4' : 'w-5 h-5'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search navigation (always visible when there's a search query, inline when collapsed) -->
+          <div v-if="searchQuery && isHeaderCollapsed" class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-2 bg-white/10 px-2 py-1 rounded-lg">
+              <span class="text-white/70 text-xs">
+                {{ totalHits === 0 ? '0' : `${currentHitIndex + 1}/${totalHits}` }}
+              </span>
+              <div class="flex gap-1">
+                <button
+                  @click="prevHit"
+                  :disabled="totalHits === 0"
+                  class="px-2 py-1 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/30 text-white rounded transition-colors text-xs"
+                  title="Previous match"
+                >
+                  ↑
+                </button>
+                <button
+                  @click="nextHit"
+                  :disabled="totalHits === 0"
+                  class="px-2 py-1 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/30 text-white rounded transition-colors text-xs"
+                  title="Next match"
+                >
+                  ↓
+                </button>
+              </div>
+            </div>
+            <button
+              v-if="hitList.length > 0"
+              @click="jumpListOpen = !jumpListOpen"
+              class="px-2 py-1 bg-white/10 hover:bg-white/20 text-white rounded transition-colors text-xs flex items-center gap-1"
+            >
+              <span>Jump</span>
+              <svg class="w-3 h-3 transition-transform" :class="{ 'rotate-180': jumpListOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Find Bar - Results Navigation (full version when not collapsed) -->
+        <div v-if="searchQuery && !isHeaderCollapsed" class="mt-4 bg-white/5 border border-white/10 rounded-lg p-3">
           <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 flex-1">
               <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg">
@@ -97,47 +189,41 @@
           </div>
         </div>
 
-        <!-- Page Controls -->
-        <div class="flex items-center justify-center gap-4 mt-4">
-          <button
-            @click="previousPage"
-            :disabled="currentPage <= 1 || isRendering"
-            class="px-4 py-2 bg-white/10 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/30 text-white rounded-lg transition-colors flex items-center gap-2 border border-white/10"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-            {{ $t('document.previous') }}
-          </button>
-
-          <div class="flex items-center gap-2">
-            <input
-              v-model.number="pageInput"
-              @keypress.enter="goToPage"
-              type="number"
-              min="1"
-              :max="totalPages"
-              :disabled="isRendering"
-              class="w-16 px-3 py-2 bg-white/10 text-white border border-white/20 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
-            />
-            <button @click="goToPage" :disabled="isRendering" class="px-3 py-2 bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 disabled:bg-white/5 text-white rounded-lg transition-colors">
-              {{ $t('document.goToPage') }}
+        <!-- Jump List for Collapsed Header (positioned absolutely) -->
+        <div v-if="jumpListOpen && hitList.length > 0 && isHeaderCollapsed" class="absolute right-6 top-full mt-2 w-96 bg-dark-900/95 backdrop-blur-lg border border-white/10 rounded-lg p-3 shadow-2xl z-50">
+          <div class="grid gap-2 max-h-64 overflow-y-auto">
+            <button
+              v-for="(hit, idx) in hitList.slice(0, 5)"
+              :key="idx"
+              @click="jumpToHit(idx)"
+              class="text-left px-3 py-2 bg-white/5 hover:bg-white/10 rounded transition-colors border border-white/10"
+              :class="{ 'ring-2 ring-pink-400': idx === currentHitIndex }"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-white/70 text-xs font-mono">Match {{ idx + 1 }}</span>
+                <span class="text-white/50 text-xs">Page {{ hit.page }}</span>
+              </div>
+              <p class="text-white text-sm mt-1 line-clamp-2">{{ hit.snippet }}</p>
             </button>
+            <div v-if="hitList.length > 5" class="text-white/50 text-xs text-center py-2">
+              + {{ hitList.length - 5 }} more matches
+            </div>
           </div>
-
-          <button
-            @click="nextPage"
-            :disabled="currentPage >= totalPages || isRendering"
-            class="px-4 py-2 bg-white/10 hover:bg-white/15 disabled:bg-white/5 disabled:text-white/30 text-white rounded-lg transition-colors flex items-center gap-2 border border-white/10"
-          >
-            {{ $t('document.next') }}
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
     </header>
+
+    <!-- Compact Navigation - Fixed Position (adjusts based on header collapse) -->
+    <div class="fixed right-6 z-40" :class="scrollInitialized ? 'transition-all duration-300' : ''" :style="{ top: isHeaderCollapsed ? '70px' : '160px' }">
+      <CompactNav
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        :disabled="isRendering || loading"
+        @prev="previousPage"
+        @next="nextPage"
+        @goto="(page) => { pageInput = page; goToPage(); }"
+      />
+    </div>
 
     <!-- PDF Viewer with TOC Sidebar -->
     <main class="viewer-wrapper relative">
@@ -229,6 +315,7 @@ import ImageOverlay from '../components/ImageOverlay.vue'
 import FigureZoom from '../components/FigureZoom.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import TocSidebar from '../components/TocSidebar.vue'
+import CompactNav from '../components/CompactNav.vue'
 import { useDocumentImages } from '../composables/useDocumentImages'
 
 // Configure PDF.js worker - use local worker file instead of CDN
@@ -244,6 +331,7 @@ const documentId = ref(route.params.id)
 const currentPage = ref(parseInt(route.query.page, 10) || 1)
 const pageInput = ref(currentPage.value)
 const searchQuery = ref(route.query.q || '')
+const searchInput = ref(route.query.q || '')
 const totalPages = ref(0)
 const documentTitle = ref('Loading...')
 const boatInfo = ref('')
@@ -260,6 +348,9 @@ const totalHits = ref(0)
 const hitList = ref([])
 const jumpListOpen = ref(false)
 
+// TOC state for clickable entries
+const tocEntries = ref([])
+
 // PDF rendering scale
 const pdfScale = ref(1.5)
 
@@ -270,6 +361,15 @@ const canvasHeight = ref(0)
 // Image handling
 const { images: pageImages, fetchPageImages, getImageUrl, clearImages } = useDocumentImages()
 const selectedImage = ref(null)
+
+// Scroll detection for collapsing header with hysteresis
+const scrollY = ref(0)
+const scrollInitialized = ref(false)
+const isHeaderCollapsed = ref(false)
+
+// Use hysteresis to prevent flickering at threshold
+const COLLAPSE_THRESHOLD = 120  // Collapse when scrolling down past 120px
+const EXPAND_THRESHOLD = 80     // Expand when scrolling up past 80px
 
 // Computed property for selected image URL
 const selectedImageUrl = computed(() => {
@@ -293,6 +393,17 @@ async function loadDocument() {
     const metadata = await metaResponse.json()
     documentTitle.value = metadata.title
     boatInfo.value = `${metadata.boatMake || ''} ${metadata.boatModel || ''} ${metadata.boatYear || ''}`.trim()
+
+    // Load TOC entries
+    try {
+      const tocResponse = await fetch(`/api/documents/${documentId.value}/toc?format=flat`)
+      if (tocResponse.ok) {
+        const tocData = await tocResponse.json()
+        tocEntries.value = tocData.entries || []
+      }
+    } catch (tocError) {
+      console.warn('Could not load TOC:', tocError)
+    }
 
     const pdfUrl = `/api/documents/${documentId.value}/pdf`
     loadingTask = pdfjsLib.getDocument(pdfUrl)
@@ -408,6 +519,116 @@ function jumpToHit(index) {
   jumpListOpen.value = false
 }
 
+function performSearch() {
+  const query = searchInput.value.trim()
+  if (!query) {
+    clearSearch()
+    return
+  }
+
+  searchQuery.value = query
+
+  // Re-highlight search terms on current page
+  if (textLayer.value) {
+    highlightSearchTerms()
+  }
+}
+
+function clearSearch() {
+  searchInput.value = ''
+  searchQuery.value = ''
+  totalHits.value = 0
+  hitList.value = []
+  currentHitIndex.value = 0
+  jumpListOpen.value = false
+
+  // Remove highlights
+  if (textLayer.value) {
+    const marks = textLayer.value.querySelectorAll('mark.search-highlight')
+    marks.forEach(mark => {
+      const text = mark.textContent
+      mark.replaceWith(text)
+    })
+  }
+}
+
+function handleSearchInput() {
+  // Optional: Auto-search as user types (with debounce)
+  // For now, require Enter key or button click
+}
+
+function makeTocEntriesClickable() {
+  if (!textLayer.value || tocEntries.value.length === 0) return
+
+  const spans = textLayer.value.querySelectorAll('span')
+
+  // Build full text content from all spans to handle multi-span entries
+  let fullText = ''
+  const spanMap = []
+  spans.forEach((span, idx) => {
+    const text = span.textContent || ''
+    spanMap.push({
+      span,
+      start: fullText.length,
+      end: fullText.length + text.length,
+      text
+    })
+    fullText += text
+  })
+
+  let matchCount = 0
+
+  // Check ALL TOC entries against current page's text
+  tocEntries.value.forEach(entry => {
+    const titleText = entry.title?.trim()
+    if (!titleText) return
+
+    // Look for the title in the full text (case-insensitive, partial match)
+    const titleWords = titleText.toLowerCase().split(/\s+/).slice(0, 5) // First 5 words
+    const searchPattern = titleWords.join('.*?')
+    const regex = new RegExp(searchPattern, 'i')
+
+    if (regex.test(fullText.toLowerCase())) {
+      const match = fullText.toLowerCase().match(regex)
+      if (match) {
+        const matchStart = match.index
+        const matchEnd = matchStart + match[0].length
+        matchCount++
+
+        // Find all spans that are part of this match
+        spanMap.forEach(({ span, start, end }) => {
+          if ((start >= matchStart && start < matchEnd) || (end > matchStart && end <= matchEnd) || (start <= matchStart && end >= matchEnd)) {
+            // This span is part of the match
+            span.classList.add('toc-entry-link')
+            span.style.cursor = 'pointer'
+            span.setAttribute('data-target-page', entry.page_start)
+            span.setAttribute('title', `Go to page ${entry.page_start}`)
+
+            // Add click handler (only once)
+            if (!span.hasAttribute('data-click-handler')) {
+              span.setAttribute('data-click-handler', 'true')
+              span.addEventListener('click', (e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                const targetPage = parseInt(span.getAttribute('data-target-page'))
+                if (targetPage && targetPage >= 1 && targetPage <= totalPages.value) {
+                  console.log(`Navigating to page ${targetPage}`)
+                  pageInput.value = targetPage
+                  goToPage()
+                }
+              })
+            }
+          }
+        })
+      }
+    }
+  })
+
+  if (matchCount > 0) {
+    console.log(`Made ${matchCount} TOC entries clickable on page ${currentPage.value}`)
+  }
+}
+
 async function renderPage(pageNum) {
   if (!pdfDoc || componentIsUnmounting) return
 
@@ -480,6 +701,10 @@ async function renderPage(pageNum) {
           await nextTick()
           highlightSearchTerms()
         }
+
+        // Make TOC entries clickable
+        await nextTick()
+        makeTocEntriesClickable()
       } catch (textErr) {
         console.warn('Failed to render text layer:', textErr)
       }
@@ -663,6 +888,49 @@ onMounted(() => {
     }
   }
 
+  // Scroll detection for collapsing header with debouncing and RAF
+  let rafId = null
+  let scrollTimeout = null
+  let lastScrollY = 0
+
+  const handleScroll = () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+    }
+
+    rafId = requestAnimationFrame(() => {
+      const currentScrollY = window.scrollY
+      scrollY.value = currentScrollY
+
+      // Apply hysteresis to prevent flickering at threshold
+      if (!isHeaderCollapsed.value && currentScrollY > COLLAPSE_THRESHOLD) {
+        // Scrolling down past collapse threshold
+        isHeaderCollapsed.value = true
+      } else if (isHeaderCollapsed.value && currentScrollY < EXPAND_THRESHOLD) {
+        // Scrolling up past expand threshold
+        isHeaderCollapsed.value = false
+      }
+
+      lastScrollY = currentScrollY
+      rafId = null
+    })
+  }
+
+  // Delay initialization to prevent flickering on load
+  setTimeout(() => {
+    scrollInitialized.value = true
+    const initialScrollY = window.scrollY
+    scrollY.value = initialScrollY
+    lastScrollY = initialScrollY
+
+    // Set initial collapsed state based on scroll position
+    if (initialScrollY > COLLAPSE_THRESHOLD) {
+      isHeaderCollapsed.value = true
+    }
+  }, 300)
+
+  window.addEventListener('scroll', handleScroll, { passive: true })
+
   // Listen for hash changes
   const handleHashChange = () => {
     const newHash = window.location.hash
@@ -677,8 +945,15 @@ onMounted(() => {
 
   window.addEventListener('hashchange', handleHashChange)
 
-  // Clean up listener
+  // Clean up listeners
   onBeforeUnmount(() => {
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+    }
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout)
+    }
+    window.removeEventListener('scroll', handleScroll)
     window.removeEventListener('hashchange', handleHashChange)
   })
 })
@@ -761,13 +1036,31 @@ onBeforeUnmount(() => {
 }
 
 .viewer-wrapper {
-  display: flex;
   min-height: calc(100vh - 64px); /* Account for header */
 }
 
 .pdf-pane {
-  flex: 1;
-  min-width: 0; /* Allow flex item to shrink */
   overflow-x: auto;
+}
+
+/* Clickable TOC entries in PDF */
+.textLayer span.toc-entry-link {
+  cursor: pointer !important;
+  transition: all 0.15s ease;
+}
+
+.textLayer span.toc-entry-link:hover {
+  background-color: rgba(236, 72, 153, 0.1);
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
+}
+
+/* Header transitions - only applied after initialization to prevent flickering */
+.header-transitions {
+  transition: padding 0.3s ease, height 0.3s ease;
+  will-change: padding, height;
+}
+
+.header-transitions * {
+  transition: all 0.3s ease;
 }
 </style>

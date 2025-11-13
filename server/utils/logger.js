@@ -1,108 +1,122 @@
 /**
- * Centralized Logging Utility
- * Provides consistent logging with timestamps and context
+ * Unified Logger - All application events in one place
+ *
+ * Logs are written to both console and file with structured format:
+ * [timestamp] LEVEL EVENT_NAME {"context":"json"}
  */
 
-const LOG_LEVELS = {
-  ERROR: 'ERROR',
-  WARN: 'WARN',
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const LOG_DIR = path.resolve(__dirname, '../../logs');
+const LOG_FILE = path.join(LOG_DIR, 'navidocs.log');
+
+// Ensure log directory exists
+try {
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+} catch (err) {
+  console.error('Failed to create log directory:', err);
+}
+
+/**
+ * Log levels
+ */
+export const LogLevel = {
   INFO: 'INFO',
-  DEBUG: 'DEBUG',
+  WARN: 'WARN',
+  ERROR: 'ERROR',
+  DEBUG: 'DEBUG'
 };
 
-const COLORS = {
-  ERROR: '\x1b[31m',   // Red
-  WARN: '\x1b[33m',    // Yellow
-  INFO: '\x1b[36m',    // Cyan
-  DEBUG: '\x1b[90m',   // Gray
-  RESET: '\x1b[0m',
-  BOLD: '\x1b[1m',
-};
+/**
+ * Main logging function
+ * @param {string} level - Log level (INFO, WARN, ERROR, DEBUG)
+ * @param {string} event - Event name (e.g., UPLOAD_START, DB_ERROR)
+ * @param {Object} context - Additional context data
+ */
+export function log(level, event, context = {}) {
+  const timestamp = new Date().toISOString();
+  const contextStr = Object.keys(context).length > 0 ? JSON.stringify(context) : '';
+  const logLine = `[${timestamp}] ${level.padEnd(5)} ${event.padEnd(30)} ${contextStr}\n`;
 
-class Logger {
-  constructor(context = 'App') {
-    this.context = context;
-    this.logLevel = process.env.LOG_LEVEL || 'INFO';
-  }
+  // Write to console
+  const colorCode = {
+    INFO: '\x1b[36m',    // Cyan
+    WARN: '\x1b[33m',    // Yellow
+    ERROR: '\x1b[31m',   // Red
+    DEBUG: '\x1b[90m'    // Gray
+  }[level] || '';
+  const resetCode = '\x1b[0m';
 
-  shouldLog(level) {
-    const levels = Object.keys(LOG_LEVELS);
-    const currentLevelIndex = levels.indexOf(this.logLevel);
-    const requestedLevelIndex = levels.indexOf(level);
-    return requestedLevelIndex <= currentLevelIndex;
-  }
+  console.log(`${colorCode}${logLine.trim()}${resetCode}`);
 
-  formatMessage(level, message, data = null) {
-    const timestamp = new Date().toISOString();
-    const color = COLORS[level] || '';
-    const reset = COLORS.RESET;
-    const bold = COLORS.BOLD;
-
-    let formattedMessage = `${color}${bold}[${timestamp}] [${level}] [${this.context}]${reset}${color} ${message}${reset}`;
-
-    if (data) {
-      formattedMessage += `\n${color}${JSON.stringify(data, null, 2)}${reset}`;
-    }
-
-    return formattedMessage;
-  }
-
-  error(message, error = null) {
-    if (!this.shouldLog('ERROR')) return;
-
-    const data = error ? {
-      message: error.message,
-      stack: error.stack,
-      ...error,
-    } : null;
-
-    console.error(this.formatMessage('ERROR', message, data));
-  }
-
-  warn(message, data = null) {
-    if (!this.shouldLog('WARN')) return;
-    console.warn(this.formatMessage('WARN', message, data));
-  }
-
-  info(message, data = null) {
-    if (!this.shouldLog('INFO')) return;
-    console.log(this.formatMessage('INFO', message, data));
-  }
-
-  debug(message, data = null) {
-    if (!this.shouldLog('DEBUG')) return;
-    console.log(this.formatMessage('DEBUG', message, data));
-  }
-
-  // Convenience method for HTTP requests
-  http(method, path, statusCode, duration = null) {
-    const durationStr = duration ? ` (${duration}ms)` : '';
-    const statusColor = statusCode >= 400 ? COLORS.ERROR : statusCode >= 300 ? COLORS.WARN : COLORS.INFO;
-    const message = `${statusColor}${method} ${path} ${statusCode}${durationStr}${COLORS.RESET}`;
-
-    if (this.shouldLog('INFO')) {
-      console.log(this.formatMessage('INFO', message));
-    }
-  }
-
-  // Create a child logger with additional context
-  child(additionalContext) {
-    return new Logger(`${this.context}:${additionalContext}`);
+  // Write to file (async, non-blocking)
+  try {
+    fs.appendFileSync(LOG_FILE, logLine);
+  } catch (err) {
+    console.error('Failed to write to log file:', err);
   }
 }
 
-// Create default logger instance
-const logger = new Logger();
-
-// Create context-specific loggers
-const loggers = {
-  app: logger,
-  upload: logger.child('Upload'),
-  ocr: logger.child('OCR'),
-  search: logger.child('Search'),
-  db: logger.child('Database'),
-  meilisearch: logger.child('Meilisearch'),
+/**
+ * Convenience methods
+ */
+export const logger = {
+  info: (event, context) => log(LogLevel.INFO, event, context),
+  warn: (event, context) => log(LogLevel.WARN, event, context),
+  error: (event, context) => log(LogLevel.ERROR, event, context),
+  debug: (event, context) => log(LogLevel.DEBUG, event, context)
 };
 
+/**
+ * Express middleware to log all requests
+ */
+export function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  // Log request
+  logger.info('HTTP_REQUEST', {
+    method: req.method,
+    path: req.path,
+    query: req.query,
+    ip: req.ip
+  });
+
+  // Log response when finished
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const level = res.statusCode >= 400 ? LogLevel.ERROR : LogLevel.INFO;
+
+    log(level, 'HTTP_RESPONSE', {
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      duration: `${duration}ms`
+    });
+  });
+
+  next();
+}
+
+/**
+ * Log rotation (call this daily or when file gets too big)
+ */
+export function rotateLog() {
+  try {
+    const stats = fs.statSync(LOG_FILE);
+    const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+    if (stats.size > MAX_SIZE) {
+      const timestamp = new Date().toISOString().split('T')[0];
+      const archivePath = path.join(LOG_DIR, `navidocs-${timestamp}.log`);
+      fs.renameSync(LOG_FILE, archivePath);
+      logger.info('LOG_ROTATED', { archive: archivePath });
+    }
+  } catch (err) {
+    console.error('Log rotation failed:', err);
+  }
+}
+
 export default logger;
-export { Logger, loggers };

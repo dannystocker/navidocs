@@ -5,10 +5,10 @@
 
 import express from 'express';
 import multer from 'multer';
-import { extractTextFromPDF } from '../services/ocr.js';
+import pdfParse from 'pdf-parse';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { writeFileSync, unlinkSync } from 'fs';
+import { writeFileSync, unlinkSync, readFileSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
@@ -158,22 +158,17 @@ router.post('/', upload.single('file'), async (req, res) => {
     tempFilePath = join(tmpdir(), `quick-ocr-${tempId}.pdf`);
     writeFileSync(tempFilePath, file.buffer);
 
-    console.log(`[Quick OCR] Processing first page of ${file.originalname}`);
+    console.log(`[Quick OCR] Extracting embedded text from ${file.originalname}`);
 
-    // Extract text from first page only
-    const ocrResults = await extractTextFromPDF(tempFilePath, {
-      language: 'eng',
-      onProgress: (page, total) => {
-        // Only process first page
-        if (page > 1) return;
-      }
+    // Fast text extraction (no OCR) - works if PDF has embedded text
+    const dataBuffer = readFileSync(tempFilePath);
+    const pdfData = await pdfParse(dataBuffer, {
+      max: 1 // Only parse first page
     });
 
-    // Get first page text
-    const firstPageText = ocrResults[0]?.text || '';
-    const confidence = ocrResults[0]?.confidence || 0;
+    const firstPageText = pdfData.text || '';
 
-    console.log(`[Quick OCR] First page OCR completed (confidence: ${confidence.toFixed(2)})`);
+    console.log(`[Quick OCR] Text extraction completed (fast)`);
     console.log(`[Quick OCR] Text length: ${firstPageText.length} characters`);
 
     // Extract metadata
@@ -191,8 +186,7 @@ router.post('/', upload.single('file'), async (req, res) => {
     res.json({
       success: true,
       metadata,
-      ocrText: firstPageText.substring(0, 500), // Return first 500 chars for debugging
-      confidence
+      ocrText: firstPageText.substring(0, 500) // Return first 500 chars for debugging
     });
 
   } catch (error) {

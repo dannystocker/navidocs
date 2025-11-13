@@ -9,10 +9,9 @@ import { getMeilisearchClient } from '../config/meilisearch.js';
 import path from 'path';
 import fs from 'fs';
 import { rm } from 'fs/promises';
-import { loggers } from '../utils/logger.js';
+import logger from '../utils/logger.js';
 
 const router = express.Router();
-const logger = loggers.app.child('Documents');
 
 const MEILISEARCH_INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-pages';
 

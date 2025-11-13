@@ -11,7 +11,7 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">NaviDocs</h1>
+              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">{{ appName }}</h1>
             </div>
           </button>
           <LanguageSwitcher />
@@ -82,18 +82,18 @@
             @keypress.enter="viewDocument(result)"
             @keypress.space.prevent="viewDocument(result)"
           >
-          <!-- Metadata Row -->
-          <header class="nv-meta">
-            <span class="nv-page">{{ $t('search.page') }} {{ result.pageNumber }}</span>
-            <span class="nv-dot">·</span>
-            <span v-if="result.boatMake || result.boatModel" class="nv-boat">
-              {{ result.boatMake }} {{ result.boatModel }}
-            </span>
-            <span class="nv-doc" :title="result.title">{{ result.title }}</span>
+          <!-- Google-style Header: Section Hierarchy + Page -->
+          <header class="nv-title-row">
+            <div class="nv-hierarchy">
+              <span v-if="result.section" class="nv-section">{{ result.section }}</span>
+              <span v-if="result.section && result.title" class="nv-arrow">›</span>
+              <span class="nv-subsection">{{ result.title }}</span>
+            </div>
+            <span class="nv-page-tag">p.{{ result.pageNumber }}</span>
           </header>
 
-          <!-- Snippet with Highlights -->
-          <p class="nv-snippet" v-html="formatSnippet(result.text)"></p>
+          <!-- Snippet with Highlights (1-2 lines max) -->
+          <p class="nv-snippet nv-snippet-compact" v-html="formatSnippet(result.text)"></p>
 
           <!-- Footer Operations -->
           <footer class="nv-ops">
@@ -216,6 +216,9 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSearch } from '../composables/useSearch'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useAppSettings } from '../composables/useAppSettings'
+
+const { appName, fetchAppName } = useAppSettings()
 
 const route = useRoute()
 const router = useRouter()
@@ -326,6 +329,7 @@ watch(() => route.query.q, (newQuery) => {
 })
 
 onMounted(() => {
+  fetchAppName()
   if (searchQuery.value) {
     performSearch()
   }
@@ -333,63 +337,81 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Dense, information-first search results */
+/* Google-style search results - minimal, compact */
 .nv-card {
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 12px 14px;
   position: relative;
   transition: background 0.15s ease;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid transparent;
 }
 
 .nv-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 92, 178, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 92, 178, 0.15);
 }
 
-/* Metadata row - small, condensed */
-.nv-meta {
+/* Title row: Section Hierarchy + Page */
+.nv-title-row {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
-  font-size: 12px;
-  margin-bottom: 6px;
-  line-height: 1.3;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
-.nv-page {
-  font-weight: 600;
-  color: #f4f4f6;
+.nv-hierarchy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
-.nv-boat {
-  color: #a8acb3;
+.nv-section {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e6e6ea;
+  white-space: nowrap;
 }
 
-.nv-dot {
-  color: #6b6b7a;
+.nv-arrow {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
 }
 
-.nv-doc {
-  margin-left: auto;
-  color: #9aa0a6;
-  border: 1px solid #3b3b4a;
-  padding: 2px 8px;
-  border-radius: 10px;
-  max-width: 50%;
+.nv-subsection {
+  font-size: 14px;
+  font-weight: 400;
+  color: #cfa7ff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 11px;
 }
 
-/* Snippet - the star of the show */
+.nv-page-tag {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+/* Snippet - compact with 2 line max */
 .nv-snippet {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   color: #e6e6ea;
-  margin: 4px 0 8px;
+  margin: 0 0 8px;
+}
+
+.nv-snippet-compact {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Highlight styling - high contrast */

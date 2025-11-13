@@ -93,7 +93,7 @@ export async function login({ email, password, deviceInfo, ipAddress }) {
   // Find user
   const user = db.prepare(`
     SELECT id, email, name, password_hash, status, email_verified,
-           failed_login_attempts, locked_until
+           failed_login_attempts, locked_until, is_system_admin
     FROM users
     WHERE email = ?
   `).get(email.toLowerCase());
@@ -165,7 +165,8 @@ export async function login({ email, password, deviceInfo, ipAddress }) {
       id: user.id,
       email: user.email,
       name: user.name,
-      emailVerified: Boolean(user.email_verified)
+      emailVerified: Boolean(user.email_verified),
+      is_system_admin: Boolean(user.is_system_admin)
     }
   };
 }
@@ -205,7 +206,7 @@ export async function refreshAccessToken(refreshToken) {
 
   // Get user
   const user = db.prepare(`
-    SELECT id, email, name, status, email_verified
+    SELECT id, email, name, status, email_verified, is_system_admin
     FROM users
     WHERE id = ?
   `).get(token.user_id);
@@ -223,7 +224,8 @@ export async function refreshAccessToken(refreshToken) {
       id: user.id,
       email: user.email,
       name: user.name,
-      emailVerified: Boolean(user.email_verified)
+      emailVerified: Boolean(user.email_verified),
+      is_system_admin: Boolean(user.is_system_admin)
     }
   };
 }

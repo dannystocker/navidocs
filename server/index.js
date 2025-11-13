@@ -95,6 +95,27 @@ import imagesRoutes from './routes/images.js';
 import statsRoutes from './routes/stats.js';
 import tocRoutes from './routes/toc.js';
 
+// Public API endpoint for app settings (no auth required)
+import * as settingsService from './services/settings.service.js';
+
+app.get('/api/settings/public/app', async (req, res) => {
+  try {
+    const appName = settingsService.getSetting('app.name');
+
+    res.json({
+      success: true,
+      appName: appName?.value || 'NaviDocs'
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+      appName: 'NaviDocs'  // Fallback
+    });
+  }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/organizations', organizationRoutes);

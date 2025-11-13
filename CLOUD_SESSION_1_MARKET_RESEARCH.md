@@ -11,7 +11,7 @@
 
 ## Mission Statement
 
-Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focusing on **recreational motor boat owners** (Jeanneau Prestige 40-50ft, €250K-€480K range) and the daily boat management pain points that NaviDocs solves with sticky engagement features.
+Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focusing on **recreational motor boat owners** (Jeanneau Prestige + Sunseeker 40-60ft, €800K-€1.5M range) and the daily boat management pain points that NaviDocs solves with sticky engagement features.
 
 ---
 
@@ -25,7 +25,7 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 - **Location:** Antibes, Golfe Juan, Beaulieu (French Riviera)
 - **Brands:** Jeanneau, Prestige Yachts, Fountaine Pajot, Monte Carlo Yachts
 - **Volume:** 150+ new boats/year, 20,500+ active customers
-- **Boat Types:** Recreational motor boats 40-50ft (€250K-€480K range)
+- **Boat Types:** Recreational motor boats 40-50ft (€800K-€1.5M range)
 - **Owner Profile:** Weekend/holiday users (20-40 days/year), NOT crew-managed mega yachts
 
 **Current NaviDocs Status:**
@@ -66,17 +66,20 @@ Each agent MUST:
 
 ## Your Tasks (Use Haiku Agents S1-H01 through S1-H10 as Needed)
 
-### Agent 1:
+### Agent 1: Recreational Boat Market (Prestige + Sunseeker)
 **AGENT ID:** S1-H01
+**PERSONA:** Joe Trader (Epic V4 Merchant-Philosopher) - detect discontinuities, market trends
 **Research:**
-- Jeanneau Prestige 40-50ft market (units sold annually, price range €250K-€480K)
+- **ACTUAL SALE PRICES:** Search YachtWorld, Boat Trader ads for current + historical sales
+- Price trend analysis 2020-2025 (COVID boom impact, current market)
+- Jeanneau Prestige + Sunseeker 40-60ft market (units sold annually, €800K-€1.5M range)
 - Riviera Plaisance Euro Voiles volume (150+ boats/year validated)
-- Typical owner demographics (age, usage patterns, pain points)
-- Boat ownership costs (annual maintenance, storage, upgrades)
+- Owner demographics (age, usage patterns, pain points)
+- Boat ownership costs (maintenance, storage, upgrades)
 
-**Deliverable:** Market sizing report for recreational boat segment with citations
+**Deliverable:** Market report with ACTUAL sale data + trend analysis (Joe Trader discontinuity lens)
 
-### Agent 2: Competitor Analysis (Boat Management Apps)
+### Agent 2 Competitor Analysis (Boat Management Apps)
 **AGENT ID:** S1-H02
 **
 **Research:**
@@ -88,7 +91,7 @@ Each agent MUST:
 
 **Deliverable:** Competitive matrix showing NaviDocs differentiation (daily engagement + perfect docs)
 
-### Agent 3: Owner Pain Points (Daily Boat Management)
+### Agent 3 Owner Pain Points (Daily Boat Management)
 **AGENT ID:** S1-H03
 **
 **Research:**
@@ -100,19 +103,19 @@ Each agent MUST:
 
 **Deliverable:** Owner pain point analysis ranked by frequency and financial impact
 
-### Agent 4: Inventory Tracking & Resale Value Protection
+### Agent 4 Inventory Tracking & Resale Value Protection
 **AGENT ID:** S1-H04
 **
 **Research:**
 - Boat equipment upgrade market (tenders, electronics, deck refinishing, automatic systems)
-- Average upgrade spend per boat per year (Jeanneau Prestige 40-50ft owners)
+- Average upgrade spend per boat per year (Jeanneau Prestige + Sunseeker 40-60ft owners)
 - "Forgotten inventory" problem - how much value is lost at resale?
 - Receipt/invoice management for boats (tax deduction, warranty claims, resale documentation)
 - Comparable: RV/car inventory tracking solutions
 
 **Deliverable:** ROI calculator for inventory tracking (€X forgotten value prevented)
 
-### Agent 5: Sticky Engagement Feature Research
+### Agent 5 Sticky Engagement Feature Research
 **AGENT ID:** S1-H05
 **
 **Research:**
@@ -124,7 +127,7 @@ Each agent MUST:
 
 **Deliverable:** Feature prioritization - which sticky features drive daily/weekly engagement?
 
-### Agent 6: Search UX Best Practices (Critical for Inventory)
+### Agent 6 Search UX Best Practices (Critical for Inventory)
 **AGENT ID:** S1-H06
 **
 **Research:**
@@ -136,7 +139,7 @@ Each agent MUST:
 
 **Deliverable:** Search UX recommendations - impeccable structured results, zero long lists
 
-### Agent 7: Pricing Strategy Research (Broker-Included Model)
+### Agent 7 Pricing Strategy Research (Broker-Included Model)
 **AGENT ID:** S1-H07
 **
 **Research:**
@@ -148,7 +151,7 @@ Each agent MUST:
 
 **Deliverable:** Pricing recommendation for "included with every Riviera boat" model
 
-### Agent 8: Home Assistant & Camera Integration Research
+### Agent 8 Home Assistant & Camera Integration Research
 **AGENT ID:** S1-H08
 **
 **Research:**
@@ -160,7 +163,7 @@ Each agent MUST:
 
 **Deliverable:** Technical feasibility report for Home Assistant/camera integration
 
-### Agent 9: Broker Sales Objection Research
+### Agent 9 Broker Sales Objection Research
 **AGENT ID:** S1-H09
 **
 **Research:**
@@ -172,7 +175,7 @@ Each agent MUST:
 
 **Deliverable:** Objection handling playbook for Sylvain meeting
 
-### Agent 10: Evidence Synthesis
+### Agent 10 Evidence Synthesis
 **AGENT ID:** S1-H10
 **
 **Research:**

@@ -91,6 +91,16 @@ router.post('/', upload.single('file'), async (req, res) => {
     // Get database connection
     const db = getDb();
 
+    // Auto-create organization if it doesn't exist (for development/testing)
+    const existingOrg = db.prepare('SELECT id FROM organizations WHERE id = ?').get(organizationId);
+    if (!existingOrg) {
+      console.log(`Creating new organization: ${organizationId}`);
+      db.prepare(`
+        INSERT INTO organizations (id, name, created_at, updated_at)
+        VALUES (?, ?, ?, ?)
+      `).run(organizationId, organizationId, Date.now(), Date.now());
+    }
+
     // Check for duplicate file hash (optional deduplication)
     const duplicateCheck = db.prepare(
       'SELECT id, title, file_path FROM documents WHERE file_hash = ? AND organization_id = ? AND status != ?'

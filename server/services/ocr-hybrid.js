@@ -2,28 +2,65 @@
  * Hybrid OCR Service
  *
  * Intelligently chooses between multiple OCR engines:
- * 1. Google Cloud Vision API (RECOMMENDED) - Best quality, fastest, real OCR API
- * 2. Google Drive OCR (ALTERNATIVE) - Good quality, uses Docs conversion
- * 3. Tesseract (FALLBACK) - Local, free, always available
+ * 1. Remote OCR Worker - Offloads OCR to dedicated Proxmox server
+ * 2. Google Cloud Vision API - Best quality, fastest, real OCR API
+ * 3. Google Drive OCR - Good quality, uses Docs conversion
+ * 4. Tesseract - Local, free, always available
  *
  * Configuration via .env:
- * - PREFERRED_OCR_ENGINE=google-vision|google-drive|tesseract|auto
+ * - PREFERRED_OCR_ENGINE=remote-ocr|google-vision|google-drive|tesseract|auto
+ * - USE_REMOTE_OCR=true (to enable remote OCR worker)
+ * - OCR_WORKER_URL=http://fr-antibes.duckdns.org/naviocr
  * - GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
  *
- * RECOMMENDATION: Use google-vision for production!
+ * RECOMMENDATION: Use remote-ocr for offloading or google-vision for production!
  */
 
 import { extractTextFromPDF as extractWithTesseract } from './ocr.js';
 import {
-  extractTextFromPDFGoogleDrive,
-  isGoogleDriveConfigured
-} from './ocr-google-drive.js';
-import {
-  extractTextFromPDFVision,
-  isVisionConfigured
-} from './ocr-google-vision.js';
+  extractTextFromPDF as extractWithRemoteOCR,
+  checkRemoteOCRHealth,
+  getOCRWorkerInfo
+} from './ocr-client.js';
 
 const PREFERRED_ENGINE = process.env.PREFERRED_OCR_ENGINE || 'auto';
+const USE_REMOTE_OCR = process.env.USE_REMOTE_OCR === 'true';
+
+// Lazy-load Google services to avoid dependency errors if not installed
+let googleDriveModule = null;
+let googleVisionModule = null;
+
+async function loadGoogleDrive() {
+  if (googleDriveModule === null) {
+    try {
+      googleDriveModule = await import('./ocr-google-drive.js');
+    } catch (e) {
+      googleDriveModule = false;
+    }
+  }
+  return googleDriveModule;
+}
+
+async function loadGoogleVision() {
+  if (googleVisionModule === null) {
+    try {
+      googleVisionModule = await import('./ocr-google-vision.js');
+    } catch (e) {
+      googleVisionModule = false;
+    }
+  }
+  return googleVisionModule;
+}
+
+function isGoogleDriveConfigured() {
+  // Can't check without loading the module, so return false
+  return false;
+}
+
+function isVisionConfigured() {
+  // Can't check without loading the module, so return false
+  return false;
+}
 
 /**
  * Extract text from PDF using the best available OCR engine
@@ -44,12 +81,17 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
 
   if (engine === 'auto') {
     // Auto-select best available engine
-    // Priority: Vision API > Drive API > Tesseract
-    if (isVisionConfigured()) {
+    // Priority: Remote OCR > Vision API > Drive API > Tesseract
+    if (USE_REMOTE_OCR) {
+      selectedEngine = 'remote-ocr';
+    } else if (isVisionConfigured()) {
       selectedEngine = 'google-vision';
     } else if (isGoogleDriveConfigured()) {
       selectedEngine = 'google-drive';
     }
+  } else if (engine === 'remote-ocr' && !USE_REMOTE_OCR) {
+    console.warn('[OCR Hybrid] Remote OCR requested but not enabled, falling back');
+    selectedEngine = isVisionConfigured() ? 'google-vision' : (isGoogleDriveConfigured() ? 'google-drive' : 'tesseract');
   } else if (engine === 'google-vision' && !isVisionConfigured()) {
     console.warn('[OCR Hybrid] Google Vision requested but not configured, falling back');
     selectedEngine = isGoogleDriveConfigured() ? 'google-drive' : 'tesseract';
@@ -64,6 +106,9 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
   // Execute OCR with selected engine
   try {
     switch (selectedEngine) {
+      case 'remote-ocr':
+        return await extractWithRemote(pdfPath, options);
+
       case 'google-vision':
         return await extractWithVision(pdfPath, options);
 
@@ -85,11 +130,34 @@ export async function extractTextFromPDF(pdfPath, options = {}) {
 }
 
 /**
+ * Wrapper for Remote OCR Worker with error handling
+ */
+async function extractWithRemote(pdfPath, options) {
+  try {
+    const results = await extractWithRemoteOCR(pdfPath, options);
+
+    // Log quality metrics
+    const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
+    console.log(`[Remote OCR] Completed with avg confidence: ${avgConfidence.toFixed(2)}`);
+
+    return results;
+  } catch (error) {
+    console.error('[Remote OCR] Error:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Wrapper for Google Cloud Vision OCR with error handling
  */
 async function extractWithVision(pdfPath, options) {
+  const visionModule = await loadGoogleVision();
+  if (!visionModule) {
+    throw new Error('Google Vision module not available');
+  }
+
   try {
-    const results = await extractTextFromPDFVision(pdfPath, options);
+    const results = await visionModule.extractTextFromPDFVision(pdfPath, options);
 
     // Log quality metrics
     const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
@@ -106,8 +174,13 @@ async function extractWithVision(pdfPath, options) {
  * Wrapper for Google Drive OCR with error handling
  */
 async function extractWithGoogleDrive(pdfPath, options) {
+  const driveModule = await loadGoogleDrive();
+  if (!driveModule) {
+    throw new Error('Google Drive module not available');
+  }
+
   try {
-    const results = await extractTextFromPDFGoogleDrive(pdfPath, options);
+    const results = await driveModule.extractTextFromPDFGoogleDrive(pdfPath, options);
 
     // Log quality metrics
     const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
@@ -126,7 +199,20 @@ async function extractWithGoogleDrive(pdfPath, options) {
  * @returns {Object} - Status of each engine
  */
 export function getAvailableEngines() {
+  const workerInfo = getOCRWorkerInfo();
+
   return {
+    'remote-ocr': {
+      available: workerInfo.enabled,
+      quality: 'good',
+      speed: 'fast',
+      cost: 'free',
+      notes: 'Offloads OCR to dedicated Proxmox server, saves local CPU',
+      handwriting: false,
+      pageByPage: true,
+      boundingBoxes: false,
+      url: workerInfo.url
+    },
     'google-vision': {
       available: isVisionConfigured(),
       quality: 'excellent',

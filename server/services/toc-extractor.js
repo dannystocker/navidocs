@@ -166,6 +166,67 @@ function extractTocEntries(pageText, pageNumber) {
 }
 
 /**
+ * Match TOC entries to their source pages in OCR text
+ * Used for PDF outline entries to find which pages they appear on
+ * @param {Array<Object>} entries - TOC entries to match
+ * @param {string} documentId - Document ID
+ * @returns {Array<Object>} Entries with tocPageNumber populated
+ */
+function matchEntriesToSourcePages(entries, documentId) {
+  const db = getDb();
+
+  // Get all pages with OCR text
+  const pages = db.prepare(`
+    SELECT page_number, ocr_text
+    FROM document_pages
+    WHERE document_id = ? AND ocr_text IS NOT NULL
+    ORDER BY page_number ASC
+  `).all(documentId);
+
+  if (pages.length === 0) {
+    console.log('[TOC] No OCR text available for source page matching');
+    return entries;
+  }
+
+  let matchCount = 0;
+
+  // For each entry, search OCR text to find source page
+  for (const entry of entries) {
+    if (entry.tocPageNumber !== null) continue; // Skip if already set
+
+    const titleText = entry.title?.trim();
+    if (!titleText || titleText.length < 5) continue;
+
+    // Try to find this title in OCR text, prioritizing early pages (TOC is usually at start)
+    for (const page of pages) {
+      // Get significant words from title (skip common words, numbers with dots like "7.2.9" count as one word)
+      const titleWords = titleText.split(/\s+/).slice(0, 8); // Use more words for better matching
+
+      // Escape special regex characters but keep spaces for word matching
+      const escapedWords = titleWords.map(word =>
+        word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      );
+
+      // Create pattern allowing for flexible spacing and line breaks
+      const searchPattern = escapedWords.join('[\\s\\S]{0,5}'); // Allow up to 5 chars between words
+      const regex = new RegExp(searchPattern, 'i');
+
+      if (regex.test(page.ocr_text)) {
+        entry.tocPageNumber = page.page_number;
+        matchCount++;
+        break; // Stop after first match
+      }
+    }
+  }
+
+  if (matchCount > 0) {
+    console.log(`[TOC] Matched ${matchCount} PDF outline entries to source pages in OCR text`);
+  }
+
+  return entries;
+}
+
+/**
  * Build parent-child relationships for hierarchical TOC
  * @param {Array<Object>} entries
  * @returns {Array<Object>} Entries with parentId set
@@ -199,106 +260,68 @@ function buildHierarchy(entries) {
  * Extract PDF outline/bookmarks as fallback TOC
  * Uses pdfjs-dist to read the PDF's built-in outline/bookmarks
  *
- * @param {string} filePath - Absolute path to PDF file
- * @param {string} documentId - Document ID for reference
- * @returns {Promise<Array<Object>|null>} Array of TOC entries or null if no outline exists
+ * @param {string} pdfPath - Absolute path to PDF file
+ * @returns {Promise<Array<Object>>} Array of TOC entries with {title, page, level}
  */
-async function extractPdfOutline(filePath, documentId) {
+async function extractPdfOutline(pdfPath) {
   try {
-    console.log(`[TOC] Attempting to extract PDF outline from: ${filePath}`);
-
-    // Read PDF file
-    const dataBuffer = await fs.readFile(filePath);
-
-    // Load PDF document
-    const loadingTask = pdfjsLib.getDocument({
-      data: new Uint8Array(dataBuffer),
-      useSystemFonts: true,
-      standardFontDataUrl: null // Disable font loading for performance
-    });
-
-    const pdfDocument = await loadingTask.promise;
-    const outline = await pdfDocument.getOutline();
+    const loadingTask = pdfjsLib.getDocument({ url: pdfPath });
+    const pdfDoc = await loadingTask.promise;
+    const outline = await pdfDoc.getOutline();
 
     if (!outline || outline.length === 0) {
-      console.log(`[TOC] No PDF outline found in document ${documentId}`);
-      await pdfDocument.destroy();
-      return null;
+      await pdfDoc.destroy?.();
+      return [];
     }
 
-    console.log(`[TOC] Found PDF outline with ${outline.length} top-level items`);
+    const results = [];
 
-    // Convert outline to TOC entries
-    const entries = [];
-    let orderIndex = 0;
+    async function walk(items, level = 1, parentKey = null) {
+      for (const item of items) {
+        const title = (item.title || '').trim();
+        let pageNum = null;
 
-    /**
-     * Recursively process outline items and convert to TOC entries
-     */
-    async function processOutlineItem(item, level = 1, parentId = null) {
-      if (!item || !item.title) return;
-
-      // Resolve destination to page number
-      let pageStart = 1;
-      if (item.dest) {
-        try {
-          // Get the destination (can be a string reference or direct array)
-          const dest = typeof item.dest === 'string'
-            ? await pdfDocument.getDestination(item.dest)
-            : item.dest;
-
-          // Extract page reference from destination array
-          // Format is typically: [pageRef, fitType, ...params]
-          if (dest && Array.isArray(dest) && dest[0]) {
-            const pageIndex = await pdfDocument.getPageIndex(dest[0]);
-            pageStart = pageIndex + 1; // Convert 0-based to 1-based
+        // Try to resolve destination to page number
+        if (item.dest) {
+          try {
+            const destArray = await pdfDoc.getDestination(item.dest);
+            if (Array.isArray(destArray) && destArray.length > 0) {
+              const pageRef = destArray[0];
+              const pageIndex = await pdfDoc.getPageIndex(pageRef);
+              pageNum = pageIndex + 1; // Convert 0-based to 1-based
+            }
+          } catch (err) {
+            // Silently handle resolution errors
           }
-        } catch (e) {
-          console.log(`[TOC] Could not resolve page for outline item "${item.title}": ${e.message}`);
-          // Keep default pageStart = 1
         }
-      }
 
-      const entry = {
-        id: uuidv4(),
-        title: item.title.trim(),
-        sectionKey: null, // PDF outlines don't have section keys
-        pageStart: pageStart,
-        level: level,
-        parentId: parentId,
-        orderIndex: orderIndex++,
-        tocPageNumber: null // Not from a TOC page, from PDF outline
-      };
+        // Fallback: try URL fragment like #page=5
+        if (!pageNum && item.url) {
+          const m = String(item.url).match(/#page=(\d+)/i);
+          if (m) pageNum = parseInt(m[1], 10);
+        }
 
-      entries.push(entry);
+        results.push({
+          title: title || 'Untitled',
+          page: Number.isFinite(pageNum) && pageNum >= 1 ? pageNum : null,
+          level,
+          _raw: { dest: !!item.dest, url: !!item.url, action: !!item.action }
+        });
 
-      // Process children recursively
-      if (item.items && Array.isArray(item.items) && item.items.length > 0) {
-        for (const child of item.items) {
-          await processOutlineItem(child, level + 1, entry.id);
+        // Recurse into children
+        if (item.items && item.items.length) {
+          await walk(item.items, level + 1);
         }
       }
     }
 
-    // Process all top-level outline items
-    for (const item of outline) {
-      await processOutlineItem(item);
-    }
+    await walk(outline, 1);
+    await pdfDoc.destroy?.();
 
-    // Clean up
-    await pdfDocument.destroy();
-
-    if (entries.length === 0) {
-      console.log(`[TOC] PDF outline exists but contains no valid entries for document ${documentId}`);
-      return null;
-    }
-
-    console.log(`[TOC] Successfully extracted ${entries.length} entries from PDF outline for document ${documentId}`);
-    return entries;
-
-  } catch (error) {
-    console.error(`[TOC] Error extracting PDF outline for document ${documentId}:`, error);
-    return null;
+    return results;
+  } catch (err) {
+    console.warn('extractPdfOutline failed:', err && err.message);
+    return [];
   }
 }
 
@@ -343,6 +366,95 @@ export async function extractTocFromDocument(documentId) {
       };
     }
 
+    // PRIORITY: Try PDF outline FIRST (Adobe approach)
+    console.log(`[TOC] Attempting PDF outline extraction first for document ${documentId}`);
+    const doc = db.prepare('SELECT file_path FROM documents WHERE id = ?').get(documentId);
+
+    if (doc?.file_path) {
+      const outlineResults = await extractPdfOutline(doc.file_path);
+
+      if (outlineResults && outlineResults.length > 0) {
+        console.log(`[TOC] PDF outline found with ${outlineResults.length} entries, using it as primary TOC source`);
+
+        // Convert simplified outline format to database format
+        const outlineEntries = [];
+        const parentStack = [];
+
+        for (let i = 0; i < outlineResults.length; i++) {
+          const result = outlineResults[i];
+          const entryId = uuidv4();
+
+          let parentId = null;
+          if (result.level > 1) {
+            for (let j = parentStack.length - 1; j >= 0; j--) {
+              if (parentStack[j].level === result.level - 1) {
+                parentId = parentStack[j].id;
+                break;
+              }
+            }
+          }
+
+          const entry = {
+            id: entryId,
+            title: result.title,
+            sectionKey: null,
+            pageStart: result.page || 1,
+            level: result.level,
+            parentId: parentId,
+            orderIndex: i,
+            tocPageNumber: null
+          };
+
+          outlineEntries.push(entry);
+
+          while (parentStack.length > 0 && parentStack[parentStack.length - 1].level >= result.level) {
+            parentStack.pop();
+          }
+          parentStack.push({ id: entryId, level: result.level });
+        }
+
+        // Match PDF outline entries to their source pages in OCR text
+        matchEntriesToSourcePages(outlineEntries, documentId);
+
+        // Save to database
+        db.prepare('DELETE FROM document_toc WHERE document_id = ?').run(documentId);
+
+        const insertStmt = db.prepare(`
+          INSERT INTO document_toc (
+            id, document_id, title, section_key, page_start,
+            level, parent_id, order_index, toc_page_number, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        const timestamp = Date.now();
+        for (const entry of outlineEntries) {
+          insertStmt.run(
+            entry.id,
+            documentId,
+            entry.title,
+            entry.sectionKey,
+            entry.pageStart,
+            entry.level,
+            entry.parentId,
+            entry.orderIndex,
+            entry.tocPageNumber,
+            timestamp
+          );
+        }
+
+        return {
+          success: true,
+          entriesCount: outlineEntries.length,
+          pages: [],
+          source: 'pdf-outline',
+          message: `Extracted ${outlineEntries.length} entries from PDF outline`
+        };
+      }
+    }
+
+    // FALLBACK: Try OCR-based TOC detection if PDF outline failed
+    console.log(`[TOC] No PDF outline found, falling back to OCR-based TOC detection for document ${documentId}`);
+
     // Get all pages with OCR text
     const pages = db.prepare(`
       SELECT page_number, ocr_text
@@ -369,71 +481,14 @@ export async function extractTocFromDocument(documentId) {
       }
     }
 
-    // If no TOC pages found, try PDF outline as fallback
+    // If no TOC pages found either, give up
     if (tocPages.length === 0) {
-      console.log(`[TOC] No TOC pages detected in document ${documentId}, attempting PDF outline fallback`);
-
-      // Get document file path
-      const doc = db.prepare('SELECT file_path FROM documents WHERE id = ?').get(documentId);
-
-      if (!doc || !doc.file_path) {
-        console.log(`[TOC] Cannot attempt PDF outline fallback: file path not found for document ${documentId}`);
-        return {
-          success: false,
-          error: 'TOC detection failed: No patterns matched',
-          entriesCount: 0,
-          pages: []
-        };
-      }
-
-      // Try extracting PDF outline
-      const outlineEntries = await extractPdfOutline(doc.file_path, documentId);
-
-      if (!outlineEntries || outlineEntries.length === 0) {
-        console.log(`[TOC] PDF outline fallback failed for document ${documentId}`);
-        return {
-          success: false,
-          error: 'TOC detection failed: No patterns matched and no PDF outline found',
-          entriesCount: 0,
-          pages: []
-        };
-      }
-
-      // Save outline entries to database
-      console.log(`[TOC] Using PDF outline as TOC for document ${documentId} (${outlineEntries.length} entries)`);
-
-      // Delete existing TOC entries for this document
-      db.prepare('DELETE FROM document_toc WHERE document_id = ?').run(documentId);
-
-      // Insert outline entries
-      const insertStmt = db.prepare(`
-        INSERT INTO document_toc (
-          id, document_id, title, section_key, page_start,
-          level, parent_id, order_index, toc_page_number, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      const timestamp = Date.now();
-      for (const entry of outlineEntries) {
-        insertStmt.run(
-          entry.id,
-          documentId,
-          entry.title,
-          entry.sectionKey,
-          entry.pageStart,
-          entry.level,
-          entry.parentId,
-          entry.orderIndex,
-          entry.tocPageNumber,
-          timestamp
-        );
-      }
-
+      console.log(`[TOC] No TOC pages detected via OCR either for document ${documentId}`);
       return {
-        success: true,
-        entriesCount: outlineEntries.length,
-        pages: [],
-        source: 'pdf-outline'
+        success: false,
+        error: 'TOC detection failed: No PDF outline or OCR-detectable TOC found',
+        entriesCount: 0,
+        pages: []
       };
     }
 

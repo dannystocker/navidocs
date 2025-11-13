@@ -17,7 +17,29 @@ import { authenticateToken, requireSystemAdmin } from '../middleware/auth.middle
 
 const router = express.Router();
 
-// All settings routes require system admin privileges
+/**
+ * Get public app settings (no auth required)
+ * Currently returns: app.name
+ */
+router.get('/public/app', async (req, res) => {
+  try {
+    const appName = settingsService.getSetting('app.name');
+
+    res.json({
+      success: true,
+      appName: appName?.value || 'NaviDocs'
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+      appName: 'NaviDocs'  // Fallback
+    });
+  }
+});
+
+// All other settings routes require system admin privileges
 router.use(authenticateToken, requireSystemAdmin);
 
 /**

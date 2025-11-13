@@ -122,12 +122,12 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-white/70 mb-2">Document Type</label>
-                <select v-model="metadata.documentType" class="input">
-                  <option value="owner-manual">Owner Manual</option>
-                  <option value="component-manual">Component Manual</option>
-                  <option value="service-record">Service Record</option>
-                  <option value="inspection">Inspection Report</option>
-                  <option value="certificate">Certificate</option>
+                <select v-model="metadata.documentType" class="input text-white bg-white/10">
+                  <option value="owner-manual" class="bg-gray-800 text-white">Owner Manual</option>
+                  <option value="component-manual" class="bg-gray-800 text-white">Component Manual</option>
+                  <option value="service-record" class="bg-gray-800 text-white">Service Record</option>
+                  <option value="inspection" class="bg-gray-800 text-white">Inspection Report</option>
+                  <option value="certificate" class="bg-gray-800 text-white">Certificate</option>
                 </select>
               </div>
             </div>
@@ -329,10 +329,17 @@ async function extractMetadataFromFile(file) {
     const formData = new FormData()
     formData.append('file', file)
 
+    // Add 5-second timeout to prevent hanging
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
     const response = await fetch('/api/upload/quick-ocr', {
       method: 'POST',
-      body: formData
+      body: formData,
+      signal: controller.signal
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       throw new Error('Metadata extraction failed')
@@ -363,8 +370,12 @@ async function extractMetadataFromFile(file) {
       console.log('[Upload Modal] Form auto-filled with extracted data')
     }
   } catch (error) {
-    console.warn('[Upload Modal] Metadata extraction failed:', error)
-    // Don't show error to user - just fall back to filename
+    if (error.name === 'AbortError') {
+      console.warn('[Upload Modal] Metadata extraction timed out after 5 seconds')
+    } else {
+      console.warn('[Upload Modal] Metadata extraction failed:', error)
+    }
+    // Don't show error to user - just fall back to manual input
   } finally {
     extractingMetadata.value = false
   }

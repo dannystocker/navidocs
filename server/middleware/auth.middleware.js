@@ -323,6 +323,13 @@ export function requireEntityPermission(minimumPermission) {
     const db = getDb();
     const now = Math.floor(Date.now() / 1000);
 
+    // Check if user is system admin (bypass permission checks)
+    const user = db.prepare('SELECT is_system_admin FROM users WHERE id = ?').get(req.user.userId);
+    if (user && user.is_system_admin === 1) {
+      req.entityPermission = 'admin';  // System admins have full access
+      return next();
+    }
+
     // Check entity_permissions table
     const permission = db.prepare(`
       SELECT permission_level, expires_at

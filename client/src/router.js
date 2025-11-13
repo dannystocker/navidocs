@@ -32,8 +32,49 @@ const router = createRouter({
       path: '/stats',
       name: 'stats',
       component: () => import('./views/StatsView.vue')
+    },
+    {
+      path: '/library',
+      name: 'library',
+      component: () => import('./views/LibraryView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/AuthView.vue'),
+      meta: { requiresGuest: true }
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: () => import('./views/AccountView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
+})
+
+// Navigation guards
+router.beforeEach((to, from, next) => {
+  const accessToken = localStorage.getItem('accessToken')
+  const isAuthenticated = !!accessToken
+
+  // Check if route requires authentication
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirect to login page with return URL
+    next({
+      name: 'login',
+      query: { redirect: to.fullPath }
+    })
+  }
+  // Check if route requires guest (not authenticated)
+  else if (to.meta.requiresGuest && isAuthenticated) {
+    // Redirect to home if already logged in
+    next({ name: 'home' })
+  }
+  // Allow navigation
+  else {
+    next()
+  }
 })
 
 export default router

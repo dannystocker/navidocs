@@ -7,10 +7,9 @@ import express from 'express';
 import { getDb } from '../db/db.js';
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
-import { loggers } from '../utils/logger.js';
+import logger from '../utils/logger.js';
 
 const router = express.Router();
-const logger = loggers.app.child('Stats');
 
 /**
  * GET /api/stats

@@ -1,39 +1,58 @@
 <template>
-  <div class="toc-sidebar" :class="{ 'collapsed': !isOpen }">
-    <!-- Toggle Button -->
-    <button
-      @click="toggleSidebar"
-      class="toc-toggle"
-      :title="isOpen ? $t('toc.collapse') : $t('toc.expand')"
-    >
-      <span v-if="isOpen">☰ {{ $t('toc.tableOfContents') }}</span>
-      <span v-else>☰</span>
-    </button>
+  <div
+    class="toc-floating-panel"
+    :class="{ 'expanded': isHovered || isPinned }"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
+    <!-- Collapsed Tab -->
+    <div class="toc-tab">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <span class="toc-tab-text">TOC</span>
+    </div>
 
-    <!-- Sidebar Content -->
-    <div v-if="isOpen" class="toc-content">
+    <!-- Expanded Content -->
+    <div class="toc-expanded-content">
+      <!-- Header -->
+      <div class="toc-header">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <h3>Table of Contents</h3>
+        </div>
+        <button
+          @click="isPinned = !isPinned"
+          class="pin-btn"
+          :class="{ 'pinned': isPinned }"
+          :title="isPinned ? 'Unpin' : 'Pin open'"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+        </button>
+      </div>
+
       <!-- Loading State -->
-      <div v-if="loading" class="toc-loading" aria-live="polite">
+      <div v-if="loading" class="toc-loading">
         <div class="spinner"></div>
-        <p>{{ $t('toc.loading') }}</p>
+        <p>Loading TOC...</p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="!loading && entries.length === 0" class="toc-empty">
-        <p>{{ $t('toc.noTocFound') }}</p>
+        <p>No table of contents found</p>
         <button @click="extractToc" class="btn-extract">
-          {{ $t('toc.extract') }}
+          Extract TOC
         </button>
       </div>
 
       <!-- TOC Entries -->
-      <nav v-else class="toc-nav" role="navigation" aria-label="Table of Contents">
-        <div class="toc-header">
-          <h3>{{ $t('toc.tableOfContents') }}</h3>
-          <span class="toc-count">{{ entries.length }} {{ $t('toc.entries') }}</span>
-        </div>
-
-        <ul class="toc-list" role="list">
+      <nav v-else class="toc-nav">
+        <div class="toc-count">{{ entries.length }} entries</div>
+        <ul class="toc-list">
           <TocEntry
             v-for="entry in treeEntries"
             :key="entry.id"
@@ -64,7 +83,8 @@ const props = defineProps({
 
 const emit = defineEmits(['navigate-to-page']);
 
-const isOpen = ref(true);
+const isHovered = ref(false);
+const isPinned = ref(false);
 const loading = ref(false);
 const entries = ref([]);
 
@@ -92,13 +112,6 @@ const treeEntries = computed(() => {
 
   return roots;
 });
-
-// Toggle sidebar
-const toggleSidebar = () => {
-  isOpen.value = !isOpen.value;
-  // Save preference to localStorage
-  localStorage.setItem('navidocs_toc_open', isOpen.value ? '1' : '0');
-};
 
 // Fetch TOC from API
 const fetchToc = async () => {
@@ -157,77 +170,138 @@ watch(() => props.documentId, () => {
   }
 }, { immediate: true });
 
-// Restore sidebar state from localStorage
+// Restore pin state from localStorage
 onMounted(() => {
-  const savedState = localStorage.getItem('navidocs_toc_open');
-  if (savedState !== null) {
-    isOpen.value = savedState === '1';
+  const savedPinState = localStorage.getItem('navidocs_toc_pinned');
+  if (savedPinState !== null) {
+    isPinned.value = savedPinState === '1';
   }
+});
+
+// Save pin state
+watch(isPinned, (newVal) => {
+  localStorage.setItem('navidocs_toc_pinned', newVal ? '1' : '0');
 });
 </script>
 
 <style scoped>
-.toc-sidebar {
+.toc-floating-panel {
   position: fixed;
-  left: 0;
-  top: 64px; /* Below header */
-  bottom: 0;
-  width: 320px;
-  background: white;
-  border-right: 1px solid #e5e7eb;
+  right: 0;
+  top: 220px; /* Below header and compact nav */
+  width: 40px;
+  max-height: calc(100vh - 240px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+  border-radius: 0.75rem 0 0 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 30;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
-  z-index: 40;
-  overflow: hidden;
 }
 
-.toc-sidebar.collapsed {
-  transform: translateX(-280px);
+.toc-floating-panel.expanded {
+  width: 320px;
 }
 
-.toc-toggle {
-  position: absolute;
-  right: -40px;
-  top: 20px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-left: none;
-  border-radius: 0 8px 8px 0;
-  padding: 8px 12px;
+/* Collapsed Tab */
+.toc-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: white;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  transition: all 0.2s;
-  white-space: nowrap;
+  min-width: 40px;
+  flex-shrink: 0;
 }
 
-.toc-toggle:hover {
-  background: #f9fafb;
-  color: #1f2937;
+.toc-tab-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.toc-content {
+.toc-floating-panel.expanded .toc-tab {
+  display: none;
+}
+
+/* Expanded Content */
+.toc-expanded-content {
+  display: none;
+  flex-direction: column;
   flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+  min-height: 0;
+  padding: 16px;
 }
 
+.toc-floating-panel.expanded .toc-expanded-content {
+  display: flex;
+}
+
+/* Header */
+.toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toc-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.pin-btn {
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pin-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.pin-btn.pinned {
+  background: rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.5);
+  color: rgb(236, 72, 153);
+}
+
+/* Loading */
 .toc-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #3b82f6;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgb(236, 72, 153);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 12px;
@@ -237,70 +311,84 @@ onMounted(() => {
   to { transform: rotate(360deg); }
 }
 
+/* Empty State */
 .toc-empty {
   padding: 40px 20px;
   text-align: center;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .toc-empty p {
   margin-bottom: 16px;
+  font-size: 13px;
 }
 
 .btn-extract {
-  background: #3b82f6;
+  background: linear-gradient(to right, rgb(236, 72, 153), rgb(168, 85, 247));
   color: white;
   border: none;
   border-radius: 6px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .btn-extract:hover {
-  background: #2563eb;
+  background: linear-gradient(to right, rgb(219, 39, 119), rgb(147, 51, 234));
+  transform: scale(1.05);
 }
 
-.toc-header {
+/* TOC Navigation */
+.toc-nav {
+  flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.toc-header h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .toc-count {
-  font-size: 12px;
-  color: #6b7280;
-  background: #f3f4f6;
-  padding: 2px 8px;
-  border-radius: 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  text-align: center;
 }
 
 .toc-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Custom scrollbar */
+.toc-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.toc-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.toc-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.toc-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .toc-sidebar {
+  .toc-floating-panel.expanded {
     width: 280px;
-  }
-
-  .toc-sidebar.collapsed {
-    transform: translateX(-240px);
   }
 }
 </style>

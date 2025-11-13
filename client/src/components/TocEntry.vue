@@ -17,7 +17,9 @@
         :aria-label="isExpanded ? 'Collapse' : 'Expand'"
         :aria-expanded="isExpanded"
       >
-        <span class="icon">{{ isExpanded ? '▼' : '▶' }}</span>
+        <svg class="w-3 h-3 transition-transform" :class="{ 'rotate-90': isExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
 
       <!-- Entry Content -->
@@ -93,7 +95,7 @@ const handleClick = () => {
 .toc-entry-content {
   display: flex;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 8px;
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s;
@@ -101,25 +103,24 @@ const handleClick = () => {
 }
 
 .toc-entry-content:hover {
-  background: #f3f4f6;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .toc-entry-content.active {
-  background: #eff6ff;
-  border-left: 3px solid #3b82f6;
+  background: rgba(236, 72, 153, 0.2);
+  border-left: 3px solid rgb(236, 72, 153);
   padding-left: 8px;
 }
 
 .expand-btn {
   background: none;
   border: none;
-  padding: 0 8px;
+  padding: 4px;
   cursor: pointer;
-  color: #6b7280;
-  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,13 +129,8 @@ const handleClick = () => {
 }
 
 .expand-btn:hover {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.icon {
-  display: inline-block;
-  transition: transform 0.2s;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .entry-main {
@@ -146,36 +142,37 @@ const handleClick = () => {
 }
 
 .section-key {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #3b82f6;
+  color: rgb(168, 85, 247);
   flex-shrink: 0;
   min-width: 32px;
 }
 
 .entry-title {
   flex: 1;
-  font-size: 14px;
-  color: #374151;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .page-number {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 500;
   flex-shrink: 0;
-  padding: 2px 8px;
-  background: #f3f4f6;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   margin-left: auto;
 }
 
 .toc-entry-content.active .page-number {
-  background: #dbeafe;
-  color: #1e40af;
+  background: rgba(236, 72, 153, 0.3);
+  color: rgb(236, 72, 153);
+  font-weight: 600;
 }
 
 /* Nested children */
@@ -183,36 +180,39 @@ const handleClick = () => {
   list-style: none;
   padding: 0;
   margin: 0;
-  padding-left: 16px;
-  border-left: 1px solid #e5e7eb;
-  margin-left: 12px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  margin-left: 10px;
+  margin-top: 2px;
 }
 
-/* Level-based indentation */
+/* Level-based styling */
 .level-1 {
   font-weight: 500;
 }
 
 .level-2 .entry-title {
-  font-size: 13px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .level-3 .entry-title {
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .level-4 .entry-title {
   font-size: 11px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Hover effect for all entries */
 .toc-entry-content:hover .entry-title {
-  color: #1f2937;
+  color: white;
 }
 
 .toc-entry-content:hover .page-number {
-  background: #dbeafe;
+  background: rgba(236, 72, 153, 0.2);
+  color: rgb(236, 72, 153);
 }
 </style>

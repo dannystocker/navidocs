@@ -11,7 +11,7 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">NaviDocs</h1>
+              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">{{ appName }}</h1>
             </div>
           </button>
           <button @click="refreshJobs" class="btn btn-outline btn-sm flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary-500">
@@ -141,6 +141,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted, h } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAppSettings } from '../composables/useAppSettings'
+
+const { appName, fetchAppName } = useAppSettings()
 
 const router = useRouter()
 const jobs = ref([])
@@ -245,6 +248,7 @@ async function retryJob(jobId) {
 
 onMounted(() => {
   fetchJobs()
+  fetchAppName()
   // Auto-refresh every 5 seconds
   refreshInterval = setInterval(fetchJobs, 5000)
 })

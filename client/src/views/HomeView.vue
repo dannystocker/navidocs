@@ -12,7 +12,7 @@
               </svg>
             </div>
             <div>
-              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">NaviDocs</h1>
+              <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">{{ appName }}</h1>
               <p class="text-xs text-white/70">Marine Document Intelligence</p>
             </div>
           </div>
@@ -35,6 +35,43 @@
               </svg>
               Upload Document
             </button>
+
+            <!-- Authentication Controls -->
+            <div v-if="!isAuthenticated">
+              <button @click="$router.push('/login')" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Login
+              </button>
+            </div>
+            <div v-else class="relative">
+              <button @click="showUserMenu = !showUserMenu" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {{ user?.name || 'User' }}
+                <svg class="w-4 h-4" :class="{ 'rotate-180': showUserMenu }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <!-- User Menu Dropdown -->
+              <div v-if="showUserMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-50">
+                <button @click="$router.push('/account'); showUserMenu = false" class="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 flex items-center gap-3 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>Account</span>
+                </button>
+                <button @click="handleLogout" class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -344,15 +381,20 @@ import { useRouter } from 'vue-router'
 import UploadModal from '../components/UploadModal.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import { useToast } from '../composables/useToast'
+import { useAuth } from '../composables/useAuth'
+import { useAppSettings } from '../composables/useAppSettings'
 
 const router = useRouter()
 const toast = useToast()
+const { user, isAuthenticated, logout } = useAuth()
+const { appName, fetchAppName } = useAppSettings()
 const showUploadModal = ref(false)
 const showDeleteDialog = ref(false)
 const documentToDelete = ref(null)
 const searchQuery = ref('')
 const loading = ref(false)
 const documents = ref([])
+const showUserMenu = ref(false)
 
 // Group documents by status
 const documentsByStatus = computed(() => {
@@ -444,9 +486,16 @@ function cancelDelete() {
   documentToDelete.value = null
 }
 
+async function handleLogout() {
+  showUserMenu.value = false
+  await logout()
+  toast.success('Successfully logged out')
+}
+
 // Load documents on mount
 onMounted(() => {
   loadDocuments()
+  fetchAppName()  // Load custom app name
 
   // Auto-refresh every 10 seconds if there are processing documents
   setInterval(() => {

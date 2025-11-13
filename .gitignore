@@ -50,3 +50,5 @@ meilisearch-data/
 
 # Sensitive handover docs (do not commit)
 docs/handover/PATHS_AND_CREDENTIALS.md
+meilisearch
+data/

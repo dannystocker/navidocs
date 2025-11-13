@@ -14,7 +14,7 @@
           </button>
           <div>
             <h1 class="text-3xl font-bold text-white">System Statistics</h1>
-            <p class="text-white/70 mt-1">Overview of your NaviDocs system</p>
+            <p class="text-white/70 mt-1">Overview of your {{ appName }} system</p>
           </div>
         </div>
         <button
@@ -171,6 +171,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAppSettings } from '../composables/useAppSettings'
+
+const { appName, fetchAppName } = useAppSettings()
 
 const router = useRouter()
 const stats = ref(null)
@@ -231,5 +234,6 @@ function statusClass(status) {
 
 onMounted(() => {
   fetchStats()
+  fetchAppName()
 })
 </script>
