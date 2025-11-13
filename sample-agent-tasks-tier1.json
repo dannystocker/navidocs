@@ -1,0 +1,267 @@
+{
+  "metadata": {
+    "timestamp": "2025-11-13T00:00:00.000Z",
+    "meeting": "Riviera Plaisance Partnership",
+    "deployment_target": "StackCP shared hosting (~/public_html/digital-lab.ca/navidocs)",
+    "selected_features": 4,
+    "swarm_pattern": "S2 (5 Haiku agents parallel)",
+    "autonomous_task_file": "AUTONOMOUS-NEXT-TASKS.md"
+  },
+  "agents": {
+    "agent-1-backend": {
+      "role": "Backend API Development",
+      "model": "haiku",
+      "tasks": [
+        {
+          "feature_id": "inventory-tracking",
+          "title": "API endpoints for Photo-Based Inventory Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Implement Express.js REST API for Photo-Based Inventory Tracking",
+          "technical_notes": "Upload photos of every piece of equipment, link receipts and warranties, track depreciation, generate comprehensive inventory reports for resale.",
+          "user_notes": "None",
+          "estimated_hours": 4,
+          "dependencies": [
+            "database schema ready"
+          ]
+        },
+        {
+          "feature_id": "maintenance-log",
+          "title": "API endpoints for Smart Maintenance Tracking & Reminders",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Implement Express.js REST API for Smart Maintenance Tracking & Reminders",
+          "technical_notes": "Service history logging, automated reminders (personalized, <2 notifications/week), provider suggestions, maintenance calendar integration.",
+          "user_notes": "None",
+          "estimated_hours": 4,
+          "dependencies": [
+            "database schema ready"
+          ]
+        },
+        {
+          "feature_id": "document-versioning",
+          "title": "API endpoints for Document Versioning & Audit Trail",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Implement Express.js REST API for Document Versioning & Audit Trail",
+          "technical_notes": "Version history for all documents, conflict resolution, complete audit trail, IF.TTT compliance with ed25519 signatures.",
+          "user_notes": "None",
+          "estimated_hours": 4,
+          "dependencies": [
+            "database schema ready"
+          ]
+        },
+        {
+          "feature_id": "expense-tracking",
+          "title": "API endpoints for Multi-User Expense Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Implement Express.js REST API for Multi-User Expense Tracking",
+          "technical_notes": "Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.",
+          "user_notes": "None",
+          "estimated_hours": 4,
+          "dependencies": [
+            "database schema ready"
+          ]
+        }
+      ]
+    },
+    "agent-2-frontend": {
+      "role": "Frontend Components (Vue 3)",
+      "model": "haiku",
+      "tasks": [
+        {
+          "feature_id": "inventory-tracking",
+          "title": "Vue components for Photo-Based Inventory Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Create Vue 3 components for Photo-Based Inventory Tracking",
+          "technical_notes": "Upload photos of every piece of equipment, link receipts and warranties, track depreciation, generate comprehensive inventory reports for resale.",
+          "user_notes": "None",
+          "estimated_hours": 3,
+          "dependencies": [
+            "API endpoints ready"
+          ]
+        },
+        {
+          "feature_id": "maintenance-log",
+          "title": "Vue components for Smart Maintenance Tracking & Reminders",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Create Vue 3 components for Smart Maintenance Tracking & Reminders",
+          "technical_notes": "Service history logging, automated reminders (personalized, <2 notifications/week), provider suggestions, maintenance calendar integration.",
+          "user_notes": "None",
+          "estimated_hours": 3,
+          "dependencies": [
+            "API endpoints ready"
+          ]
+        },
+        {
+          "feature_id": "document-versioning",
+          "title": "Vue components for Document Versioning & Audit Trail",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Create Vue 3 components for Document Versioning & Audit Trail",
+          "technical_notes": "Version history for all documents, conflict resolution, complete audit trail, IF.TTT compliance with ed25519 signatures.",
+          "user_notes": "None",
+          "estimated_hours": 3,
+          "dependencies": [
+            "API endpoints ready"
+          ]
+        },
+        {
+          "feature_id": "expense-tracking",
+          "title": "Vue components for Multi-User Expense Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Create Vue 3 components for Multi-User Expense Tracking",
+          "technical_notes": "Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.",
+          "user_notes": "None",
+          "estimated_hours": 3,
+          "dependencies": [
+            "API endpoints ready"
+          ]
+        }
+      ]
+    },
+    "agent-3-database": {
+      "role": "Database Schema & Migrations",
+      "model": "haiku",
+      "tasks": [
+        {
+          "feature_id": "inventory-tracking",
+          "title": "Database schema for Photo-Based Inventory Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Design SQLite schema for Photo-Based Inventory Tracking",
+          "technical_notes": "Upload photos of every piece of equipment, link receipts and warranties, track depreciation, generate comprehensive inventory reports for resale.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": []
+        },
+        {
+          "feature_id": "maintenance-log",
+          "title": "Database schema for Smart Maintenance Tracking & Reminders",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Design SQLite schema for Smart Maintenance Tracking & Reminders",
+          "technical_notes": "Service history logging, automated reminders (personalized, <2 notifications/week), provider suggestions, maintenance calendar integration.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": []
+        },
+        {
+          "feature_id": "document-versioning",
+          "title": "Database schema for Document Versioning & Audit Trail",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Design SQLite schema for Document Versioning & Audit Trail",
+          "technical_notes": "Version history for all documents, conflict resolution, complete audit trail, IF.TTT compliance with ed25519 signatures.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": []
+        },
+        {
+          "feature_id": "expense-tracking",
+          "title": "Database schema for Multi-User Expense Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Design SQLite schema for Multi-User Expense Tracking",
+          "technical_notes": "Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": []
+        }
+      ]
+    },
+    "agent-4-integration": {
+      "role": "Third-Party Integrations",
+      "model": "haiku",
+      "tasks": [
+        {
+          "feature_id": "expense-tracking",
+          "title": "Integration setup for Multi-User Expense Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Configure third-party integration for Multi-User Expense Tracking",
+          "technical_notes": "Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.",
+          "user_notes": "None",
+          "estimated_hours": 3,
+          "dependencies": [
+            "API endpoints ready"
+          ]
+        }
+      ]
+    },
+    "agent-5-testing": {
+      "role": "Testing & Documentation",
+      "model": "haiku",
+      "tasks": [
+        {
+          "feature_id": "inventory-tracking",
+          "title": "Tests for Photo-Based Inventory Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Write integration tests for Photo-Based Inventory Tracking",
+          "technical_notes": "Upload photos of every piece of equipment, link receipts and warranties, track depreciation, generate comprehensive inventory reports for resale.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": [
+            "frontend and backend complete"
+          ]
+        },
+        {
+          "feature_id": "maintenance-log",
+          "title": "Tests for Smart Maintenance Tracking & Reminders",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Write integration tests for Smart Maintenance Tracking & Reminders",
+          "technical_notes": "Service history logging, automated reminders (personalized, <2 notifications/week), provider suggestions, maintenance calendar integration.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": [
+            "frontend and backend complete"
+          ]
+        },
+        {
+          "feature_id": "document-versioning",
+          "title": "Tests for Document Versioning & Audit Trail",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Write integration tests for Document Versioning & Audit Trail",
+          "technical_notes": "Version history for all documents, conflict resolution, complete audit trail, IF.TTT compliance with ed25519 signatures.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": [
+            "frontend and backend complete"
+          ]
+        },
+        {
+          "feature_id": "expense-tracking",
+          "title": "Tests for Multi-User Expense Tracking",
+          "priority": "P0",
+          "status": "pending",
+          "description": "Write integration tests for Multi-User Expense Tracking",
+          "technical_notes": "Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.",
+          "user_notes": "None",
+          "estimated_hours": 2,
+          "dependencies": [
+            "frontend and backend complete"
+          ]
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_tasks": 21,
+    "estimated_total_hours": 53,
+    "p0_tasks": 21,
+    "deployment_instructions": [
+      "1. Agents poll AUTONOMOUS-NEXT-TASKS.md for pending tasks",
+      "2. Each agent updates task status: pending → in_progress → completed",
+      "3. Update agents.md after every task completion",
+      "4. Deploy to ~/public_html/digital-lab.ca/navidocs/",
+      "5. Test on https://digital-lab.ca/navidocs/"
+    ]
+  }
+}
