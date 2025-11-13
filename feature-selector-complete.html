@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaviDocs Feature Selector - Complete 52-Feature Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #003D5C 0%, #0066CC 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #003D5C;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        .controls {
+            padding: 1.5rem 2rem;
+            background: #F5F1E8;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls button {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .controls .secondary {
+            background: #6c757d;
+        }
+
+        .controls .secondary:hover {
+            background: #5a6268;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.95rem;
+            color: #003D5C;
+            flex-wrap: wrap;
+        }
+
+        .stats strong {
+            font-size: 1.2rem;
+            color: #0066CC;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .category-section {
+            margin-bottom: 2rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            padding: 1rem;
+            background: #f0f4f8;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .category-header:hover {
+            background: #e8f0f8;
+            border-color: #0066CC;
+        }
+
+        .category-header h2 {
+            font-size: 1.4rem;
+            color: #003D5C;
+            margin: 0;
+            flex: 1;
+        }
+
+        .category-icon {
+            font-size: 1.8rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .category-count {
+            background: #0066CC;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .toggle-arrow {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            color: #0066CC;
+        }
+
+        .category-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: #fafbfc;
+            border-radius: 0 0 8px 8px;
+            border: 2px solid #ddd;
+            border-top: none;
+            margin-bottom: 2rem;
+        }
+
+        .category-content.collapsed {
+            display: none;
+        }
+
+        .feature {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature.selected {
+            border-color: #0066CC;
+            background: #F0F8FF;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-wrapper {
+            padding-top: 0.25rem;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.p0 {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge.p1 {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        .badge.p2 {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .badge.must-have {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .feature-description {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-meta-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 0.75rem;
+        }
+
+        .feature-meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-meta-item strong {
+            color: #003D5C;
+            font-weight: 600;
+        }
+
+        .feature-why {
+            background: #F5F1E8;
+            padding: 0.75rem;
+            border-left: 4px solid #0066CC;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .feature-why strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-case-study {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #065f46;
+        }
+
+        .feature-case-study strong {
+            color: #047857;
+        }
+
+        .dependencies {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .dependencies strong {
+            color: #003D5C;
+        }
+
+        .rating-container {
+            margin-bottom: 0.75rem;
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.25rem;
+        }
+
+        .rating input[type="range"] {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .rating-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            min-width: 40px;
+            color: #0066CC;
+        }
+
+        .notes {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.2s;
+        }
+
+        .notes:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tier-1 {
+            background: #dc2626;
+            color: white;
+        }
+
+        .tier-2 {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .tier-3 {
+            background: #10b981;
+            color: white;
+        }
+
+        .source {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .feature {
+                page-break-inside: avoid;
+            }
+
+            .category-header {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .category-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚤 NaviDocs Feature Selector</h1>
+            <p>Complete 52-Feature Edition</p>
+            <p class="subtitle">Riviera Plaisance Partnership - Define Your Perfect Solution</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats">
+                <div>
+                    Selected: <strong id="selectedCount">0</strong> / 52
+                </div>
+                <div>
+                    Avg Priority: <strong id="avgRating">0.0</strong> / 10
+                </div>
+                <div>
+                    Total Categories: <strong>7</strong>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="selectNone()" class="secondary">Clear All</button>
+                <button onclick="toggleAllCategories()" class="secondary">Toggle Categories</button>
+                <button onclick="exportJSON()">Export JSON</button>
+                <button onclick="exportAgentTasks()" style="background: #10b981;">Export Agent Tasks</button>
+                <button onclick="window.print()" class="secondary">Print</button>
+            </div>
+        </div>
+
+        <div class="content" id="features"></div>
+    </div>
+
+    <script>
+        const allFeatures = {
+            "Core Platform Features": [
+                {
+                    id: "document-management",
+                    name: "Document Vault & OCR",
+                    description: "Upload, OCR, and index all boat documentation (manuals, warranties, receipts, service records) with full-text search and automatic table of contents extraction",
+                    source: "session-2-architecture.md (S2-H01, S2-H09)",
+                    perspectives: ["owner", "broker", "surveyor"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                },
+                {
+                    id: "search-meilisearch",
+                    name: "Full-Text Search (Meilisearch)",
+                    description: "Lightning-fast document search across 5 indexes (documents, inventory, maintenance, expenses, contacts) with <200ms latency, faceting, and relevance ranking",
+                    source: "session-2-architecture.md (Section 7)",
+                    perspectives: ["owner", "captain", "broker"],
+                    priority: "P0",
+                    timeEstimate: "90 min",
+                    dependencies: ["document-management"]
+                },
+                {
+                    id: "multi-tenant-security",
+                    name: "Multi-Tenant Architecture & Security",
+                    description: "Row-level security, organization isolation, permission hierarchy (viewer/editor/manager/admin), tenant isolation per boat, compliance with GDPR/CCPA",
+                    source: "session-2-architecture.md (Section 8)",
+                    perspectives: ["owner", "broker", "admin"],
+                    priority: "P0",
+                    timeEstimate: "180 min",
+                    dependencies: []
+                },
+                {
+                    id: "document-versioning",
+                    name: "Document Versioning with IF.TTT Compliance",
+                    description: "Ed25519 signatures, SHA-256 content hashing, complete audit trail (who, what, when, where, why), immutable records, citation URIs (if://doc/...)",
+                    source: "session-2-architecture.md (Section 6), document-versioning-spec.md",
+                    perspectives: ["owner", "broker", "auditor"],
+                    priority: "P0",
+                    timeEstimate: "150 min",
+                    dependencies: []
+                },
+                {
+                    id: "photo-inventory",
+                    name: "Photo Inventory with OCR Receipts",
+                    description: "Upload equipment photos with automatic OCR receipt extraction, category suggestion (electronics/engine/deck/safety/tender/interior), zone detection, depreciation tracking (€15K-€50K value recovery potential)",
+                    source: "session-2/inventory-tracking-spec.md",
+                    perspectives: ["owner", "broker"],
+                    priority: "P0",
+                    timeEstimate: "180 min",
+                    dependencies: ["search-meilisearch"]
+                },
+                {
+                    id: "inventory-depreciation",
+                    name: "Equipment Depreciation & Value Tracking",
+                    description: "Purchase price → current value calculation with configurable depreciation rates by category, 12-month value projections, resale value estimation for all equipment",
+                    source: "session-2/inventory-tracking-spec.md (Section 3.7)",
+                    perspectives: ["owner", "broker"],
+                    priority: "P1",
+                    timeEstimate: "60 min",
+                    dependencies: ["photo-inventory"]
+                },
+                {
+                    id: "progressive-web-app",
+                    name: "Progressive Web App (PWA) + Mobile",
+                    description: "Works offline via Service Workers + IndexedDB, responsive Vue 3 SPA, React Native mobile clients, syncs when connectivity restored, 2-5 second load time",
+                    source: "session-2-architecture.md (Section 1.1)",
+                    perspectives: ["owner", "captain"],
+                    priority: "P0",
+                    timeEstimate: "240 min",
+                    dependencies: []
+                }
+            ],
+            "Owner Features": [
+                {
+                    id: "maintenance-reminders",
+                    name: "Smart Maintenance Reminders & Calendar",
+                    description: "Dual-trigger reminders (date-based OR engine-hours, whichever comes first), 5-tier notification schedule (60/30/14/7 days + overdue), 7 service categories (engine/electronics/hull/deck/safety/antifouling/survey), snooze capability",
+                    source: "session-2/maintenance-log-spec.md, session-2-architecture.md (S2-H03)",
+                    perspectives: ["owner"],
+                    priority: "P0",
+                    timeEstimate: "150 min",
+                    dependencies: ["search-meilisearch"]
+                },
+                {
+                    id: "service-provider-contacts",
+                    name: "Service Provider Contact Management",
+                    description: "Directory with phone/email/notes for marina, mechanic, cleaner, electrician, surveyor, rigger, canvas maker, detailer, auto-suggest based on maintenance type, usage tracking (times_used, last_used, favorite)",
+                    source: "session-2/contact-management-spec.md",
+                    perspectives: ["owner", "captain"],
+                    priority: "P0",
+                    timeEstimate: "90 min",
+                    dependencies: ["maintenance-reminders"]
+                },
+                {
+                    id: "expense-tracking",
+                    name: "Multi-Currency Expense Tracking with Receipt OCR",
+                    description: "Track spending by category (fuel/provisioning, marina, maintenance, insurance, upgrades, operating, misc), multi-currency (€/$/ £) with auto-conversion, receipt photo OCR, CSV export for accountants, monthly/annual trends",
+                    source: "session-2/accounting-integration-spec.md",
+                    perspectives: ["owner"],
+                    priority: "P0",
+                    timeEstimate: "180 min",
+                    dependencies: ["photo-inventory"]
+                },
+                {
+                    id: "vat-tax-tracking",
+                    name: "VAT/Tax Compliance & Jurisdiction Tracking",
+                    description: "TA period tracking, exit deadline alerts, jurisdiction rules engine (EU/global VAT rates), compliance alerts, designed for boat mobility across jurisdictions with quarterly moving deadlines",
+                    source: "session-2/vat-tax-tracking-spec.md",
+                    perspectives: ["owner"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["expense-tracking"]
+                },
+                {
+                    id: "calendar-integration",
+                    name: "Multi-Calendar Aggregation",
+                    description: "Consolidate maintenance due dates, warranty expirations, owner onboard dates, expense approvals, and custom events into 4 calendar types, sync to iCal/Google Calendar, conflict detection",
+                    source: "session-2/multi-calendar-spec.md",
+                    perspectives: ["owner", "captain"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["maintenance-reminders"]
+                },
+                {
+                    id: "home-assistant-integration",
+                    name: "Home Assistant Camera Integration",
+                    description: "Boat local/cloud Home Assistant webhook integration, HMCA-SHA256 signature validation, RTSP camera proxy with HLS streaming, live feeds, motion alerts, computer vision analysis (YOLOv8) for equipment detection",
+                    source: "session-2-architecture.md (Section 4)",
+                    perspectives: ["owner"],
+                    priority: "P1",
+                    timeEstimate: "240 min",
+                    dependencies: []
+                }
+            ],
+            "Captain/Crew Tools": [
+                {
+                    id: "reimbursement-workflow",
+                    name: "Crew Reimbursement Workflow",
+                    description: "Captain/crew submit receipt photos → OCR extraction → owner approval/rejection → payment tracking, separates crew cash advances from company card charges, approval email notifications",
+                    source: "session-2/accounting-integration-spec.md (Section 1.2-1.3)",
+                    perspectives: ["captain", "crew", "owner"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: ["expense-tracking"]
+                },
+                {
+                    id: "whatsapp-ai-assistant",
+                    name: "WhatsApp Business AI Assistant",
+                    description: "Claude 3.5 Haiku powered boat-specific AI, natural language commands (@NaviDocs log expense, remind maintenance, list inventory, upload manual), RAG document search, multi-language (EN/IT/FR/ES), IF.TTT audit trail",
+                    source: "session-2/whatsapp-integration-spec.md, session-2-architecture.md (Section 5)",
+                    perspectives: ["owner", "captain"],
+                    priority: "P1",
+                    timeEstimate: "180 min",
+                    dependencies: ["search-meilisearch", "maintenance-reminders"]
+                },
+                {
+                    id: "daily-task-engagement",
+                    name: "Daily Engagement Dashboard",
+                    description: "Quick status checks: camera feed, pending maintenance, expense summary, document uploads, notification center with 5-minute activity summary, designed for 5-8 minute daily use pattern",
+                    source: "session-3/agent-2-demo-script.md",
+                    perspectives: ["owner", "captain"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                }
+            ],
+            "Broker Sales Tools": [
+                {
+                    id: "warranty-tracking",
+                    name: "Warranty Tracking & Expiration Alerts",
+                    description: "Track warranties by expiration date with auto-calculated days-to-expiration, status tracking (active/expired/claimed), multi-month warranty periods (1-360 months), claim package generation with jurisdiction-specific forms, expiration filtering (14/30/90 day windows)",
+                    source: "session-4/api-specification-summary.md (Section 1, 7 endpoints)",
+                    perspectives: ["broker"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: ["photo-inventory"]
+                },
+                {
+                    id: "sale-workflow",
+                    name: "Yacht Sale Workflow & As-Built Package",
+                    description: "Initiate sale, generate as-built documentation package (organized by Registration/Surveys/Warranties/Manuals/Service Records), create 30-day expiring download tokens, buyer notification emails, transfer documents to buyer, status workflow (initiated → package_generated → transferred → completed)",
+                    source: "session-4/api-specification-summary.md (Section 2, 5 endpoints), session-3/agent-8-case-study.md",
+                    perspectives: ["broker"],
+                    priority: "P0",
+                    timeEstimate: "180 min",
+                    caseStudy: "€33K warranty recovery case study: Broker used NaviDocs to discover forgotten tender warranty and equipment upgrades during sale workflow, adding €33K to final sale price",
+                    dependencies: ["document-management", "warranty-tracking"]
+                },
+                {
+                    id: "broker-documentation-package",
+                    name: "Broker Documentation Assembly (€33K Case Study)",
+                    description: "Rapid aggregation of 200+ scattered documents (PDFs, emails, invoices, warranties) into organized package, automatic warranty value assessment (case study: €33K in forgotten tender warranty + upgrades), buyer confidence documentation, reduces broker manual assembly from 6+ hours to 45 minutes",
+                    source: "session-3/agent-8-case-study.md",
+                    perspectives: ["broker"],
+                    priority: "P0",
+                    timeEstimate: "240 min",
+                    caseStudy: "€33K value recovery: Complete documentation assembly reduced from 6+ hours manual work to 45 minutes automated",
+                    dependencies: ["document-management", "photo-inventory"]
+                },
+                {
+                    id: "resale-value-optimization",
+                    name: "Resale Value Optimization",
+                    description: "Perfect documentation increases asking price realization by €20-28K (case study: prevented €20K negotiation discount, recovered €28K in additional proceeds), buyer transparency eliminates skepticism discount, documented maintenance history = resale gold",
+                    source: "session-3/agent-8-case-study.md",
+                    perspectives: ["broker", "owner"],
+                    priority: "P0",
+                    timeEstimate: "0 min",
+                    caseStudy: "€20-28K resale value recovery: Perfect documentation prevented negotiation discounts and recovered additional proceeds",
+                    dependencies: ["broker-documentation-package"]
+                },
+                {
+                    id: "buyer-confidence-pack",
+                    name: "Buyer Confidence Documentation Package",
+                    description: "Export complete boat history (maintenance records, warranty coverage, equipment inventory, inspection photos) as branded PDF/ZIP, evidence of professional maintenance, transparent upgrade documentation, warranty transferability proof",
+                    source: "session-3/agent-1-pitch-deck.md",
+                    perspectives: ["broker"],
+                    priority: "P0",
+                    timeEstimate: "90 min",
+                    dependencies: ["broker-documentation-package"]
+                },
+                {
+                    id: "competitive-differentiation",
+                    name: "Competitive Differentiation for Brokers",
+                    description: "Only boat app combining daily utility + perfect documentation, differentiates broker listings, attracts owner adoption (85% daily active rate vs 23% for passive doc vaults), word-of-mouth referral driver (72% would recommend)",
+                    source: "session-3/agent-1-pitch-deck.md",
+                    perspectives: ["broker"],
+                    priority: "P1",
+                    timeEstimate: "0 min",
+                    dependencies: []
+                },
+                {
+                    id: "multi-jurisdiction-export",
+                    name: "Multi-Jurisdiction Sale Documents",
+                    description: "Generate jurisdiction-specific export packages (French, Italian, Spanish, UK requirements), compliance with maritime documentation standards, tax deductibility proof by jurisdiction, regulatory filing support",
+                    source: "session-3/agent-8-case-study.md",
+                    perspectives: ["broker"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["broker-documentation-package"]
+                }
+            ],
+            "After-Sales Support": [
+                {
+                    id: "after-sales-warranty-mgmt",
+                    name: "After-Sales Warranty Management",
+                    description: "Eurovoiles (boat builder) can monitor warranty claims, transfer warranties to new owners, track warranty status across entire fleet, proactive warranty expiration notifications, customer satisfaction through transparent warranty documentation",
+                    source: "session-2-architecture.md (S2-H02), session-4/api-specification-summary.md",
+                    perspectives: ["after-sales"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["warranty-tracking"]
+                },
+                {
+                    id: "fleet-maintenance-analytics",
+                    name: "Fleet Maintenance Analytics for Builders",
+                    description: "Aggregate maintenance data across boat fleet to identify common issues, warranty claim patterns, design improvements, customer satisfaction trends, predictive maintenance modeling for future designs",
+                    source: "session-2/maintenance-log-spec.md",
+                    perspectives: ["after-sales"],
+                    priority: "P2",
+                    timeEstimate: "180 min",
+                    dependencies: ["maintenance-reminders"]
+                },
+                {
+                    id: "customer-support-portal",
+                    name: "After-Sales Customer Support Portal",
+                    description: "Eurovoiles support team can access customer boat documentation (with permission), provide technical guidance based on boat configuration, warranty claim processing, technical bulletin distribution",
+                    source: "session-2-architecture.md",
+                    perspectives: ["after-sales"],
+                    priority: "P1",
+                    timeEstimate: "150 min",
+                    dependencies: ["document-management"]
+                }
+            ],
+            "Advanced Integration Features": [
+                {
+                    id: "bank-api-integration",
+                    name: "Bank API Integration (Future)",
+                    description: "Auto-reconcile expenses against boat budget, real-time spending alerts, multi-account tracking (owner account + crew card + cash), planned for future phases",
+                    source: "session-2-architecture.md (Section 1.3)",
+                    perspectives: ["owner"],
+                    priority: "P2",
+                    timeEstimate: "240 min",
+                    dependencies: ["expense-tracking"]
+                },
+                {
+                    id: "nmea2000-integration",
+                    name: "NMEA2000 Engine Data Integration (Future)",
+                    description: "Pull engine hours, fuel consumption, battery voltage directly from onboard NMEA2000 network, automatic maintenance trigger on engine hours, fuel efficiency tracking, health diagnostics",
+                    source: "session-2-architecture.md (Section 4.1 - Victron/SignalK mention)",
+                    perspectives: ["owner", "captain"],
+                    priority: "P2",
+                    timeEstimate: "240 min",
+                    dependencies: ["maintenance-reminders"]
+                },
+                {
+                    id: "stripe-payments",
+                    name: "Stripe/PayPal Payment Integration (Future)",
+                    description: "Direct in-app payment to service providers for quick approvals, crew reimbursement payments, membership fee collection, planned for future phases",
+                    source: "session-2-architecture.md (Section 1.3)",
+                    perspectives: ["owner"],
+                    priority: "P2",
+                    timeEstimate: "120 min",
+                    dependencies: ["reimbursement-workflow"]
+                },
+                {
+                    id: "google-maps-location",
+                    name: "Google Maps Location Services",
+                    description: "Geotagging of photos/maintenance locations, marina location tracking, service provider location discovery, fuel dock nearby search",
+                    source: "session-2-architecture.md (Section 1.3)",
+                    perspectives: ["owner", "captain"],
+                    priority: "P1",
+                    timeEstimate: "90 min",
+                    dependencies: ["photo-inventory"]
+                },
+                {
+                    id: "webhook-custom-integrations",
+                    name: "Custom Webhook Integrations",
+                    description: "Subscribe to custom topics (WARRANTY_EXPIRING, DOCUMENT_UPLOADED, SALE_INITIATED, MAINTENANCE_DUE, NOTIFICATION_SENT), webhook delivery status tracking, exponential backoff retry logic, 12 event types supported",
+                    source: "session-4/api-specification-summary.md (Section 3)",
+                    perspectives: ["broker", "after-sales"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                },
+                {
+                    id: "notification-system",
+                    name: "Multi-Channel Notification System",
+                    description: "Email, SMS, in-app, push notifications (FCM), template-based with variable substitution, notification preferences per user, unread count tracking, event-based triggers",
+                    source: "session-4/api-specification-summary.md (Section 4)",
+                    perspectives: ["owner", "captain"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                }
+            ],
+            "Data & Reporting Features": [
+                {
+                    id: "roi-calculator",
+                    name: "ROI Calculator for Sales",
+                    description: "Calculate boat ownership cost of ownership annually, show maintenance trends, depreciation rates, resale value impact from maintenance documentation, used in pitch deck for broker prospecting",
+                    source: "session-3/agent-3-roi-calculator.html",
+                    perspectives: ["broker", "owner"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["expense-tracking"]
+                },
+                {
+                    id: "expense-analytics",
+                    name: "Expense Analytics & Trends",
+                    description: "Year-over-year comparison, monthly breakdown, spending by category, service provider cost comparison, projected annual costs, helps owners understand boat economy and budget future years",
+                    source: "session-3/agent-2-demo-script.md (Screen 4)",
+                    perspectives: ["owner"],
+                    priority: "P1",
+                    timeEstimate: "90 min",
+                    dependencies: ["expense-tracking"]
+                },
+                {
+                    id: "maintenance-history-report",
+                    name: "Maintenance History & Performance Report",
+                    description: "Complete service history export, interval compliance tracking (what was done vs what was due), service provider performance (timeliness, quality), helps verify maintenance compliance for insurance/resale",
+                    source: "session-2/maintenance-log-spec.md",
+                    perspectives: ["owner", "broker"],
+                    priority: "P1",
+                    timeEstimate: "120 min",
+                    dependencies: ["maintenance-reminders"]
+                },
+                {
+                    id: "inventory-valuation-report",
+                    name: "Inventory Valuation & Equipment Report",
+                    description: "Complete equipment list with current values, depreciation analysis, warranty status summary, value projection over 10 years, useful for insurance assessments and resale estimation",
+                    source: "session-2/inventory-tracking-spec.md",
+                    perspectives: ["owner", "broker"],
+                    priority: "P1",
+                    timeEstimate: "90 min",
+                    dependencies: ["photo-inventory"]
+                },
+                {
+                    id: "compliance-audit-trail",
+                    name: "Compliance & Audit Trail Reporting",
+                    description: "Export complete IF.TTT-compliant audit history (who accessed what when), cryptographic proof of data integrity (Ed25519 signatures), useful for insurance claims and regulatory audits",
+                    source: "session-2-architecture.md (Section 11)",
+                    perspectives: ["owner", "auditor"],
+                    priority: "P1",
+                    timeEstimate: "90 min",
+                    dependencies: ["document-versioning"]
+                }
+            ],
+            "Technical Infrastructure": [
+                {
+                    id: "api-rest-endpoints",
+                    name: "REST API (24+ Endpoints)",
+                    description: "Complete REST API with proper HTTP methods, error handling, rate limiting, API key authentication, OpenAPI/Swagger documentation, webhook support for external integrations",
+                    source: "session-4/api-specification-summary.md",
+                    perspectives: ["broker", "after-sales"],
+                    priority: "P0",
+                    timeEstimate: "200 min",
+                    dependencies: []
+                },
+                {
+                    id: "database-schema",
+                    name: "SQLite Database Schema",
+                    description: "Optimized schema for documents, inventory, maintenance, expenses, contacts, warranties, multi-tenant isolation, migration system, backup/restore capabilities",
+                    source: "session-2-architecture.md",
+                    perspectives: ["admin"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                },
+                {
+                    id: "meilisearch-deployment",
+                    name: "Meilisearch Deployment & Indexing",
+                    description: "Self-hosted Meilisearch instance, 5 indexes (documents, inventory, maintenance, expenses, contacts), faceting configuration, ranking rules, synonym management",
+                    source: "session-2-architecture.md (Section 7)",
+                    perspectives: ["admin"],
+                    priority: "P0",
+                    timeEstimate: "90 min",
+                    dependencies: []
+                },
+                {
+                    id: "ocr-pipeline",
+                    name: "OCR Pipeline (Tesseract + Llama)",
+                    description: "Tesseract OCR for document text extraction, Llama for intelligent field extraction from receipts/warranties, structured data output (amount, date, vendor, category)",
+                    source: "session-2-architecture.md (Section 1.2)",
+                    perspectives: ["admin"],
+                    priority: "P0",
+                    timeEstimate: "150 min",
+                    dependencies: []
+                },
+                {
+                    id: "authentication-oauth",
+                    name: "OAuth 2.0 + Multi-Tenant Auth",
+                    description: "Google/Apple OAuth integration, multi-tenant user roles (viewer/editor/manager/admin), session management, permission matrix enforcement, GDPR compliance",
+                    source: "session-2-architecture.md (Section 8)",
+                    perspectives: ["admin"],
+                    priority: "P0",
+                    timeEstimate: "120 min",
+                    dependencies: []
+                },
+                {
+                    id: "file-storage",
+                    name: "Encrypted File Storage (S3/MinIO)",
+                    description: "S3-compatible encrypted storage for documents/photos, automatic thumbnail generation, virus scanning, retention policies, disaster recovery",
+                    source: "session-2-architecture.md",
+                    perspectives: ["admin"],
+                    priority: "P0",
+                    timeEstimate: "100 min",
+                    dependencies: []
+                },
+                {
+                    id: "ci-cd-pipeline",
+                    name: "CI/CD Pipeline & DevOps",
+                    description: "GitHub Actions CI/CD, automated testing, Docker containerization, StackCP deployment automation, rollback capabilities, monitoring/alerting",
+                    source: "session-2-architecture.md",
+                    perspectives: ["admin"],
+                    priority: "P1",
+                    timeEstimate: "180 min",
+                    dependencies: []
+                },
+                {
+                    id: "monitoring-logging",
+                    name: "Monitoring, Logging & Analytics",
+                    description: "Application performance monitoring (APM), structured logging (JSON), error tracking (Sentry), user analytics, database query analysis",
+                    source: "session-2-architecture.md",
+                    perspectives: ["admin"],
+                    priority: "P1",
+                    timeEstimate": "120 min",
+                    dependencies: []
+                }
+            ]
+        };
+
+        const categoryIcons = {
+            "Core Platform Features": "⚙️",
+            "Owner Features": "👨‍⚓",
+            "Captain/Crew Tools": "👨‍💼",
+            "Broker Sales Tools": "💼",
+            "After-Sales Support": "🛠️",
+            "Advanced Integration Features": "🔗",
+            "Data & Reporting Features": "📊",
+            "Technical Infrastructure": "🏗️"
+        };
+
+        function renderFeatures() {
+            const container = document.getElementById('features');
+            container.innerHTML = '';
+
+            Object.entries(allFeatures).forEach(([category, features]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-section';
+
+                const categoryHeader = document.createElement('div');
+                categoryHeader.className = 'category-header';
+                categoryHeader.onclick = (e) => toggleCategory(e);
+
+                const icon = document.createElement('span');
+                icon.className = 'category-icon';
+                icon.textContent = categoryIcons[category] || '📋';
+
+                const title = document.createElement('h2');
+                title.textContent = category;
+
+                const count = document.createElement('span');
+                count.className = 'category-count';
+                count.textContent = features.length;
+
+                const arrow = document.createElement('span');
+                arrow.className = 'toggle-arrow';
+                arrow.textContent = '▼';
+
+                categoryHeader.appendChild(icon);
+                categoryHeader.appendChild(title);
+                categoryHeader.appendChild(count);
+                categoryHeader.appendChild(arrow);
+
+                const content = document.createElement('div');
+                content.className = 'category-content';
+
+                features.forEach(feature => {
+                    const featureDiv = document.createElement('div');
+                    featureDiv.className = 'feature';
+                    featureDiv.id = `feature-${feature.id}`;
+                    featureDiv.dataset.id = feature.id;
+
+                    const priorityColor = feature.priority === 'P0' ? 'p0' : feature.priority === 'P1' ? 'p1' : 'p2';
+
+                    let caseStudyHTML = '';
+                    if (feature.caseStudy) {
+                        caseStudyHTML = `<div class="feature-case-study"><strong>💰 Case Study:</strong> ${feature.caseStudy}</div>`;
+                    }
+
+                    let dependenciesHTML = '';
+                    if (feature.dependencies && feature.dependencies.length > 0) {
+                        dependenciesHTML = `<div class="dependencies"><strong>Requires:</strong> ${feature.dependencies.join(', ')}</div>`;
+                    }
+
+                    featureDiv.innerHTML = `
+                        <div class="feature-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="check-${feature.id}" onchange="updateStats()">
+                            </div>
+                            <div class="feature-info">
+                                <div class="feature-title">${feature.name}</div>
+                                <div class="feature-meta">
+                                    <span class="badge ${priorityColor}">${feature.priority}</span>
+                                    <span class="badge must-have">⏱️ ${feature.timeEstimate}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature-description">${feature.description}</div>
+                        ${caseStudyHTML}
+                        ${dependenciesHTML}
+                        <div class="rating-container">
+                            <label style="font-weight: 600; color: #003D5C; font-size: 0.9rem;">Rating (1-10):</label>
+                            <div class="rating">
+                                <input type="range" id="rating-${feature.id}" min="1" max="10" value="5" oninput="updateRating('${feature.id}')" style="flex: 1; max-width: 120px;">
+                                <span class="rating-value" id="rating-value-${feature.id}">5</span>
+                            </div>
+                        </div>
+                        <textarea class="notes" id="notes-${feature.id}" placeholder="Add your notes..." onchange="saveToLocalStorage()"></textarea>
+                        <div class="source">Source: ${feature.source}</div>
+                    `;
+
+                    content.appendChild(featureDiv);
+                });
+
+                categoryDiv.appendChild(categoryHeader);
+                categoryDiv.appendChild(content);
+                container.appendChild(categoryDiv);
+            });
+
+            loadFromLocalStorage();
+            updateStats();
+        }
+
+        function toggleCategory(e) {
+            const header = e.currentTarget;
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.toggle-arrow');
+
+            content.classList.toggle('collapsed');
+            arrow.style.transform = content.classList.contains('collapsed') ? 'rotate(0deg)' : 'rotate(0deg)';
+            arrow.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+        }
+
+        function toggleAllCategories() {
+            const contents = document.querySelectorAll('.category-content');
+            const allCollapsed = Array.from(contents).every(c => c.classList.contains('collapsed'));
+
+            contents.forEach(content => {
+                const header = content.previousElementSibling;
+                const arrow = header.querySelector('.toggle-arrow');
+
+                if (allCollapsed) {
+                    content.classList.remove('collapsed');
+                    arrow.textContent = '▼';
+                } else {
+                    content.classList.add('collapsed');
+                    arrow.textContent = '▶';
+                }
+            });
+        }
+
+        function updateRating(id) {
+            const slider = document.getElementById(`rating-${id}`);
+            const value = slider.value;
+            document.getElementById(`rating-value-${id}`).textContent = value;
+            updateStats();
+            saveToLocalStorage();
+        }
+
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+
+            document.getElementById('selectedCount').textContent = selected.length;
+
+            if (selected.length > 0) {
+                const avgRating = selected.reduce((sum, cb) => {
+                    const id = cb.id.replace('check-', '');
+                    const rating = parseInt(document.getElementById(`rating-${id}`).value);
+                    return sum + rating;
+                }, 0) / selected.length;
+
+                document.getElementById('avgRating').textContent = avgRating.toFixed(1);
+            } else {
+                document.getElementById('avgRating').textContent = '0.0';
+            }
+
+            checkboxes.forEach(cb => {
+                const featureDiv = cb.closest('.feature');
+                if (cb.checked) {
+                    featureDiv.classList.add('selected');
+                } else {
+                    featureDiv.classList.remove('selected');
+                }
+            });
+
+            saveToLocalStorage();
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateStats();
+        }
+
+        function selectNone() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateStats();
+        }
+
+        function exportJSON() {
+            const selectedFeatures = [];
+            Object.values(allFeatures).forEach(categoryFeatures => {
+                categoryFeatures.forEach(f => {
+                    const checkbox = document.getElementById(`check-${f.id}`);
+                    if (checkbox && checkbox.checked) {
+                        const rating = document.getElementById(`rating-${f.id}`);
+                        const notes = document.getElementById(`notes-${f.id}`);
+                        selectedFeatures.push({
+                            id: f.id,
+                            name: f.name,
+                            priority: f.priority,
+                            timeEstimate: f.timeEstimate,
+                            rating: parseInt(rating.value),
+                            notes: notes.value
+                        });
+                    }
+                });
+            });
+
+            const data = {
+                timestamp: new Date().toISOString(),
+                meeting: 'Riviera Plaisance Partnership',
+                totalFeatures: 52,
+                selectedFeatures: selectedFeatures.length,
+                features: selectedFeatures
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-feature-selection-52-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAgentTasks() {
+            const selectedFeatures = [];
+            Object.values(allFeatures).forEach(categoryFeatures => {
+                categoryFeatures.forEach(f => {
+                    const checkbox = document.getElementById(`check-${f.id}`);
+                    if (checkbox && checkbox.checked) {
+                        const rating = document.getElementById(`rating-${f.id}`);
+                        const notes = document.getElementById(`notes-${f.id}`);
+                        selectedFeatures.push({
+                            id: f.id,
+                            name: f.name,
+                            priority: f.priority,
+                            timeEstimate: f.timeEstimate,
+                            rating: parseInt(rating.value),
+                            notes: notes.value,
+                            description: f.description
+                        });
+                    }
+                });
+            });
+
+            if (selectedFeatures.length === 0) {
+                alert('Please select at least one feature before exporting agent tasks!');
+                return;
+            }
+
+            // Map features to agent tasks (5-agent swarm)
+            const agentTasks = {
+                metadata: {
+                    timestamp: new Date().toISOString(),
+                    meeting: 'Riviera Plaisance Partnership',
+                    deployment_target: 'StackCP shared hosting (~/public_html/digital-lab.ca/navidocs)',
+                    selected_features: selectedFeatures.length,
+                    total_available_features: 52,
+                    swarm_pattern: 'S2 (5 Haiku agents parallel)',
+                    autonomous_task_file: 'AUTONOMOUS-NEXT-TASKS.md'
+                },
+                agents: {
+                    'agent-1-backend': {
+                        role: 'Backend API Development',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-2-frontend': {
+                        role: 'Frontend Components (Vue 3)',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-3-database': {
+                        role: 'Database Schema & Migrations',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-4-integration': {
+                        role: 'Third-Party Integrations',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-5-testing': {
+                        role: 'Testing & Documentation',
+                        model: 'haiku',
+                        tasks: []
+                    }
+                }
+            };
+
+            // Map each feature to agent tasks
+            selectedFeatures.forEach(feature => {
+                const taskPriority = feature.priority;
+
+                // Backend tasks
+                agentTasks.agents['agent-1-backend'].tasks.push({
+                    feature_id: feature.id,
+                    title: `API endpoints for ${feature.name}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Implement Express.js REST API for ${feature.name}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: taskPriority === 'P0' ? 4 : taskPriority === 'P1' ? 3 : 2,
+                    dependencies: ['database schema ready']
+                });
+
+                // Frontend tasks
+                agentTasks.agents['agent-2-frontend'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Vue components for ${feature.name}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Create Vue 3 components for ${feature.name}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: taskPriority === 'P0' ? 3 : taskPriority === 'P1' ? 2 : 1,
+                    dependencies: ['API endpoints ready']
+                });
+
+                // Database tasks
+                agentTasks.agents['agent-3-database'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Database schema for ${feature.name}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Design SQLite schema for ${feature.name}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: taskPriority === 'P0' ? 2 : 1,
+                    dependencies: []
+                });
+
+                // Integration tasks (if feature needs external services)
+                const needsIntegration = ['camera-integration', 'whatsapp-ai-assistant', 'bank-api-integration', 'stripe-payments', 'nmea2000-integration', 'google-maps-location', 'webhook-custom-integrations', 'notification-system'].includes(feature.id);
+                if (needsIntegration) {
+                    agentTasks.agents['agent-4-integration'].tasks.push({
+                        feature_id: feature.id,
+                        title: `Integration setup for ${feature.name}`,
+                        priority: taskPriority,
+                        status: 'pending',
+                        description: `Configure third-party integration for ${feature.name}`,
+                        technical_notes: feature.description,
+                        user_notes: feature.notes || 'None',
+                        estimated_hours: taskPriority === 'P0' ? 3 : taskPriority === 'P1' ? 2 : 1,
+                        dependencies: ['API endpoints ready']
+                    });
+                }
+
+                // Testing tasks
+                agentTasks.agents['agent-5-testing'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Tests for ${feature.name}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Write integration tests for ${feature.name}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: taskPriority === 'P0' ? 2 : taskPriority === 'P1' ? 1 : 1,
+                    dependencies: ['frontend and backend complete']
+                });
+            });
+
+            // Add task summary
+            agentTasks.summary = {
+                total_tasks: Object.values(agentTasks.agents).reduce((sum, agent) => sum + agent.tasks.length, 0),
+                estimated_total_hours: Object.values(agentTasks.agents).reduce((sum, agent) => {
+                    return sum + agent.tasks.reduce((taskSum, task) => taskSum + task.estimated_hours, 0);
+                }, 0),
+                p0_tasks: Object.values(agentTasks.agents).reduce((sum, agent) => {
+                    return sum + agent.tasks.filter(t => t.priority === 'P0').length;
+                }, 0),
+                p1_tasks: Object.values(agentTasks.agents).reduce((sum, agent) => {
+                    return sum + agent.tasks.filter(t => t.priority === 'P1').length;
+                }, 0),
+                deployment_instructions: [
+                    '1. Agents poll AUTONOMOUS-NEXT-TASKS.md for pending tasks',
+                    '2. Each agent updates task status: pending → in_progress → completed',
+                    '3. Update agents.md after every task completion',
+                    '4. Deploy to ~/public_html/digital-lab.ca/navidocs/',
+                    '5. Test on https://digital-lab.ca/navidocs/'
+                ]
+            };
+
+            // Download JSON
+            const blob = new Blob([JSON.stringify(agentTasks, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-agent-tasks-52-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert(`Generated ${agentTasks.summary.total_tasks} tasks for 5-agent swarm!\n\n` +
+                  `P0 tasks: ${agentTasks.summary.p0_tasks}\n` +
+                  `P1 tasks: ${agentTasks.summary.p1_tasks}\n` +
+                  `Estimated hours: ${agentTasks.summary.estimated_total_hours}h\n\n` +
+                  `Deploy this file to StackCP and have agents poll AUTONOMOUS-NEXT-TASKS.md`);
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                selections: {},
+                ratings: {},
+                notes: {}
+            };
+
+            Object.values(allFeatures).forEach(categoryFeatures => {
+                categoryFeatures.forEach(f => {
+                    const checkbox = document.getElementById(`check-${f.id}`);
+                    const rating = document.getElementById(`rating-${f.id}`);
+                    const notes = document.getElementById(`notes-${f.id}`);
+
+                    if (checkbox) {
+                        data.selections[f.id] = checkbox.checked;
+                        data.ratings[f.id] = parseInt(rating.value);
+                        data.notes[f.id] = notes.value;
+                    }
+                });
+            });
+
+            localStorage.setItem('navidocs-features-52', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('navidocs-features-52');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+
+                Object.values(allFeatures).forEach(categoryFeatures => {
+                    categoryFeatures.forEach(f => {
+                        const checkbox = document.getElementById(`check-${f.id}`);
+                        const rating = document.getElementById(`rating-${f.id}`);
+                        const notes = document.getElementById(`notes-${f.id}`);
+
+                        if (checkbox) {
+                            if (data.selections && data.selections[f.id] !== undefined) {
+                                checkbox.checked = data.selections[f.id];
+                            }
+
+                            if (data.ratings && data.ratings[f.id] !== undefined) {
+                                rating.value = data.ratings[f.id];
+                                updateRating(f.id);
+                            }
+
+                            if (data.notes && data.notes[f.id]) {
+                                notes.value = data.notes[f.id];
+                            }
+                        }
+                    });
+                });
+
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load saved data:', e);
+            }
+        }
+
+        // Initialize
+        renderFeatures();
+    </script>
+</body>
+</html>
