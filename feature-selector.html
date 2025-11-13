@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaviDocs Feature Selector - Riviera Plaisance Meeting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #003D5C 0%, #0066CC 100%);
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #003D5C;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            padding: 1.5rem 2rem;
+            background: #F5F1E8;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .controls button {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .controls .secondary {
+            background: #6c757d;
+        }
+
+        .controls .secondary:hover {
+            background: #5a6268;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.95rem;
+            color: #003D5C;
+        }
+
+        .stats strong {
+            font-size: 1.2rem;
+            color: #0066CC;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .feature {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .feature.selected {
+            border-color: #0066CC;
+            background: #F0F8FF;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.15);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-wrapper {
+            padding-top: 0.25rem;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #003D5C;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge.must-have {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.priority {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge.savings {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .feature-why {
+            background: #F5F1E8;
+            padding: 1rem;
+            border-left: 4px solid #0066CC;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .feature-why strong {
+            color: #003D5C;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-container {
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .rating input[type="range"] {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .rating-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            min-width: 60px;
+            color: #0066CC;
+        }
+
+        .notes {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s;
+        }
+
+        .notes:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tier-1 {
+            background: #dc2626;
+            color: white;
+        }
+
+        .tier-2 {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .tier-3 {
+            background: #10b981;
+            color: white;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .feature {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚤 NaviDocs Feature Selector</h1>
+            <p>Riviera Plaisance Partnership - Define Your Perfect Solution</p>
+        </header>
+
+        <div class="controls">
+            <div class="stats">
+                <div>
+                    Selected: <strong id="selectedCount">0</strong> / 11
+                </div>
+                <div>
+                    Avg Must-Have: <strong id="avgMustHave">0.0</strong> / 10
+                </div>
+                <div>
+                    Total Savings: <strong id="totalSavings">€0</strong>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="selectNone()" class="secondary">Clear All</button>
+                <button onclick="exportJSON()">Export JSON</button>
+                <button onclick="exportAgentTasks()" style="background: #10b981;">Export Agent Tasks</button>
+                <button onclick="window.print()" class="secondary">Print</button>
+            </div>
+        </div>
+
+        <div class="content" id="features"></div>
+    </div>
+
+    <script>
+        const features = [
+            {
+                id: 'inventory-tracking',
+                title: 'Photo-Based Inventory Tracking',
+                tier: 1,
+                priority: 'CRITICAL',
+                savings: '€15,000 - €50,000',
+                mustHave: 10,
+                why: 'Solves #1 pain point: Brokers lose €15K-€50K per boat at resale due to incomplete inventory documentation. NaviDocs provides photo-based equipment catalog with depreciation calculator and receipt/warranty linking.',
+                description: 'Upload photos of every piece of equipment, link receipts and warranties, track depreciation, generate comprehensive inventory reports for resale.',
+                session: 'Session 2 Agent S2-H02'
+            },
+            {
+                id: 'maintenance-log',
+                title: 'Smart Maintenance Tracking & Reminders',
+                tier: 1,
+                priority: 'CRITICAL',
+                savings: '€5,000 - €100,000',
+                mustHave: 9,
+                why: 'Prevents €5K-€100K in warranty penalties. 100% of boats experience maintenance chaos. Smart reminders ensure service deadlines are never missed, preserving warranty coverage.',
+                description: 'Service history logging, automated reminders (personalized, <2 notifications/week), provider suggestions, maintenance calendar integration.',
+                session: 'Session 2 Agent S2-H03'
+            },
+            {
+                id: 'document-versioning',
+                title: 'Document Versioning & Audit Trail',
+                tier: 1,
+                priority: 'CRITICAL',
+                savings: '€1,000 - €10,000',
+                mustHave: 10,
+                why: 'IF.TTT compliance required for warranty claims and legal requirements. Complete audit trail prevents €1K-€10K in delayed insurance/warranty claims.',
+                description: 'Version history for all documents, conflict resolution, complete audit trail, IF.TTT compliance with ed25519 signatures.',
+                session: 'Session 2 Agent S2-H09'
+            },
+            {
+                id: 'expense-tracking',
+                title: 'Multi-User Expense Tracking',
+                tier: 1,
+                priority: 'CRITICAL',
+                savings: '€60,000 - €100,000',
+                mustHave: 8,
+                why: 'Uncovers €60K-€100K per year in hidden costs. 100% of boat owners struggle with expense tracking. OCR receipt processing + approval workflow + VAT visibility.',
+                description: 'Receipt upload with OCR, multi-user approval workflow, budget alerts, bank integration API, VAT/tax tracking.',
+                session: 'Session 2 Agent S2-H06'
+            },
+            {
+                id: 'camera-integration',
+                title: 'Home Assistant Camera Integration',
+                tier: 2,
+                priority: 'HIGH',
+                savings: 'Psychological Value',
+                mustHave: 7,
+                why: '80% of high-net-worth owners experience remote monitoring anxiety. Daily camera alerts create sticky engagement. Open HA integration works with any RTSP camera (competitive advantage).',
+                description: 'Home Assistant RTSP/ONVIF integration, live camera feeds, motion detection alerts, daily health digest (battery, bilge, temperature).',
+                session: 'Session 2 Agent S2-H04'
+            },
+            {
+                id: 'search-ux',
+                title: 'Impeccable Search (Meilisearch)',
+                tier: 2,
+                priority: 'HIGH',
+                savings: 'Time Savings',
+                mustHave: 8,
+                why: 'User requirement: "No long lists - structured, impeccable search results." Meilisearch faceting finds any manual page in seconds. Critical for 19-25 hour time savings claim.',
+                description: 'Meilisearch faceting, structured results (equipment facets, category filtering), typo tolerance, instant search (<200ms), highlight matching text.',
+                session: 'Session 2 Agent S2-H07'
+            },
+            {
+                id: 'multi-calendar',
+                title: 'Multi-Calendar System (4 Types)',
+                tier: 2,
+                priority: 'HIGH',
+                savings: 'Organizational Value',
+                mustHave: 6,
+                why: 'Yacht owners need 4 separate calendars: (1) Service deadlines, (2) Warranty expirations, (3) Owner onboard periods, (4) Work roadmap. Unified view prevents scheduling conflicts.',
+                description: '4 calendar types: Service calendar, Warranty calendar, Owner onboard calendar, Work roadmap. Color-coded, integrated view, iCal export.',
+                session: 'Session 2 Agent S2-H03A'
+            },
+            {
+                id: 'contact-management',
+                title: 'Contact Management & Provider Directory',
+                tier: 2,
+                priority: 'HIGH',
+                savings: '€500 - €5,000',
+                mustHave: 6,
+                why: 'Finding qualified service providers costs €500-€5K per repair in delays. Contact directory with search/filtering, service history linking, and provider suggestions accelerates repairs.',
+                description: 'Marina, mechanics, vendors directory. Search/filtering by service type, service history linking, provider suggestions based on past work.',
+                session: 'Session 2 Agent S2-H05'
+            },
+            {
+                id: 'vat-tax-tracking',
+                title: 'VAT/Tax Compliance Tracking',
+                tier: 3,
+                priority: 'MEDIUM',
+                savings: '€20,000 - €100,000',
+                mustHave: 7,
+                why: '30% of yachts in EU face €20K-€100K VAT penalties. Non-VAT boats must exit EU for customs stamp. NaviDocs tracks EU entry/exit, sends 6-month reminders, prevents catastrophic fines.',
+                description: 'EU entry/exit tracking, 6-month EU stay reminders, customs stamp requirements, VAT status per boat, penalty alerts.',
+                session: 'Session 2 Agent S2-H03A'
+            },
+            {
+                id: 'whatsapp-integration',
+                title: 'WhatsApp Notification Delivery',
+                tier: 3,
+                priority: 'MEDIUM',
+                savings: 'Engagement Value',
+                mustHave: 5,
+                why: 'Multi-channel notifications (email + SMS + WhatsApp + in-app) ensure owners never miss critical alerts. WhatsApp has 98% open rate vs 20% for email.',
+                description: 'WhatsApp Business API integration, notification delivery via preferred channel, read receipts, rich media support (photos, PDFs).',
+                session: 'Session 2 Agent S2-H08'
+            },
+            {
+                id: 'accounting-integration',
+                title: 'Multi-User Accounting Module (Spliit Fork)',
+                tier: 3,
+                priority: 'MEDIUM',
+                savings: 'Shared Ownership',
+                mustHave: 4,
+                why: 'Shared boat ownership (co-owners, charter guests) requires expense splitting. Spliit fork provides multi-user approval workflow, budget alerts, and fair cost allocation.',
+                description: 'Multi-user expense splitting, approval workflow, budget alerts, bank integration API, fair cost allocation for shared ownership.',
+                session: 'Session 2 Agent S2-H06A'
+            }
+        ];
+
+        function renderFeatures() {
+            const container = document.getElementById('features');
+            container.innerHTML = features.map(feature => `
+                <div class="feature" id="feature-${feature.id}" data-id="${feature.id}">
+                    <div class="feature-header">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="check-${feature.id}" onchange="updateStats()">
+                        </div>
+                        <div class="feature-info">
+                            <div class="feature-title">
+                                ${feature.title}
+                                <span class="tier-badge tier-${feature.tier}">Tier ${feature.tier}</span>
+                            </div>
+                            <div class="feature-meta">
+                                <span class="badge must-have">Must-Have: <span id="rating-display-${feature.id}">${feature.mustHave}</span>/10</span>
+                                <span class="badge priority">Priority: ${feature.priority}</span>
+                                <span class="badge savings">Saves: ${feature.savings}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-why">
+                        <strong>Why This Matters:</strong>
+                        ${feature.why}
+                    </div>
+
+                    <div class="rating-container">
+                        <label style="font-weight: 600; color: #003D5C; margin-bottom: 0.5rem; display: block;">
+                            Must-Have Rating (1-10):
+                        </label>
+                        <div class="rating">
+                            <input type="range"
+                                   id="rating-${feature.id}"
+                                   min="1"
+                                   max="10"
+                                   value="${feature.mustHave}"
+                                   oninput="updateRating('${feature.id}')"
+                                   style="width: 100%; max-width: 400px;">
+                            <span class="rating-value" id="rating-value-${feature.id}">${feature.mustHave}</span>
+                        </div>
+                    </div>
+
+                    <label style="font-weight: 600; color: #003D5C; margin-bottom: 0.5rem; display: block;">
+                        Your Notes:
+                    </label>
+                    <textarea
+                        class="notes"
+                        id="notes-${feature.id}"
+                        placeholder="Add your notes, requirements, or customization requests here..."
+                        onchange="saveToLocalStorage()"
+                    ></textarea>
+
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e0e0e0; font-size: 0.85rem; color: #666;">
+                        <strong>Technical Spec:</strong> ${feature.description}
+                        <br><strong>Source:</strong> ${feature.session}
+                    </div>
+                </div>
+            `).join('');
+
+            loadFromLocalStorage();
+            updateStats();
+        }
+
+        function updateRating(id) {
+            const slider = document.getElementById(`rating-${id}`);
+            const value = slider.value;
+            document.getElementById(`rating-value-${id}`).textContent = value;
+            document.getElementById(`rating-display-${id}`).textContent = value;
+            updateStats();
+            saveToLocalStorage();
+        }
+
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selected = Array.from(checkboxes).filter(cb => cb.checked);
+
+            document.getElementById('selectedCount').textContent = selected.length;
+
+            if (selected.length > 0) {
+                const avgRating = selected.reduce((sum, cb) => {
+                    const id = cb.id.replace('check-', '');
+                    const rating = parseInt(document.getElementById(`rating-${id}`).value);
+                    return sum + rating;
+                }, 0) / selected.length;
+
+                document.getElementById('avgMustHave').textContent = avgRating.toFixed(1);
+            } else {
+                document.getElementById('avgMustHave').textContent = '0.0';
+            }
+
+            // Calculate total savings (rough estimate)
+            const selectedFeatures = selected.map(cb => {
+                const id = cb.id.replace('check-', '');
+                return features.find(f => f.id === id);
+            });
+
+            let totalMin = 0;
+            selectedFeatures.forEach(f => {
+                const match = f.savings.match(/€([\d,]+)/);
+                if (match) {
+                    totalMin += parseInt(match[1].replace(/,/g, ''));
+                }
+            });
+
+            document.getElementById('totalSavings').textContent = totalMin > 0
+                ? `€${totalMin.toLocaleString()}+`
+                : '€0';
+
+            // Toggle feature highlight
+            checkboxes.forEach(cb => {
+                const featureDiv = cb.closest('.feature');
+                if (cb.checked) {
+                    featureDiv.classList.add('selected');
+                } else {
+                    featureDiv.classList.remove('selected');
+                }
+            });
+
+            saveToLocalStorage();
+        }
+
+        function selectAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateStats();
+        }
+
+        function selectNone() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateStats();
+        }
+
+        function exportJSON() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                meeting: 'Riviera Plaisance Partnership',
+                features: features.map(f => {
+                    const checkbox = document.getElementById(`check-${f.id}`);
+                    const rating = document.getElementById(`rating-${f.id}`);
+                    const notes = document.getElementById(`notes-${f.id}`);
+
+                    return {
+                        id: f.id,
+                        title: f.title,
+                        selected: checkbox.checked,
+                        mustHaveRating: parseInt(rating.value),
+                        notes: notes.value,
+                        tier: f.tier,
+                        priority: f.priority,
+                        savings: f.savings,
+                        why: f.why,
+                        description: f.description
+                    };
+                }).filter(f => f.selected)
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-feature-selection-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAgentTasks() {
+            const selectedFeatures = features.map(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const rating = document.getElementById(`rating-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+
+                return {
+                    id: f.id,
+                    title: f.title,
+                    selected: checkbox.checked,
+                    mustHaveRating: parseInt(rating.value),
+                    notes: notes.value,
+                    tier: f.tier,
+                    priority: f.priority,
+                    savings: f.savings,
+                    description: f.description,
+                    session: f.session
+                };
+            }).filter(f => f.selected);
+
+            if (selectedFeatures.length === 0) {
+                alert('Please select at least one feature before exporting agent tasks!');
+                return;
+            }
+
+            // Map features to agent tasks (5-agent swarm)
+            const agentTasks = {
+                metadata: {
+                    timestamp: new Date().toISOString(),
+                    meeting: 'Riviera Plaisance Partnership',
+                    deployment_target: 'StackCP shared hosting (~/public_html/digital-lab.ca/navidocs)',
+                    selected_features: selectedFeatures.length,
+                    swarm_pattern: 'S2 (5 Haiku agents parallel)',
+                    autonomous_task_file: 'AUTONOMOUS-NEXT-TASKS.md'
+                },
+                agents: {
+                    'agent-1-backend': {
+                        role: 'Backend API Development',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-2-frontend': {
+                        role: 'Frontend Components (Vue 3)',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-3-database': {
+                        role: 'Database Schema & Migrations',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-4-integration': {
+                        role: 'Third-Party Integrations',
+                        model: 'haiku',
+                        tasks: []
+                    },
+                    'agent-5-testing': {
+                        role: 'Testing & Documentation',
+                        model: 'haiku',
+                        tasks: []
+                    }
+                }
+            };
+
+            // Map each feature to agent tasks
+            selectedFeatures.forEach(feature => {
+                const taskPriority = feature.mustHaveRating >= 8 ? 'P0' : feature.mustHaveRating >= 6 ? 'P1' : 'P2';
+
+                // Backend tasks
+                agentTasks.agents['agent-1-backend'].tasks.push({
+                    feature_id: feature.id,
+                    title: `API endpoints for ${feature.title}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Implement Express.js REST API for ${feature.title}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: feature.tier === 1 ? 4 : feature.tier === 2 ? 3 : 2,
+                    dependencies: ['database schema ready']
+                });
+
+                // Frontend tasks
+                agentTasks.agents['agent-2-frontend'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Vue components for ${feature.title}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Create Vue 3 components for ${feature.title}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: feature.tier === 1 ? 3 : feature.tier === 2 ? 2 : 1,
+                    dependencies: ['API endpoints ready']
+                });
+
+                // Database tasks
+                agentTasks.agents['agent-3-database'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Database schema for ${feature.title}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Design SQLite schema for ${feature.title}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: feature.tier === 1 ? 2 : feature.tier === 2 ? 1 : 1,
+                    dependencies: []
+                });
+
+                // Integration tasks (if feature needs external services)
+                const needsIntegration = ['camera-integration', 'whatsapp-integration', 'accounting-integration', 'expense-tracking'].includes(feature.id);
+                if (needsIntegration) {
+                    agentTasks.agents['agent-4-integration'].tasks.push({
+                        feature_id: feature.id,
+                        title: `Integration setup for ${feature.title}`,
+                        priority: taskPriority,
+                        status: 'pending',
+                        description: `Configure third-party integration for ${feature.title}`,
+                        technical_notes: feature.description,
+                        user_notes: feature.notes || 'None',
+                        estimated_hours: feature.tier === 1 ? 3 : feature.tier === 2 ? 2 : 2,
+                        dependencies: ['API endpoints ready']
+                    });
+                }
+
+                // Testing tasks
+                agentTasks.agents['agent-5-testing'].tasks.push({
+                    feature_id: feature.id,
+                    title: `Tests for ${feature.title}`,
+                    priority: taskPriority,
+                    status: 'pending',
+                    description: `Write integration tests for ${feature.title}`,
+                    technical_notes: feature.description,
+                    user_notes: feature.notes || 'None',
+                    estimated_hours: feature.tier === 1 ? 2 : feature.tier === 2 ? 1 : 1,
+                    dependencies: ['frontend and backend complete']
+                });
+            });
+
+            // Add task summary
+            agentTasks.summary = {
+                total_tasks: Object.values(agentTasks.agents).reduce((sum, agent) => sum + agent.tasks.length, 0),
+                estimated_total_hours: Object.values(agentTasks.agents).reduce((sum, agent) => {
+                    return sum + agent.tasks.reduce((taskSum, task) => taskSum + task.estimated_hours, 0);
+                }, 0),
+                p0_tasks: Object.values(agentTasks.agents).reduce((sum, agent) => {
+                    return sum + agent.tasks.filter(t => t.priority === 'P0').length;
+                }, 0),
+                deployment_instructions: [
+                    '1. Agents poll AUTONOMOUS-NEXT-TASKS.md for pending tasks',
+                    '2. Each agent updates task status: pending → in_progress → completed',
+                    '3. Update agents.md after every task completion',
+                    '4. Deploy to ~/public_html/digital-lab.ca/navidocs/',
+                    '5. Test on https://digital-lab.ca/navidocs/'
+                ]
+            };
+
+            // Download JSON
+            const blob = new Blob([JSON.stringify(agentTasks, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `navidocs-agent-tasks-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert(`✅ Generated ${agentTasks.summary.total_tasks} tasks for 5-agent swarm!\n\n` +
+                  `P0 tasks: ${agentTasks.summary.p0_tasks}\n` +
+                  `Estimated hours: ${agentTasks.summary.estimated_total_hours}h\n\n` +
+                  `Deploy this file to StackCP and have agents poll AUTONOMOUS-NEXT-TASKS.md`);
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                selections: {},
+                ratings: {},
+                notes: {}
+            };
+
+            features.forEach(f => {
+                const checkbox = document.getElementById(`check-${f.id}`);
+                const rating = document.getElementById(`rating-${f.id}`);
+                const notes = document.getElementById(`notes-${f.id}`);
+
+                data.selections[f.id] = checkbox.checked;
+                data.ratings[f.id] = parseInt(rating.value);
+                data.notes[f.id] = notes.value;
+            });
+
+            localStorage.setItem('navidocs-features', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('navidocs-features');
+            if (!saved) return;
+
+            try {
+                const data = JSON.parse(saved);
+
+                features.forEach(f => {
+                    if (data.selections && data.selections[f.id] !== undefined) {
+                        document.getElementById(`check-${f.id}`).checked = data.selections[f.id];
+                    }
+
+                    if (data.ratings && data.ratings[f.id] !== undefined) {
+                        document.getElementById(`rating-${f.id}`).value = data.ratings[f.id];
+                        updateRating(f.id);
+                    }
+
+                    if (data.notes && data.notes[f.id]) {
+                        document.getElementById(`notes-${f.id}`).value = data.notes[f.id];
+                    }
+                });
+
+                updateStats();
+            } catch (e) {
+                console.error('Failed to load saved data:', e);
+            }
+        }
+
+        // Initialize
+        renderFeatures();
+    </script>
+</body>
+</html>
