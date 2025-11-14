@@ -255,7 +255,7 @@ onMounted(async () => {
 
 <style scoped>
 .nav-brand {
-  @apply text-decoration-none;
+  @apply no-underline;
 }
 
 .boat-selector {

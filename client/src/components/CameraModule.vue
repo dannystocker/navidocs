@@ -130,22 +130,22 @@
               <div class="instructions-content">
                 <p><strong>1. Add to your Home Assistant configuration.yaml:</strong></p>
                 <pre><code>automation:
-  - alias: "{{ camera.cameraName }} Snapshot to NaviDocs"
+  - alias: "NaviDocs Snapshot"
     trigger:
       platform: state
-      entity_id: camera.{{ camera.cameraName | slugify }}
+      entity_id: camera.example
       to: 'recording'
     action:
       service: rest_command.navidocs_camera_update
       data:
         webhook_url: "{{ getWebhookUrl(camera) }}"
-        image_url: "{{ '{{ state_attr(\'camera.' + (camera.cameraName | slugify) + '\', \'entity_picture\') }' }}"
+        image_url: "Replace with Home Assistant state attribute"
 
 rest_command:
   navidocs_camera_update:
     url: "{{ getWebhookUrl(camera) }}"
     method: POST
-    payload: '{"snapshot_url":"{{ '{{ image_url }}' }}","event_type":"motion"}'</code></pre>
+    payload: '{"snapshot_url":"SNAPSHOT_URL","event_type":"motion"}'</code></pre>
 
                 <p><strong>2. Or use generic ONVIF/RTSP camera directly:</strong></p>
                 <pre><code>camera:
