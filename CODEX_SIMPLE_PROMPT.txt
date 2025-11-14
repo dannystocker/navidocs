@@ -1,0 +1,54 @@
+Review the NaviDocs boat management platform codebase for:
+
+1. **Code Quality** - JavaScript/Vue style, consistency, complexity, error handling
+2. **Security** - SQL injection, XSS, authentication, file uploads, secrets management
+3. **Architecture** - Separation of concerns, component design, state management
+4. **Performance** - Bundle size, lazy loading, database indexes, pagination, caching
+5. **Usability** - Accessibility, mobile responsiveness, error feedback, loading states
+
+**Codebase:** /home/setup/navidocs
+**Stack:** Vue 3 + Express.js + SQLite
+**Target Market:** €800K-€1.5M yachts (Jeanneau Prestige, Sunseeker)
+
+**Requirements:**
+- Identify CRITICAL issues (SQL injection, auth bypasses, data loss scenarios)
+- Provide specific code examples for each issue (before/after)
+- Estimate effort to fix (hours)
+- Generate comprehensive report: CODEX_REVIEW_REPORT.md
+
+**Focus Areas:**
+- Multi-stakeholder dashboards (owner, captain, crew, management company)
+- Camera integration (RTSP security, snapshot caching)
+- File upload security (photo validation, path traversal prevention)
+- Mobile responsiveness (60×60px touch targets for gloves, high contrast for sunlight)
+- Performance (bundle <500KB, API responses <200ms)
+
+**Commands to run:**
+```bash
+cd /home/setup/navidocs
+
+# Code quality
+depcheck                          # Find unused dependencies
+npm run lint                      # Lint errors
+grep -r "db.prepare(\`" server/   # SQL injection check
+find client/src -name "*.vue" -exec wc -l {} \; | awk '$1 > 300'  # Large components
+
+# Security
+npm audit --production            # Dependency vulnerabilities
+git log --all --pretty=format: --name-only | grep "\.env$"  # Exposed secrets
+grep -r "authenticateToken" server/routes/  # Missing auth
+
+# Performance
+npm run build && du -sh dist/     # Bundle size
+sqlite3 navidocs.db "SELECT name FROM sqlite_master WHERE type='index';"  # Missing indexes
+```
+
+**Output Format:**
+- Executive summary (1 paragraph, rating 1-10)
+- Critical issues (list with code examples)
+- High/Medium/Low priority issues
+- Code quality metrics (LoC, complexity, bundle size, test coverage)
+- Recommended refactorings (specific code changes)
+- Total effort estimate (hours + budget at €80/hr)
+
+**Evaluate for:** Style, Substance, Code Quality, Usability, Value
