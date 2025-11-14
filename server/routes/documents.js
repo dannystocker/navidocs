@@ -6,6 +6,7 @@
 import express from 'express';
 import { getDb } from '../db/db.js';
 import { getMeilisearchClient } from '../config/meilisearch.js';
+import { authenticateToken } from '../middleware/auth.middleware.js';
 import path from 'path';
 import fs from 'fs';
 import { rm } from 'fs/promises';
@@ -22,7 +23,7 @@ const MEILISEARCH_INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-p
  * @param {string} id - Document UUID
  * @returns {Object} Document metadata with pages
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -32,8 +33,7 @@ router.get('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Invalid document ID format' });
     }
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
 
     const db = getDb();
 
@@ -176,7 +176,7 @@ router.get('/:id', async (req, res) => {
  * GET /api/documents/:id/pdf
  * Stream the original PDF file to the client (inline)
  */
-router.get('/:id/pdf', async (req, res) => {
+router.get('/:id/pdf', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -185,7 +185,7 @@ router.get('/:id/pdf', async (req, res) => {
       return res.status(400).json({ error: 'Invalid document ID format' });
     }
 
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
     const db = getDb();
 
     const doc = db.prepare(`
@@ -221,7 +221,7 @@ router.get('/:id/pdf', async (req, res) => {
  * List documents with optional filtering
  * Query params: organizationId, entityId, documentType, status, limit, offset
  */
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const {
       organizationId,
@@ -232,8 +232,7 @@ router.get('/', async (req, res) => {
       offset = 0
     } = req.query;
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
 
     const db = getDb();
 
@@ -351,7 +350,7 @@ router.get('/', async (req, res) => {
  * Hard delete a document (removes from DB, filesystem, and search index)
  * For single-tenant demo - simplified permissions
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {

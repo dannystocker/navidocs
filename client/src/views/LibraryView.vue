@@ -5,8 +5,8 @@
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <button @click="$router.push('/')" class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md hover:scale-105 transition-transform">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button aria-label="Go to home page" @click="$router.push('/')" class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md hover:scale-105 transition-transform">
+              <svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15c3-2 6-2 9 0s6 2 9 0M3 9c3-2 6-2 9 0s6 2 9 0" />
               </svg>
             </button>
@@ -56,8 +56,8 @@
               <p class="text-sm text-white/70">Critical documents requiring quick access</p>
             </div>
           </div>
-          <button class="text-pink-400 hover:text-pink-300 text-sm font-medium flex items-center gap-2 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button aria-label="Pin important document" class="text-pink-400 hover:text-pink-300 text-sm font-medium flex items-center gap-2 transition-colors">
+            <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             Pin Document
@@ -83,14 +83,14 @@
                   </div>
                 </div>
               </div>
-              <button class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <button aria-label="Bookmark Insurance Policy" class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                 </svg>
               </button>
             </div>
             <div class="expiry-alert">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Expires in 68 days (Dec 31, 2025)</span>
@@ -102,7 +102,7 @@
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-start gap-3">
                 <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
@@ -115,14 +115,14 @@
                   </div>
                 </div>
               </div>
-              <button class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <button aria-label="Bookmark LILIAN I Registration" class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                 </svg>
               </button>
             </div>
             <div class="compliance-badge">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span>Legally required aboard vessel</span>
@@ -134,7 +134,7 @@
             <div class="flex items-start justify-between mb-4">
               <div class="flex items-start gap-3">
                 <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
@@ -147,14 +147,14 @@
                   </div>
                 </div>
               </div>
-              <button class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <button aria-label="Bookmark Owner's Manual" class="text-pink-400 hover:text-pink-300 p-1 rounded-lg hover:bg-white/10 transition-all">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
                 </svg>
               </button>
             </div>
             <div class="info-badge">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               <span>Emergency reference • 6.7 MB</span>

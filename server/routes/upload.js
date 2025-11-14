@@ -14,6 +14,7 @@ import { dirname, join } from 'path';
 import { getDb } from '../db/db.js';
 import { validateFile, sanitizeFilename } from '../services/file-safety.js';
 import { addOcrJob } from '../services/queue.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
@@ -44,13 +45,12 @@ await fs.mkdir(UPLOAD_DIR, { recursive: true });
  *
  * @returns {Object} { jobId, documentId }
  */
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
     const { title, documentType, organizationId, entityId, componentId, subEntityId } = req.body;
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id'; // Temporary for testing
+    const userId = req.user.userId;
 
     // Validate required fields
     if (!file) {

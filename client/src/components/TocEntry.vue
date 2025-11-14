@@ -95,7 +95,8 @@ const handleClick = () => {
 .toc-entry-content {
   display: flex;
   align-items: center;
-  padding: 6px 8px;
+  min-height: 60px;
+  padding: 10px 8px;
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s;
@@ -115,12 +116,12 @@ const handleClick = () => {
 .expand-btn {
   background: none;
   border: none;
-  padding: 4px;
+  min-width: 60px;
+  min-height: 60px;
+  padding: 10px;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;

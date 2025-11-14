@@ -11,7 +11,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDb } from '../config/db.js';
 import crypto from 'crypto';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-here-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET environment variable is required and must be at least 32 characters long');
+}
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '15m';
 const REFRESH_TOKEN_EXPIRES_IN = 7 * 24 * 60 * 60; // 7 days in seconds
 const BCRYPT_ROUNDS = 12;

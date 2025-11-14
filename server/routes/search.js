@@ -23,10 +23,9 @@ const INDEX_NAME = process.env.MEILISEARCH_INDEX_NAME || 'navidocs-pages';
  * @body {number} [expiresIn] - Token expiration in seconds (default: 3600 = 1 hour)
  * @returns {Object} { token, expiresAt, indexName }
  */
-router.post('/token', async (req, res) => {
+router.post('/token', authenticateToken, async (req, res) => {
   try {
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
     const { expiresIn = 3600 } = req.body; // Default 1 hour
 
     // Validate expiresIn
@@ -86,7 +85,7 @@ router.post('/token', async (req, res) => {
  * @body {number} [offset] - Results offset (default: 0)
  * @returns {Object} { hits, estimatedTotalHits, query, processingTimeMs }
  */
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { q, filters = {}, limit = 20, offset = 0 } = req.body;
 
@@ -94,8 +93,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Query parameter "q" is required' });
     }
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
 
     const db = getDb();
 

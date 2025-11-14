@@ -24,12 +24,13 @@
           <h3>Table of Contents</h3>
         </div>
         <button
+          aria-label="Pin table of contents"
           @click="isPinned = !isPinned"
           class="pin-btn"
           :class="{ 'pinned': isPinned }"
           :title="isPinned ? 'Unpin' : 'Pin open'"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
         </button>
@@ -215,17 +216,18 @@ watch(isPinned, (newVal) => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 0;
+  padding: 10px 0;
   color: white;
   cursor: pointer;
-  min-width: 40px;
+  min-width: 60px;
+  min-height: 60px;
   flex-shrink: 0;
 }
 
 .toc-tab-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.1em;
   color: rgba(255, 255, 255, 0.8);
@@ -259,20 +261,25 @@ watch(isPinned, (newVal) => {
 }
 
 .toc-header h3 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: white;
   margin: 0;
 }
 
 .pin-btn {
-  padding: 6px;
+  min-width: 60px;
+  min-height: 60px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.375rem;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pin-btn:hover {
@@ -320,7 +327,7 @@ watch(isPinned, (newVal) => {
 
 .toc-empty p {
   margin-bottom: 16px;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .btn-extract {
@@ -328,11 +335,16 @@ watch(isPinned, (newVal) => {
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 13px;
+  min-width: 60px;
+  min-height: 60px;
+  padding: 10px 16px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-extract:hover {
@@ -349,7 +361,7 @@ watch(isPinned, (newVal) => {
 }
 
 .toc-count {
-  font-size: 11px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: 8px;
   padding: 4px 8px;

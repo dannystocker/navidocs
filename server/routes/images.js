@@ -5,6 +5,7 @@
 
 import express from 'express';
 import { getDb } from '../db/db.js';
+import { authenticateToken } from '../middleware/auth.middleware.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -56,7 +57,7 @@ async function verifyDocumentAccess(documentId, userId, db) {
  * @param {string} id - Document UUID
  * @returns {Object} Array of image metadata
  */
-router.get('/documents/:id/images', async (req, res) => {
+router.get('/documents/:id/images', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -66,8 +67,7 @@ router.get('/documents/:id/images', async (req, res) => {
       return res.status(400).json({ error: 'Invalid document ID format' });
     }
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
     const db = getDb();
 
     // Verify document access
@@ -141,7 +141,7 @@ router.get('/documents/:id/images', async (req, res) => {
  * @param {number} pageNum - Page number (1-based)
  * @returns {Object} Array of image metadata for the page
  */
-router.get('/documents/:id/pages/:pageNum/images', async (req, res) => {
+router.get('/documents/:id/pages/:pageNum/images', authenticateToken, async (req, res) => {
   try {
     const { id, pageNum } = req.params;
 
@@ -157,8 +157,7 @@ router.get('/documents/:id/pages/:pageNum/images', async (req, res) => {
       return res.status(400).json({ error: 'Invalid page number' });
     }
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
     const db = getDb();
 
     // Verify document access
@@ -246,7 +245,7 @@ router.get('/documents/:id/pages/:pageNum/images', async (req, res) => {
  * @param {string} imageId - Image UUID
  * @returns {Stream} Image file stream with proper Content-Type
  */
-router.get('/images/:imageId', imageLimiter, async (req, res) => {
+router.get('/images/:imageId', imageLimiter, authenticateToken, async (req, res) => {
   try {
     const { imageId } = req.params;
 
@@ -256,8 +255,7 @@ router.get('/images/:imageId', imageLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid image ID format' });
     }
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id';
+    const userId = req.user.userId;
     const db = getDb();
 
     // Get image metadata

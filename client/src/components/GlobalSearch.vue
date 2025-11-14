@@ -3,7 +3,7 @@
     <!-- Search Input -->
     <div class="search-container">
       <div class="search-input-wrapper">
-        <i class="material-icons">search</i>
+        <i aria-hidden="true" class="material-icons">search</i>
         <input
           v-model="query"
           type="text"
@@ -17,9 +17,10 @@
         <button
           v-if="query"
           class="clear-btn"
+          aria-label="Clear search"
           @click="clearSearch"
         >
-          <i class="material-icons">close</i>
+          <i aria-hidden="true" class="material-icons">close</i>
         </button>
       </div>
 

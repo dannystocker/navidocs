@@ -8,6 +8,7 @@ import { getDb } from '../db/db.js';
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import logger from '../utils/logger.js';
+import { authenticateToken, requireSystemAdmin } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
  * GET /api/stats
  * Get system statistics
  */
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, requireSystemAdmin, async (req, res) => {
   try {
     const db = getDb();
 

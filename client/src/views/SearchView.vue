@@ -4,9 +4,9 @@
     <header class="glass sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <button @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
+          <button aria-label="Go to home page" @click="$router.push('/')" class="flex items-center space-x-3 hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
             <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-md">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15c3-2 6-2 9 0s6 2 9 0M3 9c3-2 6-2 9 0s6 2 9 0" />
               </svg>
             </div>
@@ -100,11 +100,12 @@
             <button
               v-if="result.imageUrl"
               class="nv-chip"
+              aria-label="View diagram preview"
               @click.stop="togglePreview(result.id)"
               @mouseenter="showPreview(result.id)"
               @mouseleave="hidePreview(result.id)"
             >
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               {{ $t('common.viewDetails') }}
@@ -116,9 +117,10 @@
             <button
               v-if="result.section"
               class="nv-chip-text"
+              aria-label="Jump to section"
               @click.stop="jumpToSection(result)"
             >
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg aria-hidden="true" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
               {{ $t('toc.jumpToSection') }}
@@ -370,20 +372,20 @@ onMounted(() => {
 }
 
 .nv-section {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #e6e6ea;
   white-space: nowrap;
 }
 
 .nv-arrow {
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.4);
   font-weight: 300;
 }
 
 .nv-subsection {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: #cfa7ff;
   white-space: nowrap;
@@ -392,7 +394,7 @@ onMounted(() => {
 }
 
 .nv-page-tag {
-  font-size: 13px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.4);
   font-weight: 400;
   flex-shrink: 0;
@@ -400,7 +402,7 @@ onMounted(() => {
 
 /* Snippet - compact with 2 line max */
 .nv-snippet {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   color: #e6e6ea;
   margin: 0 0 8px;
@@ -432,14 +434,14 @@ onMounted(() => {
   display: flex;
   gap: 10px;
   align-items: center;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .nv-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 16px;
   padding: 3px 8px;
   border-radius: 8px;
   background: rgba(255, 230, 102, 0.12);
@@ -455,7 +457,7 @@ onMounted(() => {
 }
 
 .nv-chip-text {
-  font-size: 11px;
+  font-size: 16px;
   padding: 3px 8px;
   border-radius: 8px;
   background: rgba(207, 167, 255, 0.12);
@@ -509,7 +511,7 @@ onMounted(() => {
   gap: 8px;
   padding: 12px 0 8px 0;
   margin-top: 16px;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: #cfa7ff;
   letter-spacing: 0.02em;
@@ -530,7 +532,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 16px;
   color: #9aa0a6;
   padding: 12px 0;
 }
@@ -584,7 +586,7 @@ onMounted(() => {
 }
 
 .nv-context-noimage {
-  font-size: 10px;
+  font-size: 16px;
   color: #6b6b7a;
   text-align: center;
   padding: 8px;
@@ -592,7 +594,7 @@ onMounted(() => {
 
 .nv-context-page figcaption {
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 16px;
   color: #9aa0a6;
 }
 
@@ -610,7 +612,7 @@ onMounted(() => {
 }
 
 .nv-expand-text .nv-snippet {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   margin: 0;
 }
