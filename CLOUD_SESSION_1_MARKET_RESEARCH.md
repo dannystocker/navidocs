@@ -23,9 +23,9 @@ Gather comprehensive market intelligence for Riviera Plaisance Euro Voiles, focu
 
 **Riviera Plaisance Euro Voiles Profile:**
 - **Location:** Antibes, Golfe Juan, Beaulieu (French Riviera)
-- **Brands:** Jeanneau, Prestige Yachts, Fountaine Pajot, Monte Carlo Yachts
+- **Brands:** Jeanneau, Prestige Yachts, Sunseeker, Fountaine Pajot, Monte Carlo Yachts
 - **Volume:** 150+ new boats/year, 20,500+ active customers
-- **Boat Types:** Recreational motor boats 40-50ft (€800K-€1.5M range)
+- **Boat Types:** Prestige 40-50ft + Sunseeker 40-60ft (€800K-€1.5M range)
 - **Owner Profile:** Weekend/holiday users (20-40 days/year), NOT crew-managed mega yachts
 
 **Current NaviDocs Status:**
@@ -226,7 +226,7 @@ Every agent-to-agent message follows this structure:
 - Example: "S1-H02 confirms S1-H01: Market size €2.3B verified (2 sources now)"
 
 **disconfirm:** Challenge another agent's claim
-- Example: "S1-H03 challenges S1-H01: Price range conflict (€250K vs €1.5M = 500% variance)"
+- Example: "S1-H03 challenges S1-H01: Price range conflict (€800K vs €1.5M = 88% variance)"
 
 **ESCALATE:** Flag critical conflict for Sonnet coordinator
 - Example: "S1-H10 ESCALATES: Price variance >20%, requires human resolution"
@@ -267,10 +267,10 @@ S1-H10: "inform" → Coordinator: "Market size €2.3B (VERIFIED, 2 sources)"
 
 ```yaml
 # Agents report conflicting data
-S1-H01: "inform" → "Prestige 50 price €250K"
+S1-H01: "inform" → "Prestige 50 price €800K"
 S1-H03: "inform" → "Owner has €1.5M Prestige 50"
 
-# Agent 10 detects 500% variance
+# Agent 10 detects 88% variance
 S1-H10: "ESCALATE" → Coordinator: "Price conflict requires resolution"
 
 # Sonnet resolves

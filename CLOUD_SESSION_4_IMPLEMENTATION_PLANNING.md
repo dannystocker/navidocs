@@ -51,8 +51,10 @@ Each agent MUST:
 4. **Report completion** with identity: "S4-H03 complete: [deliverable summary]"
 
 **TASK DEPENDENCIES:**
-- Most agents can run in parallel
-- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+- Agents 1→2→3→4 SEQUENTIAL (Week 1 before Week 2, etc.)
+- Each week builds on previous week's deliverables
+- Agents 5-9 parallel (acceptance criteria, testing, APIs, migrations, deployment)
+- Agent 10 synthesis after all complete
 
 ---
 

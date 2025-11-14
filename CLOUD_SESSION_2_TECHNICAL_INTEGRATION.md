@@ -56,8 +56,33 @@ Each agent MUST:
 4. **Report completion** with identity: "S2-H03 complete: [deliverable summary]"
 
 **TASK DEPENDENCIES:**
-- Most agents can run in parallel
-- Agent 10 typically synthesizes results from Agents 1-9 (must wait for completion)
+- **CRITICAL:** Agent 1 (Codebase Analysis) MUST complete FIRST
+- Agents 2-9 run in parallel AFTER Agent 1 completes
+- Agent 10 (synthesis) waits for Agents 2-9
+
+**Execution Phases:**
+1. **Phase 1 (Sequential):** Agent 1 - NaviDocs codebase analysis
+   - Maps existing database schema, API patterns, business logic
+   - Identifies integration points for feature designs
+   - BLOCKS: All feature design agents until complete
+
+2. **Phase 2 (Parallel):** Agents 2-9 - Feature design & architecture
+   - Agent 2: Inventory Tracking System
+   - Agent 3: Maintenance Log & Reminders
+   - Agent 4: Camera & Remote Monitoring
+   - Agent 5: Contact Management
+   - Agent 6: Expense Tracking & Accounting
+   - Agent 7: Impeccable Search UX
+   - Agent 8: Notification System
+   - Agent 9: Database Migration Plan
+   - **Dependency:** All depend on Agent 1 codebase analysis
+   - **Communication:** Agents use IF.bus to validate designs against Agent 1 findings
+
+3. **Phase 3 (Final):** Agent 10 - Sprint planning & synthesis
+   - Compiles results from Agents 2-9
+   - Maps inter-feature dependencies
+   - Creates integrated 4-week sprint plan
+   - **Dependency:** Waits for Agents 2-9 completion
 
 ---
 

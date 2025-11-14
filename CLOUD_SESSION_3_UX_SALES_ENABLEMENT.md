@@ -505,17 +505,17 @@ Every message MUST include:
 - Browser: Chrome/Firefox
 - URL: https://demo.navidocs.app
 - Login: demo@rivieraplaisance.com / DemoPass123
-- Pre-loaded yacht: "Azimut 55S" (€800K, 15 warranties)
+- Pre-loaded yacht: "Jeanneau Prestige 50" (€1.5M, 15 warranties)
 
 ## Screen-by-Screen Walkthrough
 ### [0:00-0:30] Dashboard
 **Action:** Show multi-yacht overview
 **Say:** "Broker dashboard shows all yachts, warranty status at a glance..."
-**Highlight:** Red badge on Azimut (warranty expiring in 28 days)
+**Highlight:** Red badge on Prestige 50 (warranty expiring in 28 days)
 
 ### [0:30-1:30] Yacht Detail
-**Action:** Click Azimut 55S
-**Say:** "€760K in active warranties tracked, system prevents €8K-€33K losses..."
+**Action:** Click Jeanneau Prestige 50
+**Say:** "€1.2M-€1.5M in active warranties tracked, system prevents €8K-€33K losses..."
 **Highlight:** Warranty timeline, document library
 
 [... continue for all 6 screens]
@@ -533,7 +533,7 @@ Every message MUST include:
   <h1>NaviDocs Yacht Sales ROI Calculator</h1>
   <form id="roi-form">
     <label>Yacht Price (€):</label>
-    <input type="number" id="yacht-price" value="800000">
+    <input type="number" id="yacht-price" value="1500000">
 
     <label>Active Warranties:</label>
     <input type="number" id="warranty-count" value="15">
