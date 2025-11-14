@@ -1,0 +1,299 @@
+Analyze the NaviDocs boat management platform for performance optimization and user experience quality.
+
+**Context:**
+- Codebase: /home/setup/navidocs
+- Stack: Vue 3 + Vite, Express.js, SQLite
+- Target: €800K-€1.5M yacht market (premium UX expectations)
+- Users: Boat owners, captains, crew, management companies
+- Environment: Marine (bright sunlight, gloves, wet hands, boat vibrations)
+
+**Your Focus Areas:**
+
+## 1. Performance Analysis
+
+**Frontend Performance:**
+- Bundle size analysis (target: <500KB gzipped)
+- Code splitting effectiveness (lazy-loaded routes?)
+- Image optimization (WebP, responsive images, lazy loading)
+- JavaScript execution time (large components causing jank?)
+- Memory leaks (event listeners cleaned up on unmount?)
+- Vite build config optimization
+
+**Commands to run:**
+```bash
+cd /home/setup/navidocs
+
+# Build and analyze
+npm run build
+du -sh dist/
+find dist/assets -name "*.js" -exec du -h {} \; | sort -h
+
+# Check for lazy loading
+grep -r "import.*from.*views" client/src/router/
+
+# Find large components (>500 lines = performance risk)
+find client/src -name "*.vue" -exec wc -l {} \; | awk '$1 > 500 {print}'
+```
+
+**Backend Performance:**
+- Database query efficiency (N+1 queries, missing indexes)
+- API response times (should be <200ms p95)
+- Pagination implementation (avoid loading 1000+ rows)
+- Response compression (gzip enabled?)
+- Caching strategy (Redis used? HTTP cache headers?)
+
+**Commands to run:**
+```bash
+# Check for N+1 queries (loop + db query = bad)
+grep -r "for.*of\|forEach" server/routes/ -A 5 | grep "db.prepare"
+
+# Find missing indexes
+sqlite3 server/navidocs.db "SELECT name FROM sqlite_master WHERE type='index';"
+
+# Check pagination (should use LIMIT/OFFSET)
+grep -r "\.all(" server/routes/ | wc -l  # High count = potential issue
+```
+
+**Deliverable:**
+- Lighthouse Performance score estimate (based on code analysis)
+- Specific bottlenecks with file:line references
+- Quick wins (easy optimizations with high impact)
+- Bundle size breakdown (which chunks are largest?)
+
+---
+
+## 2. User Experience (UX) Analysis
+
+**Marine Environment Considerations:**
+- Touch targets: Are all buttons ≥60×60px? (glove-friendly)
+- Contrast ratio: Is text readable in direct sunlight? (WCAG AAA = 7:1)
+- Font sizes: Are key metrics ≥32px? (Garmin-style glanceability)
+- Glass morphism performance: Is backdrop-filter causing lag?
+
+**Commands to run:**
+```bash
+# Find small touch targets
+grep -r "width.*px\|height.*px" client/src/components/ | grep -E "width: [1-4][0-9]px|height: [1-4][0-9]px"
+
+# Check for low contrast (search for light colors on light backgrounds)
+grep -r "color.*#[A-F0-9]\{6\}" client/src --include="*.vue" | grep -E "fff|eee|ddd"
+
+# Find small fonts (<16px = hard to read)
+grep -r "font-size.*px" client/src | grep -E "[0-9]{1}px|1[0-5]px"
+```
+
+**Interaction Design:**
+- Loading states: Does every async action show feedback?
+- Error handling: Are errors user-friendly? (not technical jargon)
+- Empty states: Are "no data" screens helpful? (actionable CTAs)
+- Navigation clarity: Can users find features intuitively?
+
+**Accessibility (a11y):**
+- Keyboard navigation: Can you tab through all controls?
+- ARIA labels: Do icons have screen-reader text?
+- Color blindness: Is information conveyed beyond color?
+- Focus indicators: Are they visible and clear?
+
+**Commands to run:**
+```bash
+# Find missing ARIA labels
+grep -r "<button\|<div.*@click" client/src/components/ | grep -v "aria-label" | wc -l
+
+# Find images without alt text
+grep -r "<img" client/src | grep -v "alt=" | wc -l
+
+# Check for keyboard traps (modals must be escapable)
+grep -r "v-if.*showModal\|v-show.*modal" client/src | grep -v "@keyup.escape"
+```
+
+**Mobile Responsiveness:**
+- Does UI adapt to tablet (1024×768)?
+- Are there responsive breakpoints?
+- Is there horizontal scrolling on small screens?
+- Touch gestures implemented (swipe, pinch zoom)?
+
+---
+
+## 3. Code Quality (UX-Impacting)
+
+**Component Complexity:**
+- Are components too large? (>300 lines = hard to maintain, bugs likely)
+- Is there duplicated code? (inconsistent UX across modules)
+- Are error boundaries implemented? (crashes break UX)
+
+**State Management:**
+- Is global state properly managed? (Pinia store used?)
+- Are loading/error states handled consistently?
+- Do forms validate properly? (prevent user frustration)
+
+**Visual Consistency:**
+- Is there a design system? (consistent spacing, colors, typography)
+- Are magic numbers avoided? (CSS values in variables)
+- Do all modules look coherent? (or patchwork of different styles)
+
+**Commands to run:**
+```bash
+# Find inconsistent spacing (magic numbers in CSS)
+grep -r "margin:.*px\|padding:.*px" client/src | grep -v "var(--" | wc -l
+
+# Find duplicate code
+npx jscpd client/src --min-lines 10 --min-tokens 50
+
+# Find global state scattered in components (antipattern)
+grep -r "ref(\|reactive(" client/src/views/ | wc -l  # High count = state not centralized
+```
+
+---
+
+## 4. Specific NaviDocs Features to Test
+
+**Test these user flows (if services running):**
+
+1. **Camera Module** (http://localhost:3200/cameras)
+   - Do thumbnails load quickly?
+   - Is there a loading skeleton?
+   - What happens when camera offline? (error state clear?)
+
+2. **Inventory Module** (http://localhost:3200/inventory)
+   - Photo upload: Is there drag-drop? Progress bar?
+   - Large lists: Is there virtualization? Infinite scroll?
+   - Search: Debounced? Shows "no results" clearly?
+
+3. **Maintenance Timeline** (http://localhost:3200/timeline)
+   - Does it load quickly with 1000+ events?
+   - Is future/past navigation clear?
+   - Mobile: Can you swipe between dates?
+
+4. **Dashboard** (http://localhost:3200/)
+   - Glanceable metrics: Large fonts? Color-coded?
+   - Weather widget: Loads fast? Cached?
+   - Quick actions: Thumb-reachable on mobile?
+
+---
+
+## Output Format
+
+Generate: `/home/setup/navidocs/reviews/GEMINI_PERFORMANCE_UX_REPORT.md`
+
+**Structure:**
+
+```markdown
+# Gemini Performance & UX Review - NaviDocs
+
+**Reviewed:** 2025-11-14
+**Model:** Gemini 2.0 Flash Thinking
+**Focus:** Performance optimization + User experience quality
+
+---
+
+## Executive Summary
+
+**Performance Score:** 7.2/10 (Good, needs optimization)
+**UX Score:** 8.1/10 (Strong, minor accessibility gaps)
+
+[2-3 paragraph summary of findings]
+
+---
+
+## Performance Issues
+
+### 🔴 Critical (Blocks User Action)
+1. **Large Bundle Size (789 KB gzipped)**
+   - **Impact:** 5-8 second load on 3G connection
+   - **Root Cause:** All routes loaded upfront, no code splitting
+   - **Fix:**
+     ```javascript
+     // client/src/router/index.js
+     // BEFORE
+     import DocumentView from './views/DocumentView.vue'
+
+     // AFTER
+     component: () => import('./views/DocumentView.vue')
+     ```
+   - **Effort:** 30 minutes (convert 9 routes)
+
+### 🟡 High Priority (Degrades Experience)
+2. **N+1 Query in Inventory Endpoint**
+   - **File:** `server/routes/inventory.js:78`
+   - **Impact:** 200ms → 2000ms with 100 items
+   - **Fix:** Use JOIN instead of loop
+   - **Effort:** 1 hour
+
+[Continue...]
+
+---
+
+## UX Issues
+
+### 🔴 Critical (Unusable in Marine Environment)
+1. **Touch Targets Too Small (32×32px)**
+   - **Files:**
+     - `client/src/components/ContactsModule.vue:45` (delete icon)
+     - `client/src/components/InventoryModule.vue:89` (edit button)
+   - **Impact:** Impossible to tap with gloves
+   - **Fix:** Increase to 60×60px minimum
+   - **Effort:** 15 minutes
+
+### 🟡 High Priority (Accessibility Issue)
+2. **Missing ARIA Labels (14 buttons)**
+   - **Impact:** Screen readers can't identify actions
+   - **Fix:** Add `aria-label` to icon-only buttons
+   - **Effort:** 30 minutes
+
+[Continue...]
+
+---
+
+## Quick Wins (High Impact, Low Effort)
+
+| Fix | Impact | Effort | ROI |
+|-----|--------|--------|-----|
+| Enable Vite gzip compression | -40% bundle size | 5 min | ⭐⭐⭐⭐⭐ |
+| Add loading skeletons | +20% perceived speed | 1 hr | ⭐⭐⭐⭐ |
+| Increase touch targets to 60px | Marine usability | 15 min | ⭐⭐⭐⭐⭐ |
+| Add database indexes | -80% query time | 30 min | ⭐⭐⭐⭐⭐ |
+
+---
+
+## Lighthouse Score Projection
+
+| Metric | Current (Estimated) | After Fixes | Target |
+|--------|---------------------|-------------|--------|
+| Performance | 68 | 92 | >90 |
+| Accessibility | 81 | 96 | >90 |
+| Best Practices | 87 | 95 | >90 |
+| SEO | 92 | 100 | >90 |
+
+---
+
+## Total Effort Estimate
+
+| Priority | Issues | Hours | Cost (€80/hr) |
+|----------|--------|-------|---------------|
+| Critical | 3 | 4 hrs | €320 |
+| High | 8 | 12 hrs | €960 |
+| Medium | 12 | 16 hrs | €1,280 |
+| **Total** | **23** | **32 hrs** | **€2,560** |
+
+---
+
+## Recommendations Priority Order
+
+1. **Week 1:** Fix critical performance issues (bundle splitting, N+1 queries, indexes)
+2. **Week 2:** Fix marine UX issues (touch targets, contrast, font sizes)
+3. **Week 3:** Accessibility improvements (ARIA, keyboard nav)
+4. **Week 4:** Polish (animations, micro-interactions, loading states)
+
+---
+
+## Conclusion
+
+NaviDocs has a solid foundation but needs optimization for marine environments and performance at scale. Most issues are quick fixes with high ROI.
+
+**Most Critical Fix:** Increase touch targets to 60×60px (15 minutes, massive UX improvement)
+**Biggest Performance Win:** Add database indexes (30 minutes, 10× query speedup)
+```
+
+---
+
+**Start your analysis now. Be thorough but actionable. Focus on fixes that matter to yacht owners using the app in real marine conditions (bright sun, gloves, boat motion).**
