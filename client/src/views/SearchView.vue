@@ -239,17 +239,26 @@ async function performSearch() {
   try {
     await search(searchQuery.value)
   } catch (error) {
-    console.error('Search failed:', error)
+    // Search failed - could show error toast in production
+    results.value = []
   }
 }
 
 function formatSnippet(text) {
   if (!text) return ''
 
-  // Meilisearch returns <mark> tags, enhance them with bold
-  return text
-    .replace(/<mark>/g, '<mark class="nv-hi"><strong>')
-    .replace(/<\/mark>/g, '</strong></mark>')
+  // First, escape any HTML except Meilisearch's <mark> tags
+  const escaped = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+
+  // Then restore and enhance Meilisearch <mark> tags
+  return escaped
+    .replace(/&lt;mark&gt;/g, '<mark class="nv-hi"><strong>')
+    .replace(/&lt;\/mark&gt;/g, '</strong></mark>')
 }
 
 function showPreview(id) {

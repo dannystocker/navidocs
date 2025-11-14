@@ -1,12 +1,16 @@
 /**
  * Authentication Middleware
- * Placeholder for JWT authentication
- * TODO: Implement full JWT verification
+ * JWT token verification and user authentication
  */
 
 import jwt from 'jsonwebtoken';
+import logger from '../utils/logger.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-here-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be set in environment variables');
+}
 
 /**
  * Verify JWT token and attach user to request
@@ -47,7 +51,7 @@ export function optionalAuth(req, res, next) {
       req.user = user;
     } catch (error) {
       // Token invalid, but don't fail - continue without user
-      console.log('Invalid token provided:', error.message);
+      logger.debug('AUTH_TOKEN_INVALID', { error: error.message });
     }
   }
 
