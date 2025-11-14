@@ -67,12 +67,34 @@ app.use('/api/', limiter);
 // Health check
 app.get('/health', async (req, res) => {
   try {
-    // TODO: Check database, Meilisearch, queue
-    res.json({
+    const health = {
       status: 'ok',
       timestamp: Date.now(),
-      uptime: process.uptime()
-    });
+      uptime: process.uptime(),
+      checks: {}
+    };
+
+    // Check database
+    try {
+      const db = getDb();
+      db.prepare('SELECT 1').get();
+      health.checks.database = 'ok';
+    } catch (err) {
+      health.checks.database = 'error';
+      health.status = 'degraded';
+    }
+
+    // Check Meilisearch
+    try {
+      const meiliHealth = await fetch(`${process.env.MEILISEARCH_HOST}/health`);
+      health.checks.meilisearch = meiliHealth.ok ? 'ok' : 'error';
+      if (!meiliHealth.ok) health.status = 'degraded';
+    } catch (err) {
+      health.checks.meilisearch = 'error';
+      health.status = 'degraded';
+    }
+
+    res.json(health);
   } catch (error) {
     res.status(500).json({
       status: 'error',

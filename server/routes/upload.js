@@ -14,6 +14,8 @@ import { dirname, join } from 'path';
 import { getDb } from '../db/db.js';
 import { validateFile, sanitizeFilename } from '../services/file-safety.js';
 import { addOcrJob } from '../services/queue.js';
+import logger from '../utils/logger.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
@@ -44,13 +46,13 @@ await fs.mkdir(UPLOAD_DIR, { recursive: true });
  *
  * @returns {Object} { jobId, documentId }
  */
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const file = req.file;
     const { title, documentType, organizationId, entityId, componentId, subEntityId } = req.body;
 
-    // TODO: Authentication middleware should provide req.user
-    const userId = req.user?.id || 'test-user-id'; // Temporary for testing
+    // User is authenticated via middleware
+    const userId = req.user.id;
 
     // Validate required fields
     if (!file) {
@@ -94,7 +96,7 @@ router.post('/', upload.single('file'), async (req, res) => {
     // Auto-create organization if it doesn't exist (for development/testing)
     const existingOrg = db.prepare('SELECT id FROM organizations WHERE id = ?').get(organizationId);
     if (!existingOrg) {
-      console.log(`Creating new organization: ${organizationId}`);
+      logger.info('ORG_AUTO_CREATE', { organizationId });
       db.prepare(`
         INSERT INTO organizations (id, name, created_at, updated_at)
         VALUES (?, ?, ?, ?)
@@ -109,7 +111,11 @@ router.post('/', upload.single('file'), async (req, res) => {
     if (duplicateCheck) {
       // File already exists - optionally return existing document
       // For now, we'll allow duplicates but log it
-      console.log(`Duplicate file detected: ${duplicateCheck.id}, proceeding with new upload`);
+      logger.warn('DUPLICATE_FILE', {
+        existingDocId: duplicateCheck.id,
+        fileHash,
+        organizationId
+      });
     }
 
     const timestamp = Date.now();
