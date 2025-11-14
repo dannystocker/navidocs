@@ -1,0 +1,471 @@
+You are Gemini 2.0 Flash Thinking, tasked with a comprehensive performance and UX review of the NaviDocs boat management platform.
+
+## CONTEXT
+
+**Project:** NaviDocs - Premium boat documentation management for €800K-€1.5M yachts
+**Codebase:** /home/setup/navidocs (Vue 3 + Vite, Express.js, SQLite)
+**Branch:** navidocs-cloud-coordination
+**Services:** Backend on port 8001, Frontend on port 3200
+**Target Users:** Boat owners, captains, crew using tablets/phones **in marine environments** (bright sunlight, gloves, wet hands, boat vibrations)
+
+## YOUR MISSION
+
+Perform a deep performance and UX review focusing on:
+1. **Performance optimization** (bundle size, lazy loading, database indexes, caching)
+2. **User experience** (touch targets, contrast, accessibility, mobile responsiveness)
+3. **Marine environment usability** (glove operation, sunlight readability, simplicity)
+
+## STEP 1: RUN AUTOMATED AUDITS
+
+Execute these commands and analyze output:
+
+```bash
+cd /home/setup/navidocs
+
+# Frontend Performance
+npm run build                                                    # Build production bundle
+du -sh dist/                                                     # Total bundle size (target: <500KB gzipped)
+find dist/assets -name "*.js" -exec du -h {} \; | sort -h | tail -5  # Largest JS chunks
+grep -r "import.*from.*views" client/src/router/ | head -20     # Check for lazy loading
+
+# Component Size Analysis
+find client/src/components -name "*.vue" -exec wc -l {} \; | awk '$1 > 300 {print $2 " (" $1 " lines)"}' | head -10  # Large components (performance risk)
+find client/src -name "*.vue" -exec wc -l {} \; | awk '$1 > 500 {print $2 " (" $1 " lines - GOD COMPONENT!)"}' # God components
+
+# Database Performance
+ls server/*.db 2>/dev/null || ls *.db 2>/dev/null              # Find database
+# Then: sqlite3 <db-file> "SELECT name FROM sqlite_master WHERE type='index';" | wc -l  # Count indexes
+
+# Backend Performance
+grep -r "\.all(" server/routes/ | wc -l                         # Count .all() queries (should use pagination)
+grep -r "for.*of\|forEach" server/routes/ -A 3 | grep "db.prepare" | wc -l  # N+1 query risk
+
+# UX/Accessibility
+grep -r "width.*px\|height.*px" client/src/components/ | grep -E "width: [1-4][0-9]px|height: [1-4][0-9]px" | head -20  # Small touch targets (<50px)
+grep -r "<button\|<div.*@click" client/src/components/ | grep -v "aria-label" | wc -l  # Missing ARIA labels
+grep -r "<img" client/src | grep -v "alt=" | head -10           # Images without alt text
+grep -r "font-size.*px" client/src | grep -E "[0-9]{1}px|1[0-5]px" | head -20  # Small fonts (<16px)
+```
+
+## STEP 2: MANUAL CODE REVIEW
+
+**Key files to examine:**
+
+**Performance Critical:**
+- `client/src/router/index.js` - Lazy loading routes?
+- `client/vite.config.js` - Build optimization?
+- `server/routes/*.js` - Database query efficiency?
+- `client/src/components/*Module.vue` - Large components causing jank?
+
+**UX Critical:**
+- All `.vue` components - Touch target sizes, font sizes, contrast
+- `client/src/views/*.vue` - Mobile responsiveness
+- Error handling in components - User-friendly messages?
+
+**Look for:**
+
+### PERFORMANCE ISSUES ⚡
+
+**1. Large Bundle Size (>500KB):**
+```javascript
+// BAD: All routes loaded upfront
+import DocumentView from './views/DocumentView.vue'
+const routes = [{ path: '/documents', component: DocumentView }]
+
+// GOOD: Lazy loading
+const routes = [{
+  path: '/documents',
+  component: () => import('./views/DocumentView.vue')
+}]
+```
+
+**2. N+1 Database Queries:**
+```javascript
+// BAD: Query in loop (1 + N queries)
+const boats = db.prepare('SELECT * FROM boats').all()
+for (const boat of boats) {
+  const items = db.prepare('SELECT * FROM inventory WHERE boat_id = ?').all(boat.id)
+  boat.inventory = items
+}
+
+// GOOD: Single JOIN query
+const stmt = db.prepare(`
+  SELECT boats.*, inventory.*
+  FROM boats
+  LEFT JOIN inventory ON inventory.boat_id = boats.id
+`)
+```
+
+**3. Missing Database Indexes:**
+```sql
+-- BAD: No index on foreign key (slow queries)
+CREATE TABLE inventory (boat_id INTEGER, ...)
+
+-- GOOD: Index added
+CREATE INDEX idx_inventory_boat_id ON inventory(boat_id);
+```
+
+**4. No Pagination:**
+```javascript
+// BAD: Returns all 10,000 items
+router.get('/api/inventory/:boatId', async (req, res) => {
+  const items = db.prepare('SELECT * FROM inventory WHERE boat_id = ?').all(boatId)
+  res.json(items)  // Could be 10MB response!
+})
+
+// GOOD: Paginated
+const { limit = 50, offset = 0 } = req.query
+const items = db.prepare('SELECT * FROM inventory WHERE boat_id = ? LIMIT ? OFFSET ?').all(boatId, limit, offset)
+```
+
+### UX ISSUES 🎨
+
+**1. Touch Targets Too Small (<60px for marine environment):**
+```vue
+<!-- BAD: 32×32px button (impossible with gloves) -->
+<button class="delete-btn" style="width: 32px; height: 32px">
+  <TrashIcon />
+</button>
+
+<!-- GOOD: 60×60px minimum -->
+<button class="delete-btn" style="min-width: 60px; min-height: 60px; padding: 16px;">
+  <TrashIcon />
+</button>
+```
+
+**2. Low Contrast (unreadable in sunlight):**
+```vue
+<!-- BAD: Light text on light background (contrast ratio 2:1) -->
+<p style="color: #999; background: #eee;">Equipment name</p>
+
+<!-- GOOD: High contrast (7:1 for WCAG AAA) -->
+<p style="color: #1E3A8A; background: #fff;">Equipment name</p>
+```
+
+**3. Small Fonts (<24px for critical metrics):**
+```vue
+<!-- BAD: Small temperature display -->
+<div class="temperature" style="font-size: 16px;">24°C</div>
+
+<!-- GOOD: Garmin-style large metric -->
+<div class="temperature" style="font-size: 48px; font-weight: 700;">24°C</div>
+```
+
+**4. Missing Loading States:**
+```vue
+<!-- BAD: No feedback during API call -->
+<button @click="submitForm">Submit</button>
+
+<!-- GOOD: Loading indicator -->
+<button @click="submitForm" :disabled="isLoading">
+  {{ isLoading ? 'Submitting...' : 'Submit' }}
+</button>
+```
+
+**5. Missing ARIA Labels:**
+```vue
+<!-- BAD: Screen readers can't identify action -->
+<button @click="deleteItem"><TrashIcon /></button>
+
+<!-- GOOD: Accessible -->
+<button @click="deleteItem" aria-label="Delete item">
+  <TrashIcon />
+</button>
+```
+
+## STEP 3: LIGHTHOUSE ANALYSIS (if services running)
+
+If you can access the running app (http://localhost:3200), test these critical flows:
+
+**Test Flow 1: Dashboard Load**
+- Navigate to http://localhost:3200/
+- Does it load in <2 seconds?
+- Are there loading skeletons?
+- Is data fetched efficiently (not 20 separate API calls)?
+
+**Test Flow 2: Inventory with Photos**
+- Navigate to inventory module
+- Upload photos - is there progress bar?
+- Scroll long list - is it smooth (60fps)?
+- Search items - is it debounced?
+
+**Test Flow 3: Mobile Simulation**
+- Resize browser to 375×667 (iPhone SE)
+- Can you tap all buttons easily?
+- Is text readable without zooming?
+- No horizontal scrolling?
+
+## STEP 4: GENERATE REPORT
+
+Create: `/home/setup/navidocs/reviews/GEMINI_PERFORMANCE_UX_REPORT.md`
+
+**Format:**
+
+```markdown
+# Gemini Performance & UX Review - NaviDocs
+
+**Reviewed:** [DATE]
+**Model:** Gemini 2.0 Flash Thinking
+**Reviewer:** Gemini
+**Performance Rating:** X/10
+**UX Rating:** X/10
+**Marine Usability Rating:** X/10
+
+---
+
+## Executive Summary
+
+[2-3 paragraphs summarizing key findings]
+
+**Performance Bottlenecks:**
+- [Top 3 performance issues slowing the app]
+
+**UX Blockers for Marine Environment:**
+- [Top 3 UX issues making app unusable on boats]
+
+**Quick Wins:**
+- [3-5 easy fixes with massive impact]
+
+---
+
+## PERFORMANCE ISSUES ⚡
+
+### 🔴 Critical (Blocks User Action)
+
+#### 1. [Issue Name - e.g., Bundle Size 789KB (58% too large)]
+
+**Impact:** 5-8 second load on 3G connection (marina WiFi)
+**Measurement:** \`du -sh dist/\` = 789KB gzipped
+**Target:** <500KB gzipped
+**Root Cause:** All routes loaded upfront, no code splitting
+
+**Current Code:**
+\`\`\`javascript
+// client/src/router/index.js
+import DocumentView from './views/DocumentView.vue'
+import InventoryView from './views/InventoryView.vue'
+// ... 9 routes imported upfront
+\`\`\`
+
+**Fix:**
+\`\`\`javascript
+const routes = [
+  { path: '/documents', component: () => import('./views/DocumentView.vue') },
+  { path: '/inventory', component: () => import('./views/InventoryView.vue') }
+  // Lazy load all routes
+]
+\`\`\`
+
+**Expected Improvement:** Bundle size → 320KB (59% reduction)
+**Effort:** 30 minutes
+**Priority:** CRITICAL
+
+---
+
+[Continue for all CRITICAL performance issues...]
+
+---
+
+### 🟡 High Priority (Degrades Experience)
+
+#### 1. [Issue Name]
+
+**Impact:** [description]
+**File:** [path:line]
+**Measurement:** [metric]
+
+**Fix:**
+\`\`\`javascript
+[code example]
+\`\`\`
+
+**Effort:** [hours]
+
+---
+
+## UX ISSUES 🎨
+
+### 🔴 Critical (Unusable in Marine Environment)
+
+#### 1. Touch Targets Too Small (32×32px, need 60×60px)
+
+**Impact:** Impossible to tap with sailing gloves
+**Marine Context:** Yacht owners wear gloves 60% of time (wet, cold, rough seas)
+**Files Affected:**
+- `client/src/components/ContactsModule.vue:45` - Delete icon (32×32px)
+- `client/src/components/InventoryModule.vue:89` - Edit button (40×40px)
+- `client/src/components/ExpenseModule.vue:123` - Approve button (36×36px)
+
+**Current Code:**
+\`\`\`vue
+<button class="icon-btn" style="width: 32px; height: 32px">
+  <TrashIcon />
+</button>
+\`\`\`
+
+**Fix:**
+\`\`\`vue
+<button class="icon-btn" style="min-width: 60px; min-height: 60px; padding: 16px;">
+  <TrashIcon class="w-6 h-6" />
+</button>
+\`\`\`
+
+**Expected Improvement:** Tap success rate: 40% → 98%
+**Effort:** 15 minutes (update 12 buttons)
+**Priority:** CRITICAL for marine use
+
+---
+
+[Continue for all CRITICAL UX issues...]
+
+---
+
+### 🟡 High Priority (Accessibility Issue)
+
+#### 1. Missing ARIA Labels (14 icon-only buttons)
+
+**Impact:** Screen readers can't identify button actions
+**WCAG Compliance:** Fails WCAG 2.1 Level A (4.1.2 Name, Role, Value)
+**Files:** [list 5-10 worst examples]
+
+**Fix Pattern:**
+\`\`\`vue
+<button aria-label="Delete inventory item" @click="deleteItem">
+  <TrashIcon />
+</button>
+\`\`\`
+
+**Effort:** 30 minutes
+**Priority:** HIGH (legal requirement in EU)
+
+---
+
+## QUICK WINS (High Impact, Low Effort)
+
+| Fix | Impact | Effort | ROI | Priority |
+|-----|--------|--------|-----|----------|
+| Add database indexes | -80% query time | 30 min | ⭐⭐⭐⭐⭐ | Week 1 |
+| Increase touch targets to 60px | Marine usability | 15 min | ⭐⭐⭐⭐⭐ | Week 1 |
+| Enable Vite gzip compression | -40% bundle size | 5 min | ⭐⭐⭐⭐⭐ | Week 1 |
+| Add loading skeletons | +20% perceived speed | 1 hr | ⭐⭐⭐⭐ | Week 1 |
+| Lazy load routes | -50% initial load | 30 min | ⭐⭐⭐⭐⭐ | Week 1 |
+
+---
+
+## LIGHTHOUSE SCORE PROJECTION
+
+| Metric | Current (Estimated) | After Quick Wins | After All Fixes | Target |
+|--------|---------------------|------------------|-----------------|--------|
+| Performance | 68 | 85 | 92 | >90 |
+| Accessibility | 81 | 88 | 96 | >90 |
+| Best Practices | 87 | 92 | 95 | >90 |
+| SEO | 92 | 96 | 100 | >90 |
+
+---
+
+## MARINE ENVIRONMENT USABILITY
+
+**Current Issues:**
+- ❌ Touch targets too small for gloves (32-40px vs 60px needed)
+- ❌ Low contrast (unreadable in direct sunlight)
+- ❌ Small fonts for critical metrics (16px vs 48px needed)
+- ⚠️ Glass morphism may cause lag on older tablets
+
+**Recommendations:**
+1. **Increase all touch targets to 60×60px minimum**
+2. **High contrast mode by default** (Navy #1E3A8A on White #FFF = 8.5:1 ratio)
+3. **Large Garmin-style metrics** (32-48px for numbers like temperature, wind speed)
+4. **Test backdrop-filter performance** (glass effects can drop to 30fps on budget tablets)
+
+---
+
+## CODE QUALITY METRICS (UX-Impacting)
+
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| Bundle size (gzipped) | XKB | <500KB | ❌/✅ |
+| Largest component | X lines | <300 lines | ❌/✅ |
+| God components (>500 lines) | X | 0 | ❌/✅ |
+| Touch targets <60px | X | 0 | ❌/✅ |
+| Missing ARIA labels | X | 0 | ❌/✅ |
+| Low contrast elements | X | 0 | ❌/✅ |
+| Database indexes | X | >15 | ❌/✅ |
+| N+1 queries | X | 0 | ❌/✅ |
+
+---
+
+## TOTAL EFFORT ESTIMATE
+
+| Priority | Issues | Hours | Cost (€80/hr) |
+|----------|--------|-------|---------------|
+| Critical (🔴) | X | X hrs | €X |
+| High (🟡) | X | X hrs | €X |
+| Medium (⚠️) | X | X hrs | €X |
+| **TOTAL** | **X** | **X hrs** | **€X** |
+
+---
+
+## IMPLEMENTATION ROADMAP
+
+**Week 1 (Quick Wins - 8 hours):**
+1. Add database indexes (30 min)
+2. Increase touch targets to 60px (15 min)
+3. Enable gzip compression (5 min)
+4. Lazy load routes (30 min)
+5. Add loading skeletons (1 hr)
+6. Fix N+1 queries (2 hrs)
+7. Add pagination to large lists (2 hrs)
+8. Fix critical contrast issues (1 hr)
+
+**Week 2 (High Priority - 12 hours):**
+1. Add ARIA labels (2 hrs)
+2. Keyboard navigation (3 hrs)
+3. Mobile responsive fixes (4 hrs)
+4. Performance monitoring (2 hrs)
+5. Image optimization (1 hr)
+
+**Week 3 (Medium Priority - 16 hours):**
+1. Component refactoring (break up god components)
+2. State management (centralize in Pinia)
+3. Animation optimization
+4. Advanced caching
+
+---
+
+## CONCLUSION
+
+NaviDocs has solid architecture but needs optimization for:
+1. **Marine environment** (touch targets, contrast, font sizes)
+2. **Performance at scale** (bundle size, database queries, pagination)
+3. **Accessibility** (ARIA, keyboard nav, screen readers)
+
+**Most Critical Fix:** Increase touch targets to 60×60px (15 minutes, massive usability improvement for gloves)
+
+**Biggest Performance Win:** Add database indexes + lazy load routes (1 hour, 10× query speedup + 50% faster initial load)
+
+**Safe to launch?** YES, but fix critical issues first (Week 1 quick wins = 8 hours)
+
+**Overall Assessment:** 7.5/10 (Good foundation, needs polish for premium yacht market expectations)
+
+\`\`\`
+
+---
+
+## IMPORTANT INSTRUCTIONS
+
+1. **Test in marine context:** Imagine using this on a boat (bright sun, gloves, motion)
+2. **Be specific:** File:line references for every issue
+3. **Be actionable:** Before/after code for every fix
+4. **Measure impact:** Provide metrics (bundle size reduction, query speedup, etc.)
+5. **Prioritize for users:** Critical = blocks real use, High = degrades experience
+
+## START YOUR REVIEW NOW
+
+Run automated audits, analyze code, test flows (if services running), generate comprehensive report above.
+
+Focus on:
+- Performance (make it fast)
+- Usability (make it easy)
+- Marine environment (make it work on boats)
+
+Good luck! ⚡

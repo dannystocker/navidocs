@@ -1,0 +1,331 @@
+You are Codex GPT-5 High, tasked with a comprehensive security and architecture review of the NaviDocs boat management platform.
+
+## CONTEXT
+
+**Project:** NaviDocs - Premium boat documentation management for €800K-€1.5M yachts
+**Codebase:** /home/setup/navidocs (Vue 3 + Express.js + SQLite)
+**Branch:** navidocs-cloud-coordination
+**Services:** Backend on port 8001, Frontend on port 3200
+**Target Users:** Boat owners, captains, crew, management companies, yacht dealers
+
+## YOUR MISSION
+
+Perform a deep security and architecture review focusing on:
+1. **Security vulnerabilities** (OWASP Top 10, SQL injection, XSS, auth bypasses)
+2. **Architecture quality** (separation of concerns, code organization, maintainability)
+3. **Code quality** (naming, error handling, complexity, best practices)
+
+## STEP 1: RUN AUTOMATED AUDITS
+
+Execute these commands and analyze output:
+
+```bash
+cd /home/setup/navidocs
+
+# Security checks
+npm audit --production                                           # Dependency vulnerabilities
+grep -r "db.prepare(\`\${" server/ --exclude-dir=node_modules   # SQL injection (string interpolation)
+grep -r 'db.prepare("' server/ | grep -v "?" | head -20         # SQL injection (no parameterization)
+grep -r "api_key\|API_KEY\|password\|secret" server/ client/ --exclude-dir=node_modules | grep -v "\.env" | head -20  # Hardcoded secrets
+git log --all --pretty=format: --name-only | grep "\.env$"      # Exposed secrets in git history
+
+# Authentication checks
+grep -r "router\." server/routes/ | grep -v "authenticateToken" | grep -E "get\(|post\(|put\(|delete\(" | head -30  # Unprotected routes
+
+# Code quality
+find client/src/components -name "*.vue" -exec wc -l {} \; | awk '$1 > 300 {print $2 " (" $1 " lines)"}' | head -10  # Large components
+find server/routes -name "*.js" -exec wc -l {} \; | awk '$1 > 200 {print $2 " (" $1 " lines)"}' | head -10  # Large route files (business logic in routes = antipattern)
+
+# Database schema analysis
+ls server/*.db 2>/dev/null || ls *.db 2>/dev/null || echo "No database found"  # Find database file
+# Then: sqlite3 <db-file> ".schema" | grep -E "CREATE TABLE|CREATE INDEX"
+```
+
+## STEP 2: MANUAL CODE REVIEW
+
+**Key files to examine:**
+
+**Backend (security critical):**
+- `server/routes/*.js` - All route files
+- `server/middleware/auth.js` - Authentication logic
+- `server/db/db.js` - Database connection
+- `server/index.js` - Server setup
+
+**Frontend (architecture focus):**
+- `client/src/router/index.js` - Route configuration
+- `client/src/components/*.vue` - Component structure
+- `client/src/views/*.vue` - Page components
+
+**Look for:**
+
+### CRITICAL SECURITY ISSUES 🔴
+1. **SQL Injection:**
+   ```javascript
+   // VULNERABLE
+   const stmt = db.prepare(`SELECT * FROM users WHERE id = ${userId}`)
+   const stmt = db.prepare("DELETE FROM items WHERE id = " + itemId)
+
+   // SAFE
+   const stmt = db.prepare('SELECT * FROM users WHERE id = ?')
+   stmt.get(userId)
+   ```
+
+2. **Authentication Bypass:**
+   ```javascript
+   // VULNERABLE - no auth check
+   router.delete('/api/inventory/:id', async (req, res) => {
+     // Anyone can delete items!
+   })
+
+   // SAFE
+   router.delete('/api/inventory/:id', authenticateToken, async (req, res) => {
+     // Only authenticated users
+   })
+   ```
+
+3. **File Upload Vulnerabilities:**
+   ```javascript
+   // VULNERABLE - no size/type validation
+   const upload = multer({ dest: 'uploads/' })
+
+   // SAFE
+   const upload = multer({
+     dest: 'uploads/',
+     limits: { fileSize: 5 * 1024 * 1024 },  // 5MB max
+     fileFilter: (req, file, cb) => {
+       if (!['image/jpeg', 'image/png'].includes(file.mimetype)) {
+         return cb(new Error('Invalid file type'))
+       }
+       cb(null, true)
+     }
+   })
+   ```
+
+4. **Exposed Secrets:**
+   ```javascript
+   // VULNERABLE
+   const API_KEY = 'sk-abc123secretkey'
+
+   // SAFE
+   const API_KEY = process.env.API_KEY
+   ```
+
+### ARCHITECTURE ISSUES 🟡
+1. **Business Logic in Routes (should be in service layer)**
+2. **God Components (>300 lines, should be split)**
+3. **No RBAC (role-based access control for multi-stakeholder access)**
+4. **Scattered State (should use Pinia store, not ref() in components)**
+
+## STEP 3: GENERATE REPORT
+
+Create: `/home/setup/navidocs/reviews/CODEX_SECURITY_ARCHITECTURE_REPORT.md`
+
+**Format:**
+
+```markdown
+# Codex Security & Architecture Review - NaviDocs
+
+**Reviewed:** [DATE]
+**Model:** GPT-5 High
+**Reviewer:** Codex
+**Overall Security Rating:** X/10
+**Overall Architecture Rating:** X/10
+
+---
+
+## Executive Summary
+
+[2-3 paragraph summary of findings. Be direct about severity.]
+
+**Critical Risks:**
+- [List 3-5 most severe issues that could cause data breaches, data loss, or system compromise]
+
+**Quick Wins:**
+- [List 3-5 easy fixes with high security/quality impact]
+
+---
+
+## CRITICAL ISSUES 🔴 (Fix Immediately)
+
+### 1. [Issue Name - e.g., SQL Injection in Maintenance Route]
+
+**Severity:** CRITICAL (10/10)
+**File:** `server/routes/maintenance.js:78`
+**Impact:** Allows attackers to read/modify/delete entire database
+
+**Vulnerable Code:**
+\`\`\`javascript
+const stmt = db.prepare(\`SELECT * FROM maintenance WHERE id = \${req.params.id}\`)
+const result = stmt.get()
+\`\`\`
+
+**Attack Example:**
+\`\`\`bash
+curl "http://localhost:8001/api/maintenance/1; DROP TABLE users--"
+# Result: Users table deleted
+\`\`\`
+
+**Fix:**
+\`\`\`javascript
+const stmt = db.prepare('SELECT * FROM maintenance WHERE id = ?')
+const result = stmt.get(req.params.id)
+\`\`\`
+
+**Effort:** 2 minutes
+**Priority:** IMMEDIATE (stop deployment until fixed)
+
+---
+
+[Continue for all CRITICAL issues...]
+
+---
+
+## HIGH PRIORITY ISSUES 🟡 (Fix Before Launch)
+
+### 1. [Issue Name]
+
+**Severity:** HIGH (7/10)
+**File:** [path:line]
+**Impact:** [description]
+
+**Current Code:**
+\`\`\`javascript
+[code snippet]
+\`\`\`
+
+**Recommended Fix:**
+\`\`\`javascript
+[fixed code]
+\`\`\`
+
+**Effort:** [hours]
+
+---
+
+[Continue for all HIGH issues...]
+
+---
+
+## MEDIUM PRIORITY ISSUES ⚠️ (Fix Post-Launch)
+
+[List with less detail, focus on patterns]
+
+---
+
+## Architecture Recommendations
+
+### 1. Extract Business Logic to Service Layer
+
+**Current (Antipattern):**
+Routes contain 50-200 lines of business logic
+
+**Recommended:**
+\`\`\`javascript
+// routes/expenses.js
+router.post('/api/expenses', authenticateToken, async (req, res) => {
+  const expense = await ExpenseService.create(req.body, req.user)
+  res.json(expense)
+})
+
+// services/expense.service.js
+class ExpenseService {
+  static async create(data, user) {
+    this.validate(data)
+    const splits = this.calculateSplits(data)
+    return this.save(data, splits, user)
+  }
+}
+\`\`\`
+
+**Effort:** 8 hours (refactor all 5 route files)
+
+---
+
+## Security Checklist
+
+- [ ] All database queries use parameterized statements
+- [ ] All routes have authentication (except public endpoints)
+- [ ] No secrets in code (all in .env)
+- [ ] File uploads validated (size, type, magic bytes)
+- [ ] JWT tokens expire (<1 hour)
+- [ ] RBAC implemented (owner/captain/crew permissions)
+- [ ] Input validation on all POST/PUT routes
+- [ ] SQL injection: 0 vulnerabilities found
+- [ ] XSS vulnerabilities: 0 found
+- [ ] npm audit: 0 critical/high vulnerabilities
+
+---
+
+## Code Quality Metrics
+
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| SQL injection vulns | X | 0 | ❌/✅ |
+| Unauth'd routes | X | 0 | ❌/✅ |
+| Hardcoded secrets | X | 0 | ❌/✅ |
+| npm audit critical | X | 0 | ❌/✅ |
+| Large components (>300 lines) | X | 0 | ❌/✅ |
+| Large routes (>200 lines) | X | 0 | ❌/✅ |
+
+---
+
+## Total Effort Estimate
+
+| Priority | Issues | Hours | Cost (€80/hr) |
+|----------|--------|-------|---------------|
+| Critical (🔴) | X | X hrs | €X |
+| High (🟡) | X | X hrs | €X |
+| Medium (⚠️) | X | X hrs | €X |
+| **TOTAL** | **X** | **X hrs** | **€X** |
+
+---
+
+## Recommendations by Priority
+
+**Week 1 (CRITICAL):**
+1. [Fix item]
+2. [Fix item]
+
+**Week 2 (HIGH):**
+1. [Fix item]
+2. [Fix item]
+
+**Post-Launch (MEDIUM):**
+1. [Improvement item]
+2. [Improvement item]
+
+---
+
+## Conclusion
+
+[Final assessment. Be honest about severity. Don't sugarcoat if there are critical issues.]
+
+**Safe to launch?** YES/NO (if NO, list blockers)
+
+**Biggest risk:** [Single sentence describing #1 vulnerability]
+
+**Fastest security win:** [Single fix with highest impact/effort ratio]
+
+\`\`\`
+
+---
+
+## IMPORTANT INSTRUCTIONS
+
+1. **Be thorough:** Scan ALL route files, not just samples
+2. **Be specific:** Every issue needs file:line reference
+3. **Be actionable:** Every issue needs before/after code example
+4. **Be realistic:** Effort estimates should be accurate (consider testing time)
+5. **Prioritize correctly:** CRITICAL = can be exploited remotely, HIGH = degrades security posture
+
+## START YOUR REVIEW NOW
+
+Begin with automated audit commands, then manual code review, then generate the comprehensive report above.
+
+Focus on finding vulnerabilities that could cause:
+- Data breaches (unauthorized access to boat/owner data)
+- Data loss (SQL injection deletion)
+- Authentication bypass (accessing other users' boats)
+- File system attacks (malicious file uploads)
+
+Good luck! 🔒
