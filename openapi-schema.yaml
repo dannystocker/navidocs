@@ -1,0 +1,1840 @@
+openapi: 3.0.0
+info:
+  title: NaviDocs API
+  description: Comprehensive boat documentation management API with 16 supporting tables
+  version: 1.0.0
+  contact:
+    name: NaviDocs Team
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Development server
+  - url: https://api.navidocs.com/v1
+    description: Production server
+
+paths:
+  # Inventory Items Endpoints
+  /boats/{boatId}/inventory:
+    get:
+      summary: List inventory items for a boat
+      operationId: listInventoryItems
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+    post:
+      summary: Create a new inventory item
+      operationId: createInventoryItem
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInventoryItemRequest'
+      responses:
+        '201':
+          description: Item created successfully
+
+  /inventory/{itemId}:
+    get:
+      summary: Get a specific inventory item
+      operationId: getInventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    put:
+      summary: Update an inventory item
+      operationId: updateInventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInventoryItemRequest'
+      responses:
+        '200':
+          description: Item updated successfully
+    delete:
+      summary: Delete an inventory item
+      operationId: deleteInventoryItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Item deleted successfully
+
+  # Maintenance Records Endpoints
+  /boats/{boatId}/maintenance:
+    get:
+      summary: List maintenance records for a boat
+      operationId: listMaintenanceRecords
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MaintenanceRecord'
+    post:
+      summary: Create a new maintenance record
+      operationId: createMaintenanceRecord
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaintenanceRecordRequest'
+      responses:
+        '201':
+          description: Record created successfully
+
+  /maintenance/{recordId}:
+    get:
+      summary: Get a specific maintenance record
+      operationId: getMaintenanceRecord
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceRecord'
+    put:
+      summary: Update a maintenance record
+      operationId: updateMaintenanceRecord
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaintenanceRecordRequest'
+      responses:
+        '200':
+          description: Record updated successfully
+    delete:
+      summary: Delete a maintenance record
+      operationId: deleteMaintenanceRecord
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Record deleted successfully
+
+  # Camera Feeds Endpoints
+  /boats/{boatId}/cameras:
+    get:
+      summary: List camera feeds for a boat
+      operationId: listCameraFeeds
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CameraFeed'
+    post:
+      summary: Create a new camera feed
+      operationId: createCameraFeed
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCameraFeedRequest'
+      responses:
+        '201':
+          description: Camera feed created successfully
+
+  /cameras/{cameraId}:
+    get:
+      summary: Get a specific camera feed
+      operationId: getCameraFeed
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CameraFeed'
+    put:
+      summary: Update a camera feed
+      operationId: updateCameraFeed
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCameraFeedRequest'
+      responses:
+        '200':
+          description: Camera feed updated successfully
+    delete:
+      summary: Delete a camera feed
+      operationId: deleteCameraFeed
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Camera feed deleted successfully
+
+  # Contacts Endpoints
+  /organizations/{organizationId}/contacts:
+    get:
+      summary: List contacts for an organization
+      operationId: listContacts
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: type
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+    post:
+      summary: Create a new contact
+      operationId: createContact
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactRequest'
+      responses:
+        '201':
+          description: Contact created successfully
+
+  /contacts/{contactId}:
+    get:
+      summary: Get a specific contact
+      operationId: getContact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+    put:
+      summary: Update a contact
+      operationId: updateContact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactRequest'
+      responses:
+        '200':
+          description: Contact updated successfully
+    delete:
+      summary: Delete a contact
+      operationId: deleteContact
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Contact deleted successfully
+
+  # Expenses Endpoints
+  /boats/{boatId}/expenses:
+    get:
+      summary: List expenses for a boat
+      operationId: listExpenses
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Expense'
+    post:
+      summary: Create a new expense
+      operationId: createExpense
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseRequest'
+      responses:
+        '201':
+          description: Expense created successfully
+
+  /expenses/{expenseId}:
+    get:
+      summary: Get a specific expense
+      operationId: getExpense
+      parameters:
+        - name: expenseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+    put:
+      summary: Update an expense
+      operationId: updateExpense
+      parameters:
+        - name: expenseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseRequest'
+      responses:
+        '200':
+          description: Expense updated successfully
+    delete:
+      summary: Delete an expense
+      operationId: deleteExpense
+      parameters:
+        - name: expenseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Expense deleted successfully
+
+  /expenses/{expenseId}/approve:
+    post:
+      summary: Approve an expense
+      operationId: approveExpense
+      parameters:
+        - name: expenseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Expense approved successfully
+
+  # Warranties Endpoints
+  /boats/{boatId}/warranties:
+    get:
+      summary: List warranties for a boat
+      operationId: listWarranties
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Warranty'
+    post:
+      summary: Create a new warranty
+      operationId: createWarranty
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarrantyRequest'
+      responses:
+        '201':
+          description: Warranty created successfully
+
+  /warranties/{warrantyId}:
+    get:
+      summary: Get a specific warranty
+      operationId: getWarranty
+      parameters:
+        - name: warrantyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Warranty'
+    put:
+      summary: Update a warranty
+      operationId: updateWarranty
+      parameters:
+        - name: warrantyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWarrantyRequest'
+      responses:
+        '200':
+          description: Warranty updated successfully
+    delete:
+      summary: Delete a warranty
+      operationId: deleteWarranty
+      parameters:
+        - name: warrantyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Warranty deleted successfully
+
+  # Calendars Endpoints
+  /boats/{boatId}/calendars:
+    get:
+      summary: List calendar events for a boat
+      operationId: listCalendarEvents
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: eventType
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarEvent'
+    post:
+      summary: Create a new calendar event
+      operationId: createCalendarEvent
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCalendarEventRequest'
+      responses:
+        '201':
+          description: Calendar event created successfully
+
+  /calendars/{calendarId}:
+    get:
+      summary: Get a specific calendar event
+      operationId: getCalendarEvent
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarEvent'
+    put:
+      summary: Update a calendar event
+      operationId: updateCalendarEvent
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCalendarEventRequest'
+      responses:
+        '200':
+          description: Calendar event updated successfully
+    delete:
+      summary: Delete a calendar event
+      operationId: deleteCalendarEvent
+      parameters:
+        - name: calendarId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Calendar event deleted successfully
+
+  # Notifications Endpoints
+  /users/{userId}/notifications:
+    get:
+      summary: List notifications for a user
+      operationId: listNotifications
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+
+  /notifications/{notificationId}:
+    put:
+      summary: Mark notification as read
+      operationId: markNotificationAsRead
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Notification marked as read
+    delete:
+      summary: Delete a notification
+      operationId: deleteNotification
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Notification deleted successfully
+
+  # Tax Tracking Endpoints
+  /boats/{boatId}/tax-tracking:
+    get:
+      summary: List tax tracking records for a boat
+      operationId: listTaxRecords
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaxTracking'
+    post:
+      summary: Create a new tax tracking record
+      operationId: createTaxRecord
+      parameters:
+        - name: boatId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaxTrackingRequest'
+      responses:
+        '201':
+          description: Tax record created successfully
+
+  /tax-tracking/{taxId}:
+    get:
+      summary: Get a specific tax record
+      operationId: getTaxRecord
+      parameters:
+        - name: taxId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxTracking'
+    put:
+      summary: Update a tax record
+      operationId: updateTaxRecord
+      parameters:
+        - name: taxId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaxTrackingRequest'
+      responses:
+        '200':
+          description: Tax record updated successfully
+    delete:
+      summary: Delete a tax record
+      operationId: deleteTaxRecord
+      parameters:
+        - name: taxId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tax record deleted successfully
+
+  # Tags Endpoints
+  /tags:
+    get:
+      summary: List all tags
+      operationId: listTags
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+    post:
+      summary: Create a new tag
+      operationId: createTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      responses:
+        '201':
+          description: Tag created successfully
+
+  /tags/{tagId}:
+    get:
+      summary: Get a specific tag
+      operationId: getTag
+      parameters:
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+    put:
+      summary: Update a tag
+      operationId: updateTag
+      parameters:
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+      responses:
+        '200':
+          description: Tag updated successfully
+    delete:
+      summary: Delete a tag
+      operationId: deleteTag
+      parameters:
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tag deleted successfully
+
+  # Attachments Endpoints
+  /{entityType}/{entityId}/attachments:
+    get:
+      summary: List attachments for an entity
+      operationId: listAttachments
+      parameters:
+        - name: entityType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+    post:
+      summary: Upload an attachment
+      operationId: createAttachment
+      parameters:
+        - name: entityType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: entityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttachmentRequest'
+      responses:
+        '201':
+          description: Attachment created successfully
+
+  /attachments/{attachmentId}:
+    get:
+      summary: Get a specific attachment
+      operationId: getAttachment
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+    delete:
+      summary: Delete an attachment
+      operationId: deleteAttachment
+      parameters:
+        - name: attachmentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Attachment deleted successfully
+
+  # Audit Logs Endpoints
+  /audit-logs:
+    get:
+      summary: List audit logs
+      operationId: listAuditLogs
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+
+  # User Preferences Endpoints
+  /users/{userId}/preferences:
+    get:
+      summary: Get user preferences
+      operationId: getUserPreferences
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+    put:
+      summary: Update user preferences
+      operationId: updateUserPreferences
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPreferencesRequest'
+      responses:
+        '200':
+          description: User preferences updated successfully
+
+  # API Keys Endpoints
+  /users/{userId}/api-keys:
+    get:
+      summary: List API keys for a user
+      operationId: listApiKeys
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiKey'
+    post:
+      summary: Create a new API key
+      operationId: createApiKey
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiKeyRequest'
+      responses:
+        '201':
+          description: API key created successfully
+
+  /api-keys/{keyId}:
+    delete:
+      summary: Delete an API key
+      operationId: deleteApiKey
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: API key deleted successfully
+
+  # Webhooks Endpoints
+  /organizations/{organizationId}/webhooks:
+    get:
+      summary: List webhooks for an organization
+      operationId: listWebhooks
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webhook'
+    post:
+      summary: Create a new webhook
+      operationId: createWebhook
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookRequest'
+      responses:
+        '201':
+          description: Webhook created successfully
+
+  /webhooks/{webhookId}:
+    get:
+      summary: Get a specific webhook
+      operationId: getWebhook
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+    put:
+      summary: Update a webhook
+      operationId: updateWebhook
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebhookRequest'
+      responses:
+        '200':
+          description: Webhook updated successfully
+    delete:
+      summary: Delete a webhook
+      operationId: deleteWebhook
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Webhook deleted successfully
+
+  # Search History Endpoints
+  /users/{userId}/search-history:
+    get:
+      summary: List search history for a user
+      operationId: listSearchHistory
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchHistory'
+    post:
+      summary: Log a search query
+      operationId: logSearch
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchHistoryRequest'
+      responses:
+        '201':
+          description: Search logged successfully
+
+components:
+  schemas:
+    # Inventory Item Schema
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchasePrice:
+          type: number
+          format: decimal
+        currentValue:
+          type: number
+          format: decimal
+        photoUrls:
+          type: array
+          items:
+            type: string
+        depreciationRate:
+          type: number
+          format: decimal
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateInventoryItemRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchasePrice:
+          type: number
+          format: decimal
+        currentValue:
+          type: number
+          format: decimal
+        photoUrls:
+          type: array
+          items:
+            type: string
+        depreciationRate:
+          type: number
+          format: decimal
+        notes:
+          type: string
+
+    # Maintenance Record Schema
+    MaintenanceRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        serviceType:
+          type: string
+        date:
+          type: string
+          format: date
+        provider:
+          type: string
+        cost:
+          type: number
+          format: decimal
+        nextDueDate:
+          type: string
+          format: date
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateMaintenanceRecordRequest:
+      type: object
+      properties:
+        serviceType:
+          type: string
+        date:
+          type: string
+          format: date
+        provider:
+          type: string
+        cost:
+          type: number
+          format: decimal
+        nextDueDate:
+          type: string
+          format: date
+        notes:
+          type: string
+
+    # Camera Feed Schema
+    CameraFeed:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        cameraName:
+          type: string
+        rtspUrl:
+          type: string
+        lastSnapshotUrl:
+          type: string
+        webhookToken:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCameraFeedRequest:
+      type: object
+      required:
+        - cameraName
+        - rtspUrl
+      properties:
+        cameraName:
+          type: string
+        rtspUrl:
+          type: string
+        lastSnapshotUrl:
+          type: string
+        webhookToken:
+          type: string
+
+    # Contact Schema
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateContactRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+
+    # Expense Schema
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        amount:
+          type: number
+          format: decimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
+        category:
+          type: string
+        receiptUrl:
+          type: string
+        ocrText:
+          type: string
+        splitUsers:
+          type: object
+        approvalStatus:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateExpenseRequest:
+      type: object
+      required:
+        - amount
+        - date
+      properties:
+        amount:
+          type: number
+          format: decimal
+        currency:
+          type: string
+        date:
+          type: string
+          format: date
+        category:
+          type: string
+        receiptUrl:
+          type: string
+        ocrText:
+          type: string
+        splitUsers:
+          type: object
+
+    # Warranty Schema
+    Warranty:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        itemName:
+          type: string
+        provider:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        coverageDetails:
+          type: string
+        claimHistory:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateWarrantyRequest:
+      type: object
+      properties:
+        itemName:
+          type: string
+        provider:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        coverageDetails:
+          type: string
+
+    # Calendar Event Schema
+    CalendarEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        eventType:
+          type: string
+        title:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        reminderDaysBefore:
+          type: integer
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCalendarEventRequest:
+      type: object
+      required:
+        - title
+        - startDate
+      properties:
+        eventType:
+          type: string
+        title:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        reminderDaysBefore:
+          type: integer
+        notes:
+          type: string
+
+    # Notification Schema
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        sentAt:
+          type: string
+          format: date-time
+        readAt:
+          type: string
+          format: date-time
+        deliveryStatus:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # Tax Tracking Schema
+    TaxTracking:
+      type: object
+      properties:
+        id:
+          type: integer
+        boatId:
+          type: integer
+        country:
+          type: string
+        taxType:
+          type: string
+        documentUrl:
+          type: string
+        issueDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTaxTrackingRequest:
+      type: object
+      properties:
+        country:
+          type: string
+        taxType:
+          type: string
+        documentUrl:
+          type: string
+        issueDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: decimal
+
+    # Tag Schema
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateTagRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+
+    # Attachment Schema
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+        entityType:
+          type: string
+        entityId:
+          type: integer
+        fileUrl:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+        uploadedBy:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateAttachmentRequest:
+      type: object
+      required:
+        - fileUrl
+      properties:
+        fileUrl:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+
+    # Audit Log Schema
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: integer
+        oldValues:
+          type: object
+        newValues:
+          type: object
+        ipAddress:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # User Preferences Schema
+    UserPreferences:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        theme:
+          type: string
+        language:
+          type: string
+        notificationsEnabled:
+          type: boolean
+        preferences:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UpdateUserPreferencesRequest:
+      type: object
+      properties:
+        theme:
+          type: string
+        language:
+          type: string
+        notificationsEnabled:
+          type: boolean
+        preferences:
+          type: object
+
+    # API Key Schema
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        serviceName:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateApiKeyRequest:
+      type: object
+      required:
+        - serviceName
+        - apiKeyEncrypted
+      properties:
+        serviceName:
+          type: string
+        apiKeyEncrypted:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    # Webhook Schema
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: integer
+        organizationId:
+          type: integer
+        eventType:
+          type: string
+        url:
+          type: string
+        secretToken:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateWebhookRequest:
+      type: object
+      required:
+        - eventType
+        - url
+      properties:
+        eventType:
+          type: string
+        url:
+          type: string
+        secretToken:
+          type: string
+        isActive:
+          type: boolean
+
+    # Search History Schema
+    SearchHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        query:
+          type: string
+        resultsCount:
+          type: integer
+        clickedResultId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateSearchHistoryRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+        resultsCount:
+          type: integer
+        clickedResultId:
+          type: integer

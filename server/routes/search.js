@@ -1,11 +1,16 @@
 /**
- * Search Route - POST /api/search
- * Generate Meilisearch tenant tokens for client-side search
+ * Search Route - Unified search for documents and feature modules
+ * Handles:
+ * - Document/page search (Meilisearch)
+ * - Feature module search (inventory, maintenance, cameras, contacts, expenses)
+ * - Meilisearch tenant token generation
  */
 
 import express from 'express';
 import { getMeilisearchClient, generateTenantToken } from '../config/meilisearch.js';
 import { getDb } from '../db/db.js';
+import { search as searchModules, getSearchableModules, reindexModule, reindexAll } from '../services/search-modules.service.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -180,6 +185,179 @@ router.get('/health', async (req, res) => {
     res.status(503).json({
       status: 'error',
       error: 'Meilisearch unavailable',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/search/modules
+ * Get list of searchable modules and their configuration
+ */
+router.get('/modules', (req, res) => {
+  try {
+    const modules = getSearchableModules();
+    res.json({
+      modules: Object.keys(modules),
+      configurations: modules
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get modules',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/search/query?q=query&module=module&limit=20&offset=0
+ * Universal search across all feature modules
+ *
+ * Query parameters:
+ * - q: Search query (required)
+ * - module: Optional module filter (inventory_items, maintenance_records, etc.)
+ * - boatId: Optional boat ID filter
+ * - organizationId: Optional organization ID filter
+ * - category: Optional category filter
+ * - limit: Results per page (default: 20)
+ * - offset: Result offset for pagination (default: 0)
+ */
+router.get('/query', authenticateToken, async (req, res) => {
+  try {
+    const { q, module, boatId, organizationId, category, limit = 20, offset = 0 } = req.query;
+
+    if (!q || typeof q !== 'string' || q.trim().length === 0) {
+      return res.status(400).json({ error: 'Query parameter "q" is required and must be non-empty' });
+    }
+
+    const filters = {};
+    if (boatId) filters.boatId = parseInt(boatId);
+    if (organizationId) filters.organizationId = parseInt(organizationId);
+    if (category) filters.category = category;
+
+    const results = await searchModules(q.trim(), {
+      filters,
+      limit: Math.min(parseInt(limit) || 20, 100), // Max 100 results
+      offset: Math.max(parseInt(offset) || 0, 0),
+      module: module || null
+    });
+
+    res.json({
+      query: q,
+      module: module || 'all',
+      results,
+      pagination: {
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    });
+  } catch (error) {
+    console.error('Module search error:', error);
+    res.status(500).json({
+      error: 'Search failed',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/search/:module?q=query&limit=20&offset=0
+ * Module-specific search
+ *
+ * URL parameters:
+ * - module: Module name (inventory_items, maintenance_records, camera_feeds, contacts, expenses)
+ *
+ * Query parameters:
+ * - q: Search query (required)
+ * - boatId: Optional boat ID filter
+ * - organizationId: Optional organization ID filter
+ * - category: Optional category filter
+ * - limit: Results per page (default: 20)
+ * - offset: Result offset for pagination (default: 0)
+ */
+router.get('/:module', authenticateToken, async (req, res) => {
+  try {
+    const { module } = req.params;
+    const { q, boatId, organizationId, category, limit = 20, offset = 0 } = req.query;
+
+    if (!q || typeof q !== 'string' || q.trim().length === 0) {
+      return res.status(400).json({ error: 'Query parameter "q" is required and must be non-empty' });
+    }
+
+    const modules = getSearchableModules();
+    if (!modules[module]) {
+      return res.status(404).json({ error: `Unknown module: ${module}` });
+    }
+
+    const filters = {};
+    if (boatId) filters.boatId = parseInt(boatId);
+    if (organizationId) filters.organizationId = parseInt(organizationId);
+    if (category) filters.category = category;
+
+    const results = await searchModules(q.trim(), {
+      filters,
+      limit: Math.min(parseInt(limit) || 20, 100),
+      offset: Math.max(parseInt(offset) || 0, 0),
+      module
+    });
+
+    res.json({
+      query: q,
+      module,
+      results: results.modules[module] || { hits: [], totalHits: 0 },
+      pagination: {
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    });
+  } catch (error) {
+    console.error('Module search error:', error);
+    res.status(500).json({
+      error: 'Search failed',
+      message: error.message
+    });
+  }
+});
+
+/**
+ * POST /api/search/reindex/:module
+ * Reindex all records for a specific module (admin only)
+ *
+ * URL parameters:
+ * - module: Module name (optional, reindex all if omitted)
+ */
+router.post('/reindex/:module?', authenticateToken, async (req, res) => {
+  try {
+    // Check if user is admin (basic check, should be enhanced with proper authorization)
+    if (!req.user?.isAdmin && process.env.ALLOW_REINDEX !== 'true') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const { module } = req.params;
+
+    if (module) {
+      const modules = getSearchableModules();
+      if (!modules[module]) {
+        return res.status(404).json({ error: `Unknown module: ${module}` });
+      }
+      const result = await reindexModule(module);
+      return res.json({
+        success: true,
+        message: `Reindexed ${module}`,
+        result
+      });
+    } else {
+      const result = await reindexAll();
+      return res.json({
+        success: true,
+        message: 'Reindexed all modules',
+        result
+      });
+    }
+  } catch (error) {
+    console.error('Reindex error:', error);
+    res.status(500).json({
+      error: 'Reindex failed',
       message: error.message
     });
   }

@@ -94,6 +94,11 @@ import documentsRoutes from './routes/documents.js';
 import imagesRoutes from './routes/images.js';
 import statsRoutes from './routes/stats.js';
 import tocRoutes from './routes/toc.js';
+import contactsRoutes from './routes/contacts.js';
+import camerasRoutes from './routes/cameras.js';
+import expensesRoutes from './routes/expenses.js';
+import inventoryRoutes from './routes/inventory.js';
+import maintenanceRoutes from './routes/maintenance.js';
 
 // Public API endpoint for app settings (no auth required)
 import * as settingsService from './services/settings.service.js';
@@ -126,6 +131,11 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/expenses', expensesRoutes);
+app.use('/api/contacts', contactsRoutes);
+app.use('/api/cameras', camerasRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api', tocRoutes);  // Handles /api/documents/:id/toc paths
 app.use('/api', imagesRoutes);

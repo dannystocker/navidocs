@@ -272,6 +272,28 @@ CREATE INDEX idx_permissions_resource ON permissions(resource_type, resource_id)
 CREATE INDEX idx_bookmarks_user ON bookmarks(user_id);
 
 -- ============================================================================
+-- CONTACTS (Marina, Mechanic, Vendor Management)
+-- ============================================================================
+
+CREATE TABLE contacts (
+  id TEXT PRIMARY KEY,
+  organization_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  type TEXT DEFAULT 'other',              -- marina, mechanic, vendor, insurance, customs, other
+  phone TEXT,
+  email TEXT,
+  address TEXT,
+  notes TEXT,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_contacts_org ON contacts(organization_id);
+CREATE INDEX idx_contacts_type ON contacts(type);
+CREATE INDEX idx_contacts_email ON contacts(email);
+
+-- ============================================================================
 -- INITIAL DATA
 -- ============================================================================
 

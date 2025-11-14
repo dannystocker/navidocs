@@ -1,0 +1,316 @@
+# NaviDocs Docker Compose Configuration
+# Usage:
+#   Development: docker-compose -f docker-compose.yml up
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#   Build:       docker-compose build
+#   Logs:        docker-compose logs -f api
+#   Stop:        docker-compose down
+
+version: '3.9'
+
+services:
+  # ========================================================================
+  # PostgreSQL Database Service
+  # ========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: navidocs-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${DB_NAME:-navidocs}
+      POSTGRES_USER: ${DB_USER:-navidocs_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+    volumes:
+      # Database data persistence
+      - postgres_data:/var/lib/postgresql/data
+      # Initialization scripts
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-navidocs_user} -d ${DB_NAME:-navidocs}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    networks:
+      - navidocs-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    labels:
+      app.name: "navidocs"
+      app.component: "database"
+      app.version: "16"
+
+  # ========================================================================
+  # Redis Cache Service (Optional - for job queue)
+  # ========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: navidocs-redis
+    restart: unless-stopped
+
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - navidocs-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    labels:
+      app.name: "navidocs"
+      app.component: "cache"
+      app.version: "7"
+
+    profiles:
+      - with-redis
+
+  # ========================================================================
+  # Meilisearch Service (Optional - for full-text search)
+  # ========================================================================
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: navidocs-meilisearch
+    restart: unless-stopped
+
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-meilisearch_master_key}
+      MEILI_ENV: ${NODE_ENV:-development}
+      MEILI_NO_ANALYTICS: "true"
+
+    ports:
+      - "${MEILISEARCH_PORT:-7700}:7700"
+
+    volumes:
+      - meilisearch_data:/meili_data
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - navidocs-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    labels:
+      app.name: "navidocs"
+      app.component: "search"
+      app.version: "latest"
+
+    profiles:
+      - with-meilisearch
+
+  # ========================================================================
+  # NaviDocs API Service
+  # ========================================================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-development}
+
+    container_name: navidocs-api
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+
+    environment:
+      # Node Environment
+      NODE_ENV: ${NODE_ENV:-development}
+      DEBUG: ${DEBUG:-false}
+
+      # Server Configuration
+      PORT: ${PORT:-3001}
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:3001}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+
+      # Database Configuration
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-navidocs}
+      DB_USER: ${DB_USER:-navidocs_user}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+
+      # Authentication & Security
+      JWT_SECRET: ${JWT_SECRET:-your_super_secret_jwt_key_minimum_32_characters}
+      JWT_EXPIRY: ${JWT_EXPIRY:-24h}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-your_encryption_key_hex_string_64_characters}
+      SESSION_SECRET: ${SESSION_SECRET:-your_session_secret_key_minimum_32_characters}
+
+      # CORS Configuration
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      CORS_CREDENTIALS: ${CORS_CREDENTIALS:-true}
+
+      # File Upload Configuration
+      UPLOAD_DIR: ${UPLOAD_DIR:-./uploads}
+      UPLOAD_MAX_SIZE: ${UPLOAD_MAX_SIZE:-10485760}
+
+      # Search Configuration
+      SEARCH_TYPE: ${SEARCH_TYPE:-postgres-fts}
+      MEILISEARCH_HOST: ${MEILISEARCH_HOST:-http://meilisearch:7700}
+      MEILISEARCH_KEY: ${MEILISEARCH_KEY:-meilisearch_master_key}
+
+      # Cache Configuration (Redis)
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+
+      # Rate Limiting
+      RATE_LIMIT_ENABLE: ${RATE_LIMIT_ENABLE:-true}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_STORAGE_TYPE: ${LOG_STORAGE_TYPE:-file}
+      LOG_STORAGE_PATH: ${LOG_STORAGE_PATH:-./logs}
+
+    ports:
+      - "${PORT:-3001}:3001"
+
+    volumes:
+      # Application code (for development)
+      - ./server:/app/server:ro
+      - ./migrations:/app/migrations:ro
+      # Persistent volumes
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    networks:
+      - navidocs-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    labels:
+      app.name: "navidocs"
+      app.component: "api"
+      app.version: "1.0.0"
+
+  # ========================================================================
+  # Nginx Reverse Proxy (Optional - for production)
+  # ========================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: navidocs-nginx
+    restart: unless-stopped
+
+    depends_on:
+      - api
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+
+    networks:
+      - navidocs-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    profiles:
+      - with-nginx
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  navidocs-network:
+    driver: bridge
+    name: navidocs-network
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  postgres_data:
+    driver: local
+    name: navidocs-postgres-data
+
+  redis_data:
+    driver: local
+    name: navidocs-redis-data
+
+  meilisearch_data:
+    driver: local
+    name: navidocs-meilisearch-data
+
+# ============================================================================
+# Environment Variables Notes
+# ============================================================================
+#
+# Available Profiles:
+# - default: Only API, PostgreSQL (core services)
+# - with-redis: Add Redis for caching and job queue
+# - with-meilisearch: Add Meilisearch for full-text search
+# - with-nginx: Add Nginx reverse proxy (production)
+#
+# Usage:
+#   docker-compose --profile with-redis --profile with-meilisearch up
+#
+# Development Setup (with all services):
+#   docker-compose --profile with-redis --profile with-meilisearch up
+#
+# Production Setup (with Nginx):
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# ============================================================================

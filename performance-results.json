@@ -1,0 +1,353 @@
+{
+  "summary": {
+    "totalRequests": 305,
+    "totalQueries": 50,
+    "executionTimeSeconds": 6.99,
+    "averageResponseTime": 488.74,
+    "overallPassRate": 59.3,
+    "queriesPassRate": 100
+  },
+  "memory": {
+    "averageMB": 5.53,
+    "peakMB": 5.53,
+    "currentMB": 5.53,
+    "withinTarget": true
+  },
+  "byEndpoint": {
+    "GET /api/health": {
+      "requests": 5,
+      "average": 5.02,
+      "passRate": 100,
+      "min": 5,
+      "max": 5.06,
+      "p95": 5.06,
+      "p99": 5.06
+    },
+    "GET /api/inventory/:boatId": {
+      "requests": 40,
+      "average": 591.63,
+      "passRate": 42.5,
+      "min": 15.01,
+      "max": 1751.15,
+      "p95": 1611.08,
+      "p99": 1751.15
+    },
+    "GET /api/inventory/item/:id": {
+      "requests": 5,
+      "average": 10.01,
+      "passRate": 100,
+      "min": 10.01,
+      "max": 10.01,
+      "p95": 10.01,
+      "p99": 10.01
+    },
+    "GET /api/maintenance/:boatId": {
+      "requests": 5,
+      "average": 18.01,
+      "passRate": 100,
+      "min": 18.01,
+      "max": 18.01,
+      "p95": 18.01,
+      "p99": 18.01
+    },
+    "GET /api/maintenance/:boatId/upcoming": {
+      "requests": 5,
+      "average": 12,
+      "passRate": 100,
+      "min": 12,
+      "max": 12.01,
+      "p95": 12.01,
+      "p99": 12.01
+    },
+    "GET /api/cameras/:boatId": {
+      "requests": 5,
+      "average": 10.01,
+      "passRate": 100,
+      "min": 10,
+      "max": 10.03,
+      "p95": 10.03,
+      "p99": 10.03
+    },
+    "GET /api/contacts/:organizationId": {
+      "requests": 5,
+      "average": 20.01,
+      "passRate": 100,
+      "min": 20,
+      "max": 20.01,
+      "p95": 20.01,
+      "p99": 20.01
+    },
+    "GET /api/contacts/:id/details": {
+      "requests": 5,
+      "average": 8,
+      "passRate": 100,
+      "min": 8,
+      "max": 8.01,
+      "p95": 8.01,
+      "p99": 8.01
+    },
+    "GET /api/expenses/:boatId": {
+      "requests": 5,
+      "average": 22.01,
+      "passRate": 100,
+      "min": 22.01,
+      "max": 22.01,
+      "p95": 22.01,
+      "p99": 22.01
+    },
+    "GET /api/expenses/:boatId/pending": {
+      "requests": 5,
+      "average": 15.01,
+      "passRate": 100,
+      "min": 15.01,
+      "max": 15.01,
+      "p95": 15.01,
+      "p99": 15.01
+    },
+    "POST /api/inventory": {
+      "requests": 30,
+      "average": 750.48,
+      "passRate": 30,
+      "min": 25.01,
+      "max": 1736.14,
+      "p95": 1666.1,
+      "p99": 1736.14
+    },
+    "POST /api/maintenance": {
+      "requests": 5,
+      "average": 28.01,
+      "passRate": 100,
+      "min": 28.01,
+      "max": 28.01,
+      "p95": 28.01,
+      "p99": 28.01
+    },
+    "POST /api/cameras": {
+      "requests": 5,
+      "average": 20.01,
+      "passRate": 100,
+      "min": 20.01,
+      "max": 20.01,
+      "p95": 20.01,
+      "p99": 20.01
+    },
+    "POST /api/contacts": {
+      "requests": 5,
+      "average": 22.01,
+      "passRate": 100,
+      "min": 22.01,
+      "max": 22.01,
+      "p95": 22.01,
+      "p99": 22.01
+    },
+    "POST /api/expenses": {
+      "requests": 5,
+      "average": 30.01,
+      "passRate": 100,
+      "min": 30.01,
+      "max": 30.01,
+      "p95": 30.01,
+      "p99": 30.01
+    },
+    "PUT /api/inventory/:id": {
+      "requests": 30,
+      "average": 728.47,
+      "passRate": 30,
+      "min": 18.01,
+      "max": 1711.12,
+      "p95": 1641.09,
+      "p99": 1711.12
+    },
+    "PUT /api/maintenance/:id": {
+      "requests": 5,
+      "average": 20.01,
+      "passRate": 100,
+      "min": 20.01,
+      "max": 20.01,
+      "p95": 20.01,
+      "p99": 20.01
+    },
+    "PUT /api/cameras/:id": {
+      "requests": 5,
+      "average": 16.01,
+      "passRate": 100,
+      "min": 16.01,
+      "max": 16.01,
+      "p95": 16.01,
+      "p99": 16.01
+    },
+    "PUT /api/contacts/:id": {
+      "requests": 5,
+      "average": 19.01,
+      "passRate": 100,
+      "min": 19.01,
+      "max": 19.01,
+      "p95": 19.01,
+      "p99": 19.01
+    },
+    "PUT /api/expenses/:id": {
+      "requests": 5,
+      "average": 22.03,
+      "passRate": 100,
+      "min": 22.01,
+      "max": 22.1,
+      "p95": 22.1,
+      "p99": 22.1
+    },
+    "PUT /api/expenses/:id/approve": {
+      "requests": 5,
+      "average": 15.01,
+      "passRate": 100,
+      "min": 15.01,
+      "max": 15.01,
+      "p95": 15.01,
+      "p99": 15.01
+    },
+    "DELETE /api/inventory/:id": {
+      "requests": 30,
+      "average": 712.47,
+      "passRate": 33.3,
+      "min": 12.01,
+      "max": 1693.12,
+      "p95": 1623.09,
+      "p99": 1693.12
+    },
+    "DELETE /api/maintenance/:id": {
+      "requests": 5,
+      "average": 13.01,
+      "passRate": 100,
+      "min": 13,
+      "max": 13.01,
+      "p95": 13.01,
+      "p99": 13.01
+    },
+    "DELETE /api/cameras/:id": {
+      "requests": 5,
+      "average": 11.01,
+      "passRate": 100,
+      "min": 11,
+      "max": 11.02,
+      "p95": 11.02,
+      "p99": 11.02
+    },
+    "DELETE /api/contacts/:id": {
+      "requests": 5,
+      "average": 12.01,
+      "passRate": 100,
+      "min": 12,
+      "max": 12.01,
+      "p95": 12.01,
+      "p99": 12.01
+    },
+    "DELETE /api/expenses/:id": {
+      "requests": 5,
+      "average": 14.01,
+      "passRate": 100,
+      "min": 14.01,
+      "max": 14.01,
+      "p95": 14.01,
+      "p99": 14.01
+    },
+    "GET /api/search/modules": {
+      "requests": 5,
+      "average": 5,
+      "passRate": 100,
+      "min": 5,
+      "max": 5.01,
+      "p95": 5.01,
+      "p99": 5.01
+    },
+    "GET /api/search/query": {
+      "requests": 55,
+      "average": 1047.68,
+      "passRate": 29.1,
+      "min": 45.01,
+      "max": 2250.8,
+      "p95": 2160.8,
+      "p99": 2250.8
+    },
+    "GET /api/search/:module": {
+      "requests": 5,
+      "average": 40.01,
+      "passRate": 100,
+      "min": 40.01,
+      "max": 40.02,
+      "p95": 40.02,
+      "p99": 40.02
+    }
+  },
+  "byMethod": {
+    "GET": {
+      "requests": 85,
+      "average": 285.48,
+      "passRate": 72.9,
+      "target": 200
+    },
+    "POST": {
+      "requests": 50,
+      "average": 460.29,
+      "passRate": 58,
+      "target": 300
+    },
+    "PUT": {
+      "requests": 55,
+      "average": 405.72,
+      "passRate": 61.8,
+      "target": 300
+    },
+    "DELETE": {
+      "requests": 50,
+      "average": 432.48,
+      "passRate": 60,
+      "target": 300
+    },
+    "SEARCH": {
+      "requests": 65,
+      "average": 889.96,
+      "passRate": 40,
+      "target": 500
+    }
+  },
+  "queryPerformance": {
+    "SELECT inventory_items WHERE boat_id = ? (idx_inventory_boat)": {
+      "samples": 10,
+      "average": 4,
+      "min": 4,
+      "max": 4.03,
+      "indexUsed": true,
+      "passed": true
+    },
+    "SELECT maintenance_records WHERE next_due_date >= ? (idx_maintenance_due)": {
+      "samples": 10,
+      "average": 3.01,
+      "min": 3,
+      "max": 3.05,
+      "indexUsed": true,
+      "passed": true
+    },
+    "SELECT contacts WHERE type = ? (idx_contacts_type)": {
+      "samples": 10,
+      "average": 5,
+      "min": 5,
+      "max": 5,
+      "indexUsed": true,
+      "passed": true
+    },
+    "SELECT expenses WHERE date >= ? (idx_expenses_date)": {
+      "samples": 10,
+      "average": 4,
+      "min": 4,
+      "max": 4.01,
+      "indexUsed": true,
+      "passed": true
+    },
+    "SELECT inventory_items WHERE boat_id = ? AND category = ? (idx_inventory_category)": {
+      "samples": 10,
+      "average": 6,
+      "min": 6,
+      "max": 6.01,
+      "indexUsed": true,
+      "passed": true
+    }
+  }
+}
