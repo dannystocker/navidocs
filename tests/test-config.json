@@ -1,0 +1,88 @@
+{
+  "baseUrl": "http://localhost:8083",
+  "apiUrl": "http://localhost:8083/api",
+  "environment": "test",
+  "testUser": {
+    "email": "admin@test.com",
+    "password": "test123",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "admin"
+  },
+  "crewMember": {
+    "email": "user1@test.com",
+    "password": "test123",
+    "firstName": "John",
+    "lastName": "Sailor",
+    "role": "crew_member"
+  },
+  "guestUser": {
+    "email": "user2@test.com",
+    "password": "test123",
+    "firstName": "Guest",
+    "lastName": "User",
+    "role": "guest"
+  },
+  "testBoat": {
+    "id": "test-boat-123",
+    "name": "S/Y Testing Vessel",
+    "type": "Sailboat",
+    "length": "45",
+    "lengthUnit": "ft",
+    "beam": "14",
+    "draft": "7",
+    "displacement": "45000",
+    "hullType": "Monohull",
+    "material": "Fiberglass",
+    "yearBuilt": "2015",
+    "manufacturer": "Beneteau",
+    "model": "Oceanis 450",
+    "homePort": "Porto Antico, Genoa"
+  },
+  "fixtures": {
+    "equipment": "tests/fixtures/equipment.jpg",
+    "receipt": "tests/fixtures/receipt.pdf",
+    "contact": "tests/fixtures/contact.vcf"
+  },
+  "testOrganization": {
+    "id": "org-test-001",
+    "name": "Test Marine Co.",
+    "slug": "test-marine-co"
+  },
+  "testContacts": {
+    "mechanic": {
+      "name": "Marco's Marine Services",
+      "phone": "+39 010 555 1234",
+      "email": "marco@marineservices.it",
+      "type": "mechanic"
+    },
+    "supplier": {
+      "name": "Marina Porto Antico",
+      "phone": "+39 010 555 0100",
+      "email": "info@portoantic.it",
+      "type": "supplier"
+    }
+  },
+  "gpsCoordinates": {
+    "mediterranean": {
+      "latitude": 41.9028,
+      "longitude": 12.4964,
+      "name": "Mediterranean (Rome coordinates)"
+    },
+    "genoa": {
+      "latitude": 44.4056,
+      "longitude": 8.9463,
+      "name": "Genoa, Italy"
+    }
+  },
+  "timeouts": {
+    "navigation": 30000,
+    "api": 10000,
+    "element": 5000,
+    "file_upload": 10000
+  },
+  "retryConfig": {
+    "maxRetries": 3,
+    "delayMs": 1000
+  }
+}

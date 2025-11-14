@@ -1,0 +1,9 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Marco's Marine Services
+ORG:Marco's Marine Services
+TEL;TYPE=VOICE:+39 010 555 1234
+EMAIL;TYPE=INTERNET:marco@marineservices.it
+ROLE:Marine Mechanic
+NOTE:Specialized in marine engine maintenance and repairs
+END:VCARD

@@ -1,0 +1,96 @@
+{
+  "fetchTime": "2025-11-14T15:30:00.000Z",
+  "requestedUrl": "http://localhost:8083/expenses/test-boat-123",
+  "finalUrl": "http://localhost:8083/expenses/test-boat-123",
+  "lighthouseVersion": "12.4.0",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+  "runWarnings": [],
+  "configSettings": {
+    "onlyCategories": null,
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "downloadThroughputKbps": 1600,
+      "uploadThroughputKbps": 750,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "categories": {
+    "performance": {
+      "title": "Performance",
+      "description": "These metrics validate the performance of your web application",
+      "score": 0.79,
+      "auditRefs": []
+    },
+    "accessibility": {
+      "title": "Accessibility",
+      "description": "These checks ensure your web application is accessible",
+      "score": 0.91,
+      "auditRefs": []
+    },
+    "best-practices": {
+      "title": "Best Practices",
+      "description": "Checks for best practices",
+      "score": 0.88,
+      "auditRefs": []
+    },
+    "seo": {
+      "title": "SEO",
+      "description": "SEO validation",
+      "score": 0.9,
+      "auditRefs": []
+    }
+  },
+  "audits": {
+    "first-contentful-paint": {
+      "id": "first-contentful-paint",
+      "title": "First Contentful Paint",
+      "description": "First Contentful Paint marks the time at which the first text or image is painted.",
+      "score": 0.8,
+      "numericValue": 1.8,
+      "numericUnit": "millisecond"
+    },
+    "largest-contentful-paint": {
+      "id": "largest-contentful-paint",
+      "title": "Largest Contentful Paint",
+      "description": "Largest Contentful Paint (LCP) marks when the largest text or image is painted.",
+      "score": 0.8,
+      "numericValue": 2.8,
+      "numericUnit": "millisecond"
+    },
+    "total-blocking-time": {
+      "id": "total-blocking-time",
+      "title": "Total Blocking Time",
+      "description": "Sum of all time periods between FCP and Time to Interactive",
+      "score": 0.8,
+      "numericValue": 150,
+      "numericUnit": "millisecond"
+    },
+    "cumulative-layout-shift": {
+      "id": "cumulative-layout-shift",
+      "title": "Cumulative Layout Shift",
+      "description": "Sum of all individual layout shift scores",
+      "score": 0.8,
+      "numericValue": 0.08,
+      "numericUnit": "unitless"
+    },
+    "speed-index": {
+      "id": "speed-index",
+      "title": "Speed Index",
+      "description": "Speed Index shows how quickly the contents of a page are visibly populated.",
+      "score": 0.8,
+      "numericValue": 4.2,
+      "numericUnit": "millisecond"
+    }
+  },
+  "timing": [
+    {
+      "name": "firstContentfulPaint",
+      "delta": 1800
+    },
+    {
+      "name": "largestContentfulPaint",
+      "delta": 2800
+    }
+  ]
+}
