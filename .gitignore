@@ -57,3 +57,17 @@ data/
 playwright.config.manual.js
 tests/e2e/frontend-detailed.spec.js
 tests/e2e/frontend-manual.spec.js
+
+# Agent session summaries and temporary work files
+AGENT_*.md
+AGENT_*.txt
+SESSION_*.md
+PASTE_INTO_*.txt
+*_SUMMARY.txt
+*_COMPLETE.md
+*_GUIDE.md
+*_CHECKLIST.md
+integrate*.sh
+integrate*.py
+test-*.js
+reviews/
