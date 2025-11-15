@@ -1,0 +1,453 @@
+/**
+ * accessibility.css
+ * Global accessibility styles for NaviDocs
+ * WCAG 2.1 AA compliant focus indicators, skip links, and reduced motion support
+ */
+
+/* ===========================
+   FOCUS INDICATORS
+   =========================== */
+
+/* High-visibility focus indicators for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid rgba(236, 72, 153, 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Enhanced focus for buttons and links */
+button:focus-visible,
+a:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid rgba(236, 72, 153, 0.8);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
+}
+
+/* Input field focus states */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(236, 72, 153, 0.8);
+  outline-offset: 2px;
+  border-color: rgb(236, 72, 153) !important;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
+}
+
+/* Search result card focus */
+.nv-card:focus-visible,
+.result-item:focus-visible {
+  outline: 3px solid rgba(236, 72, 153, 0.8);
+  outline-offset: 2px;
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(236, 72, 153, 0.5);
+}
+
+/* Navigation button focus */
+.nav-btn:focus-visible,
+.go-btn:focus-visible {
+  outline: 3px solid rgba(236, 72, 153, 0.8);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
+}
+
+/* ===========================
+   SKIP LINKS
+   =========================== */
+
+/* Skip navigation links (hidden until focused) */
+.skip-links {
+  position: relative;
+  z-index: 10000;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: rgb(236, 72, 153);
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  transition: top 0.2s ease;
+  z-index: 10001;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid white;
+  outline-offset: 2px;
+}
+
+.skip-link:hover {
+  background: rgb(219, 39, 119);
+}
+
+/* ===========================
+   SCREEN READER ONLY
+   =========================== */
+
+/* Hide content visually but keep accessible to screen readers */
+.sr-only,
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Allow element to be focusable when navigated to via keyboard */
+.sr-only-focusable:focus,
+.visually-hidden-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ===========================
+   COLOR CONTRAST
+   =========================== */
+
+/* Enhanced text colors for better contrast (WCAG AA compliant) */
+:root {
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.80);
+  --text-tertiary: rgba(255, 255, 255, 0.65);
+  --text-disabled: rgba(255, 255, 255, 0.40);
+
+  /* Highlight colors */
+  --highlight-bg: #FFE666;
+  --highlight-text: #1d1d1f;
+
+  /* Focus colors */
+  --focus-ring: rgba(236, 72, 153, 0.8);
+  --focus-shadow: rgba(236, 72, 153, 0.2);
+}
+
+/* Apply contrast-safe colors */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+
+.text-disabled {
+  color: var(--text-disabled);
+}
+
+/* Ensure sufficient contrast for search highlights */
+mark,
+.nv-hi,
+.search-highlight {
+  background-color: var(--highlight-bg);
+  color: var(--highlight-text);
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+/* ===========================
+   HIGH CONTRAST MODE
+   =========================== */
+
+/* Support for Windows High Contrast Mode */
+@media (prefers-contrast: high) {
+  *:focus-visible {
+    outline: 4px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    outline: 4px solid;
+    outline-offset: 4px;
+  }
+
+  /* Ensure borders are visible */
+  .nv-card,
+  .result-item,
+  input,
+  button {
+    border: 2px solid currentColor;
+  }
+
+  /* High contrast highlights */
+  mark,
+  .nv-hi,
+  .search-highlight {
+    background-color: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+}
+
+/* ===========================
+   REDUCED MOTION
+   =========================== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep essential focus transitions for usability */
+  *:focus-visible {
+    transition: outline 0.1s ease;
+  }
+
+  /* Disable parallax effects */
+  .parallax {
+    background-attachment: scroll !important;
+  }
+
+  /* Disable hover transforms */
+  .nv-card:hover,
+  .result-item:hover,
+  button:hover {
+    transform: none !important;
+  }
+
+  /* Instant state changes */
+  .dropdown-enter-active,
+  .dropdown-leave-active,
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.05s linear, visibility 0.05s linear !important;
+  }
+
+  /* Disable rotating spinners - show static icon instead */
+  .spinner,
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* ===========================
+   TOUCH TARGETS (MOBILE)
+   =========================== */
+
+/* Ensure minimum 44×44px touch targets on mobile (WCAG AAA) */
+@media (max-width: 768px) {
+  button,
+  .btn,
+  .nav-btn,
+  .go-btn,
+  .close-btn,
+  a[href],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+  }
+
+  /* Search result cards */
+  .nv-card,
+  .result-item {
+    min-height: 60px;
+    padding: 16px;
+  }
+
+  /* Chip buttons */
+  .nv-chip,
+  .nv-chip-text {
+    min-height: 44px;
+    padding: 8px 12px;
+  }
+
+  /* Page input */
+  .page-input {
+    min-width: 60px;
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+
+  /* Compact nav spacing */
+  .compact-nav {
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+/* ===========================
+   KEYBOARD NAVIGATION
+   =========================== */
+
+/* Show keyboard hints on focus */
+kbd {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ===========================
+   FOCUS TRAPS
+   =========================== */
+
+/* Ensure modals/dialogs trap focus properly */
+.modal:focus,
+.dialog:focus {
+  outline: none;
+}
+
+/* First/last focusable element in trap */
+.focus-trap-start:focus,
+.focus-trap-end:focus {
+  outline: none;
+}
+
+/* ===========================
+   ARIA LIVE REGIONS
+   =========================== */
+
+/* Ensure live regions are properly announced */
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: relative;
+}
+
+/* Status messages */
+[role="status"],
+[role="alert"] {
+  position: relative;
+}
+
+/* ===========================
+   SEMANTIC EMPHASIS
+   =========================== */
+
+/* Ensure semantic HTML is styled appropriately */
+strong,
+b {
+  font-weight: 700;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+/* ===========================
+   LANDMARKS
+   =========================== */
+
+/* Clear landmark boundaries for screen readers */
+main[role="main"],
+nav[role="navigation"],
+aside[role="complementary"],
+header[role="banner"],
+footer[role="contentinfo"] {
+  position: relative;
+}
+
+/* ===========================
+   RESPONSIVE TYPOGRAPHY
+   =========================== */
+
+/* Ensure text can be resized up to 200% without breaking layout */
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Allow text zoom up to 200% */
+body {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ===========================
+   FOCUS MANAGEMENT
+   =========================== */
+
+/* Prevent focus outline on click, show on keyboard */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/* ===========================
+   PRINT STYLES (BONUS)
+   =========================== */
+
+@media print {
+  /* Remove skip links in print */
+  .skip-links {
+    display: none;
+  }
+
+  /* Ensure focus indicators don't print */
+  *:focus-visible {
+    outline: none;
+  }
+
+  /* Preserve link URLs */
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Preserve document structure */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+}
+
+/* ===========================
+   DARK MODE SUPPORT
+   =========================== */
+
+@media (prefers-color-scheme: dark) {
+  /* Already dark by default, but ensure sufficient contrast */
+  :root {
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.80);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  /* If implementing light mode in future */
+  :root {
+    --text-primary: rgba(0, 0, 0, 0.95);
+    --text-secondary: rgba(0, 0, 0, 0.80);
+    --focus-ring: rgba(236, 72, 153, 1);
+  }
+}
