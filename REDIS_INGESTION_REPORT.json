@@ -1,0 +1,86 @@
+{
+  "total_branches": 23,
+  "total_keys_created": 2438,
+  "total_files_processed": 2438,
+  "total_files_skipped": 0,
+  "redis_memory_mb": 1181.74,
+  "completion_time_seconds": 46.5,
+  "branch_details": {
+    "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY": {
+      "files": 803,
+      "total_size_mb": 267.7
+    },
+    "claude/session-2-completion-docs-011CV53B2oMH6VqjaePrFZgb": {
+      "files": 804,
+      "total_size_mb": 267.71
+    },
+    "navidocs-cloud-coordination": {
+      "files": 831,
+      "total_size_mb": 268.07
+    }
+  },
+  "largest_files": [
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/10fde4ab-2b1e-4d53-976b-e106562948b3.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/18f29f59-d2ca-4b01-95c8-004e8db3982e.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/34f82470-6dca-47d3-8e2a-ff6ff9dbdf55.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/359acccc-30f0-4b78-88b4-6d1ae494af8f.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/73e9b703-637e-4a5a-9be9-122928dea72e.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/c8375490-1e67-4f18-9c9c-4ff693aa8455.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/cb102131-fb24-4cb6-bfd6-6123ddabb97c.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/navidocs-cloud-coordination-011CV53By5dfJaBfbPXZu9XY:uploads/efb25a15-7d84-4bc3-b070-6bd7dec8d59a.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/session-2-completion-docs-011CV53B2oMH6VqjaePrFZgb:uploads/10fde4ab-2b1e-4d53-976b-e106562948b3.pdf",
+      "size_kb": 6812.65
+    },
+    {
+      "path": "claude/session-2-completion-docs-011CV53B2oMH6VqjaePrFZgb:uploads/18f29f59-d2ca-4b01-95c8-004e8db3982e.pdf",
+      "size_kb": 6812.65
+    }
+  ],
+  "errors": [
+    "Failed to checkout claude/critical-security-ux-01RZPPuRFwrveZKec62363vu",
+    "Failed to checkout claude/deployment-prep-011CV53By5dfJaBfbPXZu9XY",
+    "Failed to checkout claude/feature-polish-testing-011CV539gRUg4XMV3C1j56yr",
+    "Failed to checkout claude/feature-smart-ocr-011CV539gRUg4XMV3C1j56yr",
+    "Failed to checkout claude/feature-timeline-011CV53By5dfJaBfbPXZu9XY",
+    "Failed to checkout claude/install-run-ssh-01RZPPuRFwrveZKec62363vu",
+    "Failed to checkout claude/multiformat-011CV53B2oMH6VqjaePrFZgb",
+    "Failed to checkout claude/navidocs-cloud-coordination-011CV539gRUg4XMV3C1j56yr",
+    "Failed to checkout claude/navidocs-cloud-coordination-011CV53B2oMH6VqjaePrFZgb",
+    "Failed to checkout claude/navidocs-cloud-coordination-011CV53P3kj5j42DM7JTHJGf",
+    "Failed to checkout claude/navidocs-cloud-coordination-011CV53QAMNopnRaVdWjC37s",
+    "Failed to checkout feature/single-tenant-features",
+    "Failed to checkout fix/pdf-canvas-loop",
+    "Failed to checkout fix/toc-polish",
+    "Failed to checkout image-extraction-api",
+    "Failed to checkout image-extraction-backend",
+    "Failed to checkout image-extraction-frontend",
+    "Failed to checkout master",
+    "Failed to checkout mvp-demo-build",
+    "Failed to checkout ui-smoketest-20251019"
+  ]
+}
