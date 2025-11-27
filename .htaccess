@@ -1,0 +1,87 @@
+# NaviDocs Apache Configuration
+# Production rewrite rules recovered from StackCP on 2025-11-27
+
+# Enable mod_rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # HTTPS redirect for production
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Remove .html extension
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+    # API routing - no rewrite for /api/* endpoints
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.html [L]
+
+    # Prevent direct access to sensitive directories
+    RewriteRule ^(server|config|\.env|package\.json) - [F,L]
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Clickjacking protection
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Content Security Policy
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Gzip compression for assets
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Browser caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Cache static assets for 1 week
+    ExpiresByType image/jpeg "access plus 7 days"
+    ExpiresByType image/gif "access plus 7 days"
+    ExpiresByType image/png "access plus 7 days"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+
+    # Don't cache HTML
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# File protection
+<FilesMatch "\.(env|config|password|sql|conf)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+###
+# RECOVERY ANALYSIS:
+# - HTTPS enforcement with X-Forwarded-Proto check (load balancer support)
+# - Clean URL rewriting for SPA routing
+# - Security headers for XSS, MIME-sniffing, and clickjacking protection
+# - Gzip compression for performance
+# - Browser caching strategy for assets
+# - Sensitive file protection
+#
+# AUDIT TRAIL:
+# - Recovered from: /public_html/icantwait.ca/.htaccess
+# - Last modified on StackCP: 2025-10-12 (estimated)
+# - Status: Production-ready, tested on StackCP
+# - Source branch: fix/production-sync-2025
+###
